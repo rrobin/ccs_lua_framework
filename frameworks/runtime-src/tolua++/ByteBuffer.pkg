@@ -1,0 +1,91 @@
+
+class ByteBufferException
+{
+public:
+	ByteBufferException(bool _add, size_t _pos, size_t _esize, size_t _size);
+
+	void PrintPosError() const;
+};
+
+
+class ByteBuffer
+{
+public:
+	const static size_t DEFAULT_SIZE;
+
+	// constructor
+	ByteBuffer();
+
+	// constructor
+	ByteBuffer(size_t res);
+
+	// copy constructor
+	ByteBuffer(const ByteBuffer& buf);
+
+	void clear();
+
+	size_t rpos() const;
+
+	size_t rpos(size_t rpos_);
+
+	size_t wpos() const;
+
+	size_t wpos(size_t wpos_);
+
+	uint64 readPackGUID();
+
+	const uint8* contents() const;
+
+	size_t size() const;
+	bool empty() const;
+
+	// can be used in SMSG_MONSTER_MOVE opcode
+	void appendPackXYZ(float x, float y, float z);
+
+	void appendPackGUID(uint64 guid);
+	
+	void append(const U8Ptr* str);
+
+	//void put(size_t pos, const uint8* src, size_t cnt);
+
+	void put(size_t pos,int value);
+	
+	void setU8(int value);
+
+	int getU8();
+
+	void setU16(int value);
+
+	int getU16();
+
+	void setU32(int value);
+
+	int getU32();
+
+	void setI8(int value);
+
+	int getI8();
+
+	void setI16(int value);
+
+	int getI16();
+
+	void setI32(int value);
+
+	int getI32();
+
+	void setFloat(float value);
+
+	float getFloat();
+
+	void setStr(const char* str);
+
+	const char* getStr();
+
+	void setU64(Guid* guid);
+	
+	void setPackGuid(Guid* guid);
+	
+	void read(U8Ptr* p,size_t t);
+};
+

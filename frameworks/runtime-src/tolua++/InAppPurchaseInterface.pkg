@@ -1,0 +1,15 @@
+class InAppPurchaseInterface
+{
+public:
+	static bool initStore(InAppPurchaseDelegate* delegate);
+	static bool canMakePurchases();
+	static void queryProductInfo( const char** productIdArray, int32 size );
+	static void onQueryProductBack( const char* productId, const char* price );
+    static void onQueryProductFinish();
+	static void makePurchase( const char* productId, int32 quantity );
+	static void onPurchaseFinish( void* backData, int32 size );
+    static void onPurchaseFailed( const char* desc );
+	static bool hasInit;
+	static InAppPurchaseDelegate* _delegate;
+	
+};

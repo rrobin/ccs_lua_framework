@@ -1,0 +1,19 @@
+class WorldPacket : public ByteBuffer
+{
+    public:
+                                                            // just container for later use
+        WorldPacket();                                   
+        WorldPacket(int opcode, int res);
+
+		WorldPacket( int opcode, uint64 guid, int res );
+                                                            // copy constructor
+        WorldPacket(const WorldPacket &packet);
+
+        void Initialize(int opcode, int newres);
+
+		void Initialize(int opcode, uint64 guid, int newres);
+        int GetOpcode();
+        void SetOpcode(int opcode);
+
+		void SetGuid( Guid* guid );
+};

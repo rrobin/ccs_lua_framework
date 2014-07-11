@@ -1,0 +1,77 @@
+
+enum HeroPacketHeaderFlag
+{
+	HERO_PACKET_LARGE			= 0x01,
+};
+
+struct HeroPacketHeader
+{
+	uint32	packetLength;		
+	uint8	version;			
+	uint8	flag;				
+	uint16	cmd;				
+	HeroPacketHeader( uint16 _cmd, uint32 _length );
+};
+
+#define MAX_HERO_PACKET_SIZE 10240
+#define CLIENT_RECV_BUFFER_SIZE 10240
+#define CLIENT_SEND_BUFFER_SIZE 10240
+
+void* NetThreadBody( void* param );
+
+enum NetLoginState
+{
+	NLS_LOGINSERVER			= 0,
+	NLS_GAMESERVER			= 1,
+};
+
+class CNetConnection
+{
+public:
+	static CNetConnection& Instance();
+	bool IsConnected( int32 state = -1 );
+	void CloseSocket();			
+	bool IsAuthed();
+	bool ConnectLoginServer(const char* address);
+	bool ConnectGameServer();
+	void DisConnect( bool force = false );
+	void Update();
+	void SendPacket( WorldPacket* pkt );
+	bool OnRecv( uint32 Bytes );
+	void FlushData();
+	void OnFirstChallenge();
+	uint32 GetConnectType();
+	void SetConnectType( uint32 type );
+	void SetPingCode( int opcode );
+	void OnSendPing();
+	void OnRecvPong( uint32 pingTime );
+	uint32 GetAvgPing();
+	void ClearPingStatistics();
+
+	void setVersion(uint32 version);
+	const char* getClientMd5();
+	uint32 getClientSeed();
+	std::string getUserName();
+	void SetUserNameAndPassWord(std::string uName, std::string pWord);
+	void GetClientMd5Str(U8Ptr* loginSeed, std::string& rClientSeed, std::string& rClientMd5Str, std::string& rClientUnk);
+	void SendLoginPacket(WorldPacket* packet);
+	void SendSignInPacket();
+
+	bool ConnectFailed();
+
+	bool Next();
+	void ReleasePacket(WorldPacket* recv);
+	WorldPacket* GetPacket();
+	bool IsLoginState(int state);
+	void setLoginState(int state);
+
+	void HandleNull( WorldPacket& recvPacket ){}
+	void HandleClientSide( WorldPacket& recvPacket ){}
+	void HandleLoginRealmListResponse( WorldPacket& recvPacket );
+	void HandleGameAuthChallengeResponse( WorldPacket& recvPacket );
+
+	void sendAuthSessionMessage();
+
+	void registerScriptFunc(LUA_FUNCTION handleId);
+    void unregisterScriptHandler();
+};

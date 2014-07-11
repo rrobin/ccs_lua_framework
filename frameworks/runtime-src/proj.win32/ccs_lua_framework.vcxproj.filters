@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Classes">
+      <UniqueIdentifier>{fc5cb953-2953-4968-83b3-39e3ff951754}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="win32">
+      <UniqueIdentifier>{037a9a02-b906-4cc5-ad98-304acd4e25ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{2d1d0979-58cd-4ab6-b91c-13650158f1fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Utility">
+      <UniqueIdentifier>{b0274eec-e9be-45ff-bbd5-7cd33e5d18bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\mersennetwister">
+      <UniqueIdentifier>{26b4db67-2fbc-48fa-96f0-5d884a28caac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\platform">
+      <UniqueIdentifier>{50bf1af8-6d5e-4f6f-abd2-8a1544bf8bd1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\Purchase">
+      <UniqueIdentifier>{65228ecb-0a24-4d09-acab-d3be1deb016a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\luabinding">
+      <UniqueIdentifier>{3135dd6d-f295-41ea-b3b4-34a21cd0fb64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\cocosEx">
+      <UniqueIdentifier>{16140913-32b4-4ce9-b806-bf27fba260fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\utf8cpp">
+      <UniqueIdentifier>{4364bbd3-0dc4-4f0b-bf63-d62d7e95b370}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Classes\pthread">
+      <UniqueIdentifier>{c08772a7-f3b8-41d3-b555-02f324116770}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="..\Classes\Utility\ByteBuffer.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\ByteConverter.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\Errors.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\gameVariables.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\LockedQueue.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\Log.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\md5.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\ProgressBar.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\SharedDefines.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\Singleton.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\Timer.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\Util.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Utility\WorldPacket.h">
+      <Filter>Classes\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\mersennetwister\MersenneTwister.h">
+      <Filter>Classes\mersennetwister</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\common.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\gameEngine.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\NetConnection.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\PlatformUtility.h">
+      <Filter>Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Purchase\InAppPurchaseDelegate.h">
+      <Filter>Classes\Purchase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Purchase\InAppPurchaseInterface.h">
+      <Filter>Classes\Purchase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\luabinding\game_luabinding.h">
+      <Filter>Classes\luabinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\luabinding\game_manual.h">
+      <Filter>Classes\luabinding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\cocosEx\CCScriptAction.h">
+      <Filter>Classes\cocosEx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\cocosEx\FileIO.h">
+      <Filter>Classes\cocosEx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\utf8cpp\utf8.h">
+      <Filter>Classes\utf8cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\pthread\pthread.h">
+      <Filter>Classes\pthread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\pthread\sched.h">
+      <Filter>Classes\pthread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\pthread\semaphore.h">
+      <Filter>Classes\pthread</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Utility\Log.cpp">
+      <Filter>Classes\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Utility\md5.c">
+      <Filter>Classes\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Utility\ProgressBar.cpp">
+      <Filter>Classes\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Utility\Timer.cpp">
+      <Filter>Classes\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Utility\Util.cpp">
+      <Filter>Classes\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\common.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\NetConnection.cpp">
+      <Filter>Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\platform\win32\InAppPurchaseInterface.cpp">
+      <Filter>Classes\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\platform\win32\PlatformUtility.cpp">
+      <Filter>Classes\platform</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Purchase\InAppPurchaseDelegate.cpp">
+      <Filter>Classes\Purchase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\luabinding\game_luabinding.cpp">
+      <Filter>Classes\luabinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\luabinding\game_manual.cpp">
+      <Filter>Classes\luabinding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\cocosEx\CCScriptAction.cpp">
+      <Filter>Classes\cocosEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\cocosEx\FileIO.cpp">
+      <Filter>Classes\cocosEx</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="game.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\game.ico" />
+  </ItemGroup>
+</Project>

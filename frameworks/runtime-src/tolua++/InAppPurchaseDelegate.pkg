@@ -1,0 +1,33 @@
+
+enum
+{
+	IAP_EVENT_QUERY_FINISH,
+	IAP_EVENT_PURCHASE_FINISH,
+	IAP_EVENT_PURCHASE_FAILED,
+};
+
+struct ProductInfo
+{
+	std::string productId;
+	std::string price;
+};
+
+class InAppPurchaseDelegate
+{
+public:
+	InAppPurchaseDelegate();
+	~InAppPurchaseDelegate();
+	virtual void addProduct(const char* productId, const char* price);
+	virtual void queryProducts();
+	virtual void purchase(unsigned int index);
+
+	const char* getPrice(unsigned int index);
+
+	virtual bool queryProductFinish();
+	virtual void onQueryProductFinish();
+	virtual void onPurchaseFinish( void* content);
+	virtual void onPurchaseFailed( const char* desc );
+	void	registerScriptHandler(LUA_FUNCTION nHandler);
+	void	unregisterScriptHandler();
+	void	clearProduct();
+};

@@ -1,0 +1,11 @@
+$#include "gameEngine.h"
+
+$pfile "common.pkg"
+$pfile "ByteBuffer.pkg"
+$pfile "WorldPacket.pkg"
+$pfile "NetConnection.pkg"
+$pfile "InAppPurchaseDelegate.pkg"
+$pfile "InAppPurchaseInterface.pkg"
+$pfile "PlatformUtility.pkg"
+$pfile "FileIO.pkg"
+$pfile "CCScriptAction.pkg"

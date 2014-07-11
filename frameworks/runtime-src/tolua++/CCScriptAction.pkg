@@ -1,0 +1,5 @@
+class CCScriptAction : public CCActionInterval
+{
+public:
+	static CCScriptAction* create(float d, LUA_FUNCTION nScriptHandler);
+};

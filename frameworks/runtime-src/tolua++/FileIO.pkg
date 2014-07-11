@@ -1,0 +1,7 @@
+class FileIO : public CCObject
+{
+public:
+	static FileIO* create();
+	virtual bool init();
+	ByteBuffer* getFileData(const char* filename); 
+};
