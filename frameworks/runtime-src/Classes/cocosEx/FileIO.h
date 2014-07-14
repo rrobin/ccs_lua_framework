@@ -9,6 +9,7 @@ public:
 	CREATE_FUNC(FileIO);
 	virtual bool init(){return true;}
 	ByteBuffer* getFileData(const char* filename);
+	Texture2D* openImage(const char* jpgFile,const char* maskFile);
 private:
 	ByteBuffer readBuffer;
 };
