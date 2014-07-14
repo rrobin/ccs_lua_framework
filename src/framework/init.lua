@@ -10,6 +10,8 @@ uber = uber or {}
 			  修改了display模块
 			  	-去掉了2.x版本的ShaderExten模块,采用3.x的ShaderEx
 			  	-增加了display.addShader函数
+			  	-支持对jpg+I8 mask这样的组合方式创建sprite
+			  	-增加了一个sprite自动根据文件名来创建对象的函数:AutoCreate(filename)
 			  增加了audio模块
 			  增加Opengl模块
 			  增加helper模块

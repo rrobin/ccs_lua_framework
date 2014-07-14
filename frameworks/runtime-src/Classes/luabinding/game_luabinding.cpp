@@ -1,6 +1,6 @@
 /*
 ** Lua binding: game
-** Generated automatically by tolua++-1.0.92 on 07/04/14 16:43:29.
+** Generated automatically by tolua++-1.0.92 on 07/14/14 15:16:33.
 */
 
 /****************************************************************************
@@ -114,6 +114,7 @@ static void tolua_reg_types (lua_State* tolua_S)
  tolua_usertype(tolua_S,"uint64");
  tolua_usertype(tolua_S,"CNetConnection");
  tolua_usertype(tolua_S,"InAppPurchaseInterface");
+ tolua_usertype(tolua_S,"Texture2D");
  tolua_usertype(tolua_S,"CCScriptAction");
  tolua_usertype(tolua_S,"CCObject");
  tolua_usertype(tolua_S,"uint16");
@@ -5209,6 +5210,42 @@ static int tolua_game_FileIO_getFileData00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: openImage of class  FileIO */
+#ifndef TOLUA_DISABLE_tolua_game_FileIO_openImage00
+static int tolua_game_FileIO_openImage00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertype(tolua_S,1,"FileIO",0,&tolua_err) ||
+     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
+     !tolua_isstring(tolua_S,3,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,4,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  FileIO* self = (FileIO*)  tolua_tousertype(tolua_S,1,0);
+  const char* jpgFile = ((const char*)  tolua_tostring(tolua_S,2,0));
+  const char* maskFile = ((const char*)  tolua_tostring(tolua_S,3,0));
+#ifndef TOLUA_RELEASE
+  if (!self) tolua_error(tolua_S,"invalid 'self' in function 'openImage'", NULL);
+#endif
+  {
+   Texture2D* tolua_ret = (Texture2D*)  self->openImage(jpgFile,maskFile);
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"cc.Texture2D");
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'openImage'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: create of class  CCScriptAction */
 #ifndef TOLUA_DISABLE_tolua_game_CCScriptAction_create00
 static int tolua_game_CCScriptAction_create00(lua_State* tolua_S)
@@ -5509,6 +5546,7 @@ TOLUA_API int tolua_game_open (lua_State* tolua_S)
    tolua_function(tolua_S,"create",tolua_game_FileIO_create00);
    tolua_function(tolua_S,"init",tolua_game_FileIO_init00);
    tolua_function(tolua_S,"getFileData",tolua_game_FileIO_getFileData00);
+   tolua_function(tolua_S,"openImage",tolua_game_FileIO_openImage00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"CCScriptAction","CCScriptAction","CCActionInterval",NULL);
   tolua_beginmodule(tolua_S,"CCScriptAction");

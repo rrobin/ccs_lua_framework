@@ -544,6 +544,10 @@ local function main()
     local scene = cc.Scene:create()
     local layer = cc.LayerColor:create(cc.c4b(100, 100, 200, 255),winSize.width,winSize.height)
     scene:addChild(layer)
+    
+    local sprite = cc.Sprite:AutoCreate("autocombat_on")
+    layer:addChild(sprite)
+    sprite:setPosition(cc.CENTER)
     --[[
     for k,v in ipairs(shaders) do
         display.addShader(v.v,v.f,v.n)
@@ -560,14 +564,14 @@ local function main()
         local node = tolua.cast(label:getVirtualRenderer(),"cc.Label")
         node:enableOutline(cc.c4b(0,0,0,255),2)
     end
-    ]]
+    
     ccs.ArmatureDataManager:getInstance():addArmatureFileInfo("Character/bandiangou/bandiangou.ExportJson")
     local armature = ccs.Armature:create("bandiangou")
     armature:setPosition(cc.CENTER)
     
     armature:getAnimation():play("跑步")
     layer:addChild(armature)
-    cc.runScene(scene)
+    
     local label = ccui.label({
         text = 1.0,
         x = cc.CENTER.x,
@@ -590,6 +594,8 @@ local function main()
     slider:setPercent(50)
     
     layer:addChild(slider)
+    ]]
+    cc.runScene(scene)
     require("MyApp"):new()
 end
 

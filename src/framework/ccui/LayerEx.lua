@@ -47,7 +47,7 @@ function Layer:insterGroup(groupId,...)
     for i,v in ipairs(arg) do
         if v == nil then
             assert(false,string.format("CCSLayerExtend:insterGroup error : invalid checkBox :%d",i))
-        elseif v:getDescription() ~= "CheckBox" then
+        elseif v:getDescription() ~= UI_CHECKBOX then
             assert(false,"CCSLayerExtend:insterGroup error : only support UICheckBox")
         elseif type(groupId) ~= "number" then
             assert(false,"CCSLayerExtend:insterGroup error : #1 groupId expected number")

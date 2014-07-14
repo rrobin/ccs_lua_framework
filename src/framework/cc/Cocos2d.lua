@@ -60,6 +60,11 @@ function cc.getFileData(filename)
     return fileIO:getFileData(filename)
 end
 
+function cc.openImage(jpg,mask)
+    local fileIO = FileIO:create()
+    return fileIO:openImage(jpg,mask)
+end
+
 CC_SAFE_RETAIN = function (ccnode)
     if ccnode ~= nil then
         ccnode:retain()

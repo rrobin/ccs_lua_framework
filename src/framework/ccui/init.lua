@@ -142,7 +142,7 @@ end
 function ccui.TextArea(params)
     assert(type(params) == "table", "[ccui.TextArea] invalid params")
     local areaSize      = params.size or ccui.DEFAULT_TEXTAREA_SIZE
-    assert(tolua.type(areaSize) == "ccuiize", "[ccui.TextArea] invalid params.size")
+    assert(tolua.type(areaSize) == "table", "[ccui.TextArea] invalid params.size")
     local h_alignment   = params.H_alignment
     local v_alignment   = params.A_alignment
     local textArea      = ccui.label(params)
