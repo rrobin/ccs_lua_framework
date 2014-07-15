@@ -45,4 +45,8 @@ frameworks/runtime-src/proj.win32/Debug.win32/websockets.dll
 frameworks/runtime-src/proj.win32/Debug.win32/websockets.lib
 frameworks/runtime-src/proj.win32/Debug.win32/zlib1.dll
 frameworks/runtime-src/tolua++/cocos2dx.ini
+<<<<<<< HEAD
 frameworks/runtime-src/proj.ios_mac/ccs_lua_framework.xcodeproj/project.xcworkspace/xcuserdata/shilu.xcuserdatad/UserInterfaceState.xcuserstate
+=======
+frameworks/runtime-src/proj.win32/Debug.win32/ccs_lua_framework.unsuccessfulbuild
+>>>>>>> FETCH_HEAD

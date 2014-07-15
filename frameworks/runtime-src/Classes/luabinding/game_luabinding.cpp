@@ -1,6 +1,6 @@
 /*
 ** Lua binding: game
-** Generated automatically by tolua++-1.0.92 on 07/14/14 15:16:33.
+** Generated automatically by tolua++-1.0.92 on 07/15/14 11:06:34.
 */
 
 /****************************************************************************
@@ -390,6 +390,33 @@ static int tolua_game_Guid_equals00(lua_State* tolua_S)
 #ifndef TOLUA_RELEASE
  tolua_lerror:
  tolua_error(tolua_S,"#ferror in function 'equals'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* function: getMSTime */
+#ifndef TOLUA_DISABLE_tolua_game_getMSTime00
+static int tolua_game_getMSTime00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isnoobj(tolua_S,1,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  {
+   unsigned int tolua_ret = ( unsigned int)  getMSTime();
+   tolua_pushnumber(tolua_S,(lua_Number)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'getMSTime'.",&tolua_err);
  return 0;
 #endif
 }
@@ -5234,7 +5261,7 @@ static int tolua_game_FileIO_openImage00(lua_State* tolua_S)
 #endif
   {
    Texture2D* tolua_ret = (Texture2D*)  self->openImage(jpgFile,maskFile);
-    tolua_pushusertype(tolua_S,(void*)tolua_ret,"cc.Texture2D");
+    tolua_pushusertype(tolua_S,(void*)tolua_ret,"Texture2D");
   }
  }
  return 1;
@@ -5323,6 +5350,7 @@ TOLUA_API int tolua_game_open (lua_State* tolua_S)
   tolua_constant(tolua_S,"LOCALE_esMX",LOCALE_esMX);
   tolua_constant(tolua_S,"LOCALE_ruRU",LOCALE_ruRU);
   tolua_constant(tolua_S,"MAX_LOCALE",MAX_LOCALE);
+  tolua_function(tolua_S,"getMSTime",tolua_game_getMSTime00);
   #ifdef __cplusplus
   tolua_cclass(tolua_S,"ByteBufferException","ByteBufferException","",tolua_collect_ByteBufferException);
   #else
