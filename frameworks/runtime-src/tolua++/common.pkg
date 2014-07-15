@@ -33,3 +33,5 @@ enum LocaleConstant
 };
 
 #define MAX_LOCALE 9
+
+uint32 getMSTime();
