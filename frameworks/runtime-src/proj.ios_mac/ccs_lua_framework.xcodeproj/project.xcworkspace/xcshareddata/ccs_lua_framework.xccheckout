@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>847162A5-777A-4E00-93FE-B827AE8AB84C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ccs_lua_framework</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>3FF59ED2-393B-488A-ADEC-9FB971392725</key>
+		<string>https://github.com/rrobin/ccs_lua_framework.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>frameworks/runtime-src/proj.ios_mac/ccs_lua_framework.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>3FF59ED2-393B-488A-ADEC-9FB971392725</key>
+		<string>../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/rrobin/ccs_lua_framework.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>3FF59ED2-393B-488A-ADEC-9FB971392725</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>3FF59ED2-393B-488A-ADEC-9FB971392725</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ccs_lua_framework</string>
+		</dict>
+	</array>
+</dict>
+</plist>

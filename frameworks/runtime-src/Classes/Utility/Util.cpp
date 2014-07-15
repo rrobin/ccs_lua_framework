@@ -1,11 +1,14 @@
 #include "Util.h"
 #include "Timer.h"
+#ifdef _WIN32
 #include "utf8cpp/utf8.h"
 #include "mersennetwister/MersenneTwister.h"
-#include <sstream>
-#ifdef ANDROID
+#else
+#include "utf8.h"
+#include "MersenneTwister.h"
 #include <unistd.h>
 #endif
+#include <sstream>
 
 static MTRand mtRand;
 

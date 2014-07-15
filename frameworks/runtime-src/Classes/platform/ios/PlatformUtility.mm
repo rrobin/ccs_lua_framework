@@ -42,14 +42,14 @@ bool PlatformUtility::IsNetUseable()
     return (isReachable && !needsConnection) ? true : false;
 }
 
-const char* PlatformUtility::GetDeviceMacAddress()
+std::string PlatformUtility::GetDeviceMacAddress()
 {
-    return "";
+    return std::string("");
 }
 
-const char* PlatformUtility::GetKeychain()
+std::string PlatformUtility::GetKeychain()
 {
-    return "";
+    return std::string("");
 }
 
 bool PlatformUtility::SaveMacToKeychain(const char* mac_address)
@@ -100,14 +100,71 @@ uint64 PlatformUtility::GetSystemUptime()
     return (uint64)uptime;
 }
 
-const char* PlatformUtility::GetDeviceIfa()
+std::string PlatformUtility::GetDeviceIfa()
 {
-    return "";
+    return std::string("");
 }
 
-const char* PlatformUtility::GetDeviceIdentify()
+std::string PlatformUtility::GetDeviceIdentify()
 {
-    return "";
+    return std::string("");
+}
+
+
+std::string PlatformUtility::getAnonymAccount()
+{
+    return std::string("");
+}
+
+std::string PlatformUtility::getAccount()
+{
+    return std::string("");
+}
+
+std::string PlatformUtility::getPassword()
+{
+    return std::string("");
+}
+
+void PlatformUtility::setAnonymAccount(const char* account)
+{
+
+}
+
+void PlatformUtility::setAccount(const char* account)
+{
+    
+}
+
+void PlatformUtility::setPassword(const char* password)
+{
+
+}
+
+void PlatformUtility::initLimeiCPC()
+{
+
+}
+
+void PlatformUtility::showiAd(bool bshow)
+{
+
+}
+
+bool PlatformUtility::getDeviceValue(int flag)
+{
+    return 0;
+}
+
+void PlatformUtility::setDeviceValue(int flag)
+{
+    
+
+}
+
+void PlatformUtility::CallTrackingIFA()
+{
+ 
 }
 
 void PlatformUtility::initTapjoy()

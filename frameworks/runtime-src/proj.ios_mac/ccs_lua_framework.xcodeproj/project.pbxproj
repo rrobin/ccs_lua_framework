@@ -17,6 +17,43 @@
 		15A8A4841834C73500142BE0 /* libcocos2dx-extensions Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15A8A4191834BDA200142BE0 /* libcocos2dx-extensions Mac.a */; };
 		15A8A4851834C73500142BE0 /* libCocosDenshion Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 15A8A41F1834BDA200142BE0 /* libCocosDenshion Mac.a */; };
 		15A8A4881834C90F00142BE0 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 15A8A4871834C90E00142BE0 /* libcurl.dylib */; };
+		1607AB401974C31500BAC645 /* CCScriptAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AAF61974C31400BAC645 /* CCScriptAction.cpp */; };
+		1607AB411974C31500BAC645 /* CCScriptAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AAF61974C31400BAC645 /* CCScriptAction.cpp */; };
+		1607AB441974C31500BAC645 /* FileIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AAFA1974C31400BAC645 /* FileIO.cpp */; };
+		1607AB451974C31500BAC645 /* FileIO.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AAFA1974C31400BAC645 /* FileIO.cpp */; };
+		1607AB461974C31500BAC645 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AAFC1974C31400BAC645 /* common.cpp */; };
+		1607AB471974C31500BAC645 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AAFC1974C31400BAC645 /* common.cpp */; };
+		1607AB481974C31500BAC645 /* game_luabinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB001974C31400BAC645 /* game_luabinding.cpp */; };
+		1607AB491974C31500BAC645 /* game_luabinding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB001974C31400BAC645 /* game_luabinding.cpp */; };
+		1607AB4A1974C31500BAC645 /* game_manual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB021974C31400BAC645 /* game_manual.cpp */; };
+		1607AB4B1974C31500BAC645 /* game_manual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB021974C31400BAC645 /* game_manual.cpp */; };
+		1607AB4C1974C31500BAC645 /* NetConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB061974C31400BAC645 /* NetConnection.cpp */; };
+		1607AB4D1974C31500BAC645 /* NetConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB061974C31400BAC645 /* NetConnection.cpp */; };
+		1607AB5A1974C31500BAC645 /* InAppPurchaseInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB121974C31400BAC645 /* InAppPurchaseInterface.mm */; };
+		1607AB5B1974C31500BAC645 /* InAppPurchaseInterface.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB121974C31400BAC645 /* InAppPurchaseInterface.mm */; };
+		1607AB5C1974C31500BAC645 /* InAppPurchaseManager_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB141974C31400BAC645 /* InAppPurchaseManager_objc.mm */; };
+		1607AB5D1974C31500BAC645 /* InAppPurchaseManager_objc.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB141974C31400BAC645 /* InAppPurchaseManager_objc.mm */; };
+		1607AB5E1974C31500BAC645 /* PlatformUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB151974C31400BAC645 /* PlatformUtility.mm */; };
+		1607AB5F1974C31500BAC645 /* PlatformUtility.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB151974C31400BAC645 /* PlatformUtility.mm */; };
+		1607AB681974C31500BAC645 /* InAppPurchaseDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB211974C31400BAC645 /* InAppPurchaseDelegate.cpp */; };
+		1607AB691974C31500BAC645 /* InAppPurchaseDelegate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB211974C31400BAC645 /* InAppPurchaseDelegate.cpp */; };
+		1607AB6A1974C31500BAC645 /* ReleaseNotes in Resources */ = {isa = PBXBuildFile; fileRef = 1607AB261974C31400BAC645 /* ReleaseNotes */; };
+		1607AB6B1974C31500BAC645 /* ReleaseNotes in Resources */ = {isa = PBXBuildFile; fileRef = 1607AB261974C31400BAC645 /* ReleaseNotes */; };
+		1607AB6C1974C31500BAC645 /* utf8cpp.html in Resources */ = {isa = PBXBuildFile; fileRef = 1607AB271974C31400BAC645 /* utf8cpp.html */; };
+		1607AB6D1974C31500BAC645 /* utf8cpp.html in Resources */ = {isa = PBXBuildFile; fileRef = 1607AB271974C31400BAC645 /* utf8cpp.html */; };
+		1607AB6E1974C31500BAC645 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB331974C31400BAC645 /* Log.cpp */; };
+		1607AB6F1974C31500BAC645 /* Log.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB331974C31400BAC645 /* Log.cpp */; };
+		1607AB701974C31500BAC645 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB351974C31400BAC645 /* md5.c */; };
+		1607AB711974C31500BAC645 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB351974C31400BAC645 /* md5.c */; };
+		1607AB721974C31500BAC645 /* ProgressBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB371974C31400BAC645 /* ProgressBar.cpp */; };
+		1607AB731974C31500BAC645 /* ProgressBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB371974C31400BAC645 /* ProgressBar.cpp */; };
+		1607AB741974C31500BAC645 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB3B1974C31400BAC645 /* Timer.cpp */; };
+		1607AB751974C31500BAC645 /* Timer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB3B1974C31400BAC645 /* Timer.cpp */; };
+		1607AB761974C31500BAC645 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB3D1974C31400BAC645 /* Util.cpp */; };
+		1607AB771974C31500BAC645 /* Util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1607AB3D1974C31400BAC645 /* Util.cpp */; };
+		1607AB7B1974CAEE00BAC645 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1607AB7A1974CAEE00BAC645 /* UIKit.framework */; };
+		1607AB7D1974CB5500BAC645 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1607AB7C1974CB5500BAC645 /* StoreKit.framework */; };
+		1607AB7F1974CBD000BAC645 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1607AB7E1974CBD000BAC645 /* SystemConfiguration.framework */; };
 		1AF4C403178663F200122817 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AF4C402178663F200122817 /* libz.dylib */; };
 		5023811817EBBCAC00990C9B /* AppController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5023810817EBBCAC00990C9B /* AppController.mm */; };
 		5023811917EBBCAC00990C9B /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5023810917EBBCAC00990C9B /* Default-568h@2x.png */; };
@@ -278,6 +315,55 @@
 		15A8A4031834BDA200142BE0 /* cocos2d_libs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = cocos2d_libs.xcodeproj; path = "../../cocos2d-x/build/cocos2d_libs.xcodeproj"; sourceTree = "<group>"; };
 		15A8A4871834C90E00142BE0 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		15C1568D1683131500D239F2 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = "../../cocos2d-x/cocos2dx/platform/third_party/ios/libraries/libcurl.a"; sourceTree = "<group>"; };
+		1607AAF61974C31400BAC645 /* CCScriptAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCScriptAction.cpp; sourceTree = "<group>"; };
+		1607AAF71974C31400BAC645 /* CCScriptAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCScriptAction.h; sourceTree = "<group>"; };
+		1607AAFA1974C31400BAC645 /* FileIO.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileIO.cpp; sourceTree = "<group>"; };
+		1607AAFB1974C31400BAC645 /* FileIO.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileIO.h; sourceTree = "<group>"; };
+		1607AAFC1974C31400BAC645 /* common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = common.cpp; path = ../Classes/common.cpp; sourceTree = "<group>"; };
+		1607AAFD1974C31400BAC645 /* common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = common.h; path = ../Classes/common.h; sourceTree = "<group>"; };
+		1607AAFE1974C31400BAC645 /* gameEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = gameEngine.h; path = ../Classes/gameEngine.h; sourceTree = "<group>"; };
+		1607AB001974C31400BAC645 /* game_luabinding.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game_luabinding.cpp; sourceTree = "<group>"; };
+		1607AB011974C31400BAC645 /* game_luabinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game_luabinding.h; sourceTree = "<group>"; };
+		1607AB021974C31400BAC645 /* game_manual.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game_manual.cpp; sourceTree = "<group>"; };
+		1607AB031974C31400BAC645 /* game_manual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = game_manual.h; sourceTree = "<group>"; };
+		1607AB051974C31400BAC645 /* MersenneTwister.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MersenneTwister.h; sourceTree = "<group>"; };
+		1607AB061974C31400BAC645 /* NetConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetConnection.cpp; path = ../Classes/NetConnection.cpp; sourceTree = "<group>"; };
+		1607AB071974C31400BAC645 /* NetConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetConnection.h; path = ../Classes/NetConnection.h; sourceTree = "<group>"; };
+		1607AB121974C31400BAC645 /* InAppPurchaseInterface.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InAppPurchaseInterface.mm; sourceTree = "<group>"; };
+		1607AB131974C31400BAC645 /* InAppPurchaseManager_objc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InAppPurchaseManager_objc.h; sourceTree = "<group>"; };
+		1607AB141974C31400BAC645 /* InAppPurchaseManager_objc.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InAppPurchaseManager_objc.mm; sourceTree = "<group>"; };
+		1607AB151974C31400BAC645 /* PlatformUtility.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformUtility.mm; sourceTree = "<group>"; };
+		1607AB1B1974C31400BAC645 /* PlatformUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformUtility.h; path = ../Classes/PlatformUtility.h; sourceTree = "<group>"; };
+		1607AB211974C31400BAC645 /* InAppPurchaseDelegate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InAppPurchaseDelegate.cpp; sourceTree = "<group>"; };
+		1607AB221974C31400BAC645 /* InAppPurchaseDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InAppPurchaseDelegate.h; sourceTree = "<group>"; };
+		1607AB231974C31400BAC645 /* InAppPurchaseInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InAppPurchaseInterface.h; sourceTree = "<group>"; };
+		1607AB261974C31400BAC645 /* ReleaseNotes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ReleaseNotes; sourceTree = "<group>"; };
+		1607AB271974C31400BAC645 /* utf8cpp.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = utf8cpp.html; sourceTree = "<group>"; };
+		1607AB291974C31400BAC645 /* checked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checked.h; sourceTree = "<group>"; };
+		1607AB2A1974C31400BAC645 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
+		1607AB2B1974C31400BAC645 /* unchecked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unchecked.h; sourceTree = "<group>"; };
+		1607AB2C1974C31400BAC645 /* utf8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utf8.h; sourceTree = "<group>"; };
+		1607AB2E1974C31400BAC645 /* ByteBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteBuffer.h; sourceTree = "<group>"; };
+		1607AB2F1974C31400BAC645 /* ByteConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteConverter.h; sourceTree = "<group>"; };
+		1607AB301974C31400BAC645 /* Errors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Errors.h; sourceTree = "<group>"; };
+		1607AB311974C31400BAC645 /* gameVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = gameVariables.h; sourceTree = "<group>"; };
+		1607AB321974C31400BAC645 /* LockedQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LockedQueue.h; sourceTree = "<group>"; };
+		1607AB331974C31400BAC645 /* Log.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Log.cpp; sourceTree = "<group>"; };
+		1607AB341974C31400BAC645 /* Log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log.h; sourceTree = "<group>"; };
+		1607AB351974C31400BAC645 /* md5.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = md5.c; sourceTree = "<group>"; };
+		1607AB361974C31400BAC645 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
+		1607AB371974C31400BAC645 /* ProgressBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ProgressBar.cpp; sourceTree = "<group>"; };
+		1607AB381974C31400BAC645 /* ProgressBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProgressBar.h; sourceTree = "<group>"; };
+		1607AB391974C31400BAC645 /* SharedDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SharedDefines.h; sourceTree = "<group>"; };
+		1607AB3A1974C31400BAC645 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
+		1607AB3B1974C31400BAC645 /* Timer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Timer.cpp; sourceTree = "<group>"; };
+		1607AB3C1974C31400BAC645 /* Timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Timer.h; sourceTree = "<group>"; };
+		1607AB3D1974C31400BAC645 /* Util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Util.cpp; sourceTree = "<group>"; };
+		1607AB3E1974C31400BAC645 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
+		1607AB3F1974C31400BAC645 /* WorldPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldPacket.h; sourceTree = "<group>"; };
+		1607AB7A1974CAEE00BAC645 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		1607AB7C1974CB5500BAC645 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/StoreKit.framework; sourceTree = DEVELOPER_DIR; };
+		1607AB7E1974CBD000BAC645 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
 		1AF4C402178663F200122817 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		5023810717EBBCAC00990C9B /* AppController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppController.h; sourceTree = "<group>"; };
 		5023810817EBBCAC00990C9B /* AppController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AppController.mm; sourceTree = "<group>"; };
@@ -375,6 +461,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1607AB7F1974CBD000BAC645 /* SystemConfiguration.framework in Frameworks */,
+				1607AB7D1974CB5500BAC645 /* StoreKit.framework in Frameworks */,
+				1607AB7B1974CAEE00BAC645 /* UIKit.framework in Frameworks */,
 				C03781F618BF65B100FE4F13 /* libluabindings iOS.a in Frameworks */,
 				15A8A4441834C43700142BE0 /* libchipmunk iOS.a in Frameworks */,
 				15A8A4451834C43700142BE0 /* libcocos2dx iOS.a in Frameworks */,
@@ -411,6 +500,126 @@
 				15A8A42D1834BDA200142BE0 /* libCocosDenshion iOS.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		1607AAF51974C31400BAC645 /* cocosEx */ = {
+			isa = PBXGroup;
+			children = (
+				1607AAF61974C31400BAC645 /* CCScriptAction.cpp */,
+				1607AAF71974C31400BAC645 /* CCScriptAction.h */,
+				1607AAFA1974C31400BAC645 /* FileIO.cpp */,
+				1607AAFB1974C31400BAC645 /* FileIO.h */,
+			);
+			name = cocosEx;
+			path = ../Classes/cocosEx;
+			sourceTree = "<group>";
+		};
+		1607AAFF1974C31400BAC645 /* luabinding */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB001974C31400BAC645 /* game_luabinding.cpp */,
+				1607AB011974C31400BAC645 /* game_luabinding.h */,
+				1607AB021974C31400BAC645 /* game_manual.cpp */,
+				1607AB031974C31400BAC645 /* game_manual.h */,
+			);
+			name = luabinding;
+			path = ../Classes/luabinding;
+			sourceTree = "<group>";
+		};
+		1607AB041974C31400BAC645 /* mersennetwister */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB051974C31400BAC645 /* MersenneTwister.h */,
+			);
+			name = mersennetwister;
+			path = ../Classes/mersennetwister;
+			sourceTree = "<group>";
+		};
+		1607AB081974C31400BAC645 /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB0F1974C31400BAC645 /* ios */,
+			);
+			name = platform;
+			path = ../Classes/platform;
+			sourceTree = "<group>";
+		};
+		1607AB0F1974C31400BAC645 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB121974C31400BAC645 /* InAppPurchaseInterface.mm */,
+				1607AB131974C31400BAC645 /* InAppPurchaseManager_objc.h */,
+				1607AB141974C31400BAC645 /* InAppPurchaseManager_objc.mm */,
+				1607AB151974C31400BAC645 /* PlatformUtility.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
+		1607AB201974C31400BAC645 /* Purchase */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB211974C31400BAC645 /* InAppPurchaseDelegate.cpp */,
+				1607AB221974C31400BAC645 /* InAppPurchaseDelegate.h */,
+				1607AB231974C31400BAC645 /* InAppPurchaseInterface.h */,
+			);
+			name = Purchase;
+			path = ../Classes/Purchase;
+			sourceTree = "<group>";
+		};
+		1607AB241974C31400BAC645 /* utf8cpp */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB251974C31400BAC645 /* doc */,
+				1607AB281974C31400BAC645 /* utf8 */,
+				1607AB2C1974C31400BAC645 /* utf8.h */,
+			);
+			name = utf8cpp;
+			path = ../Classes/utf8cpp;
+			sourceTree = "<group>";
+		};
+		1607AB251974C31400BAC645 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB261974C31400BAC645 /* ReleaseNotes */,
+				1607AB271974C31400BAC645 /* utf8cpp.html */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		1607AB281974C31400BAC645 /* utf8 */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB291974C31400BAC645 /* checked.h */,
+				1607AB2A1974C31400BAC645 /* core.h */,
+				1607AB2B1974C31400BAC645 /* unchecked.h */,
+			);
+			path = utf8;
+			sourceTree = "<group>";
+		};
+		1607AB2D1974C31400BAC645 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				1607AB2E1974C31400BAC645 /* ByteBuffer.h */,
+				1607AB2F1974C31400BAC645 /* ByteConverter.h */,
+				1607AB301974C31400BAC645 /* Errors.h */,
+				1607AB311974C31400BAC645 /* gameVariables.h */,
+				1607AB321974C31400BAC645 /* LockedQueue.h */,
+				1607AB331974C31400BAC645 /* Log.cpp */,
+				1607AB341974C31400BAC645 /* Log.h */,
+				1607AB351974C31400BAC645 /* md5.c */,
+				1607AB361974C31400BAC645 /* md5.h */,
+				1607AB371974C31400BAC645 /* ProgressBar.cpp */,
+				1607AB381974C31400BAC645 /* ProgressBar.h */,
+				1607AB391974C31400BAC645 /* SharedDefines.h */,
+				1607AB3A1974C31400BAC645 /* Singleton.h */,
+				1607AB3B1974C31400BAC645 /* Timer.cpp */,
+				1607AB3C1974C31400BAC645 /* Timer.h */,
+				1607AB3D1974C31400BAC645 /* Util.cpp */,
+				1607AB3E1974C31400BAC645 /* Util.h */,
+				1607AB3F1974C31400BAC645 /* WorldPacket.h */,
+			);
+			name = Utility;
+			path = ../Classes/Utility;
 			sourceTree = "<group>";
 		};
 		1A0227A417A3AA1A00B867AD /* Lua Common */ = {
@@ -523,6 +732,9 @@
 		F293B3CB15EB7BE500256477 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1607AB7E1974CBD000BAC645 /* SystemConfiguration.framework */,
+				1607AB7C1974CB5500BAC645 /* StoreKit.framework */,
+				1607AB7A1974CAEE00BAC645 /* UIKit.framework */,
 				15A8A4871834C90E00142BE0 /* libcurl.dylib */,
 				D6B061341803AC000077942B /* CoreMotion.framework */,
 				50D7C96F17EBBEEC005D0B91 /* IOKit.framework */,
@@ -547,6 +759,19 @@
 		F293BB7C15EB830F00256477 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				1607AAF51974C31400BAC645 /* cocosEx */,
+				1607AAFC1974C31400BAC645 /* common.cpp */,
+				1607AAFD1974C31400BAC645 /* common.h */,
+				1607AAFE1974C31400BAC645 /* gameEngine.h */,
+				1607AAFF1974C31400BAC645 /* luabinding */,
+				1607AB041974C31400BAC645 /* mersennetwister */,
+				1607AB061974C31400BAC645 /* NetConnection.cpp */,
+				1607AB071974C31400BAC645 /* NetConnection.h */,
+				1607AB081974C31400BAC645 /* platform */,
+				1607AB1B1974C31400BAC645 /* PlatformUtility.h */,
+				1607AB201974C31400BAC645 /* Purchase */,
+				1607AB241974C31400BAC645 /* utf8cpp */,
+				1607AB2D1974C31400BAC645 /* Utility */,
 				F293BB7E15EB831F00256477 /* AppDelegate.cpp */,
 				F293BB7F15EB831F00256477 /* AppDelegate.h */,
 			);
@@ -749,6 +974,7 @@
 				C03781F018BF656A00FE4F13 /* OpenglConstants.lua in Resources */,
 				C03781E418BF656A00FE4F13 /* extern.lua in Resources */,
 				C03781E618BF656A00FE4F13 /* GuiConstants.lua in Resources */,
+				1607AB6B1974C31500BAC645 /* ReleaseNotes in Resources */,
 				C03781D418BF656A00FE4F13 /* Cocos2d.lua in Resources */,
 				C03781BA18BF655400FE4F13 /* res in Resources */,
 				C03781BC18BF655400FE4F13 /* src in Resources */,
@@ -763,6 +989,7 @@
 				C03781DC18BF656A00FE4F13 /* DeprecatedClass.lua in Resources */,
 				C03781F218BF656A00FE4F13 /* StudioConstants.lua in Resources */,
 				C03781EA18BF656A00FE4F13 /* luaj.lua in Resources */,
+				1607AB6D1974C31500BAC645 /* utf8cpp.html in Resources */,
 				C03781DE18BF656A00FE4F13 /* DeprecatedEnum.lua in Resources */,
 				C03781E818BF656A00FE4F13 /* json.lua in Resources */,
 				C03781D618BF656A00FE4F13 /* Cocos2dConstants.lua in Resources */,
@@ -792,8 +1019,10 @@
 				C03781CF18BF656A00FE4F13 /* AudioEngine.lua in Resources */,
 				C03781B918BF655400FE4F13 /* res in Resources */,
 				C03781EF18BF656A00FE4F13 /* OpenglConstants.lua in Resources */,
+				1607AB6C1974C31500BAC645 /* utf8cpp.html in Resources */,
 				C03781E518BF656A00FE4F13 /* GuiConstants.lua in Resources */,
 				5023812217EBBCAC00990C9B /* Icon-76.png in Resources */,
+				1607AB6A1974C31500BAC645 /* ReleaseNotes in Resources */,
 				C03781DF18BF656A00FE4F13 /* DeprecatedOpenglEnum.lua in Resources */,
 				5091733A17ECE17A00D62437 /* Icon-80.png in Resources */,
 				5091733717ECE17A00D62437 /* Icon-40.png in Resources */,
@@ -819,8 +1048,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1607AB4D1974C31500BAC645 /* NetConnection.cpp in Sources */,
+				1607AB451974C31500BAC645 /* FileIO.cpp in Sources */,
+				1607AB411974C31500BAC645 /* CCScriptAction.cpp in Sources */,
 				C06E23C418CEF9740093C81A /* main.cpp in Sources */,
+				1607AB5B1974C31500BAC645 /* InAppPurchaseInterface.mm in Sources */,
+				1607AB491974C31500BAC645 /* game_luabinding.cpp in Sources */,
+				1607AB731974C31500BAC645 /* ProgressBar.cpp in Sources */,
+				1607AB5D1974C31500BAC645 /* InAppPurchaseManager_objc.mm in Sources */,
 				5023813317EBBCE400990C9B /* AppDelegate.cpp in Sources */,
+				1607AB471974C31500BAC645 /* common.cpp in Sources */,
+				1607AB711974C31500BAC645 /* md5.c in Sources */,
+				1607AB4B1974C31500BAC645 /* game_manual.cpp in Sources */,
+				1607AB6F1974C31500BAC645 /* Log.cpp in Sources */,
+				1607AB691974C31500BAC645 /* InAppPurchaseDelegate.cpp in Sources */,
+				1607AB5F1974C31500BAC645 /* PlatformUtility.mm in Sources */,
+				1607AB751974C31500BAC645 /* Timer.cpp in Sources */,
+				1607AB771974C31500BAC645 /* Util.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -830,8 +1074,23 @@
 			files = (
 				5023812517EBBCAC00990C9B /* RootViewController.mm in Sources */,
 				F293BB9C15EB831F00256477 /* AppDelegate.cpp in Sources */,
+				1607AB701974C31500BAC645 /* md5.c in Sources */,
 				5023812417EBBCAC00990C9B /* main.m in Sources */,
+				1607AB761974C31500BAC645 /* Util.cpp in Sources */,
+				1607AB461974C31500BAC645 /* common.cpp in Sources */,
+				1607AB4A1974C31500BAC645 /* game_manual.cpp in Sources */,
+				1607AB5E1974C31500BAC645 /* PlatformUtility.mm in Sources */,
+				1607AB6E1974C31500BAC645 /* Log.cpp in Sources */,
+				1607AB681974C31500BAC645 /* InAppPurchaseDelegate.cpp in Sources */,
+				1607AB5C1974C31500BAC645 /* InAppPurchaseManager_objc.mm in Sources */,
+				1607AB481974C31500BAC645 /* game_luabinding.cpp in Sources */,
+				1607AB4C1974C31500BAC645 /* NetConnection.cpp in Sources */,
 				5023811817EBBCAC00990C9B /* AppController.mm in Sources */,
+				1607AB5A1974C31500BAC645 /* InAppPurchaseInterface.mm in Sources */,
+				1607AB401974C31500BAC645 /* CCScriptAction.cpp in Sources */,
+				1607AB721974C31500BAC645 /* ProgressBar.cpp in Sources */,
+				1607AB741974C31500BAC645 /* Timer.cpp in Sources */,
+				1607AB441974C31500BAC645 /* FileIO.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -999,7 +1258,7 @@
 				HEADER_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../cocos2d-x $(SRCROOT)/../../cocos2d-x/cocos $(SRCROOT)/../../cocos2d-x/cocos/base $(SRCROOT)/../../cocos2d-x/cocos/physics $(SRCROOT)/../../cocos2d-x/cocos/math/kazmath $(SRCROOT)/../../cocos2d-x/cocos/2d $(SRCROOT)/../../cocos2d-x/cocos/ui $(SRCROOT)/../../cocos2d-x/cocos/network $(SRCROOT)/../../cocos2d-x/cocos/audio/include $(SRCROOT)/../../cocos2d-x/cocos/editor-support $(SRCROOT)/../../cocos2d-x/extensions $(SRCROOT)/../../cocos2d-x/external $(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk $(SRCROOT)/../../cocos2d-x/external/lua/luajit/include $(SRCROOT)/../../cocos2d-x/external/lua/tolua $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/manual $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/auto";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/../../cocos2d-x $(SRCROOT)/../../cocos2d-x/cocos $(SRCROOT)/../../cocos2d-x/cocos/base $(SRCROOT)/../../cocos2d-x/cocos/physics $(SRCROOT)/../../cocos2d-x/cocos/math/kazmath $(SRCROOT)/../../cocos2d-x/cocos/2d $(SRCROOT)/../../cocos2d-x/cocos/ui $(SRCROOT)/../../cocos2d-x/cocos/network $(SRCROOT)/../../cocos2d-x/cocos/audio/include $(SRCROOT)/../../cocos2d-x/cocos/editor-support $(SRCROOT)/../../cocos2d-x/extensions $(SRCROOT)/../../cocos2d-x/external $(SRCROOT)/../../cocos2d-x/external/chipmunk/include/chipmunk $(SRCROOT)/../../cocos2d-x/external/lua/luajit/include $(SRCROOT)/../../cocos2d-x/external/lua/tolua $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/manual $(SRCROOT)/../../cocos2d-x/cocos/scripting/lua-bindings/auto $(SRCROOT)/../Classes/";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -1023,7 +1282,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/cocos/platform/ios";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/cocos/platform/ios $(SRCROOT)/../Classes/";
 			};
 			name = Debug;
 		};
@@ -1045,7 +1304,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/cocos/platform/ios";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../../cocos2d-x/cocos/platform/ios $(SRCROOT)/../Classes/";
 			};
 			name = Release;
 		};

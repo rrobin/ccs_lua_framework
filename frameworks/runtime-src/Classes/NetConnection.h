@@ -20,7 +20,11 @@
 extern int errno;
 #endif
 #endif
+#ifdef _WIN32
 #include "pthread/pthread.h"
+#else
+#include <pthread.h>
+#endif
 #include "Utility/LockedQueue.h"
 #include "Utility/WorldPacket.h"
 #include <map>
