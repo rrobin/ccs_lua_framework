@@ -60,3 +60,36 @@ function Sprite:AutoCreate(filename)
 		return Sprite:createWithTexture(texture)
 	end	
 end
+
+local playActTag = 100
+
+function Sprite:load(character)
+	if display.GameCache.preload(character) then
+		self._info = display.GameCache.getCharacter(character)
+	end
+	assert(self._info)
+	self:playAction("default")
+end
+
+function Sprite:playAction(action,looptimes)
+	local animation = self._info.animations[action]
+	if not animation then
+		--cclog("not find action:"..action)
+		return
+	end
+	self:stopActionByTag(playActTag)
+	local frames = animation:getFrames()
+	local temp = frames[1]
+	local frame = temp:getSpriteFrame()
+	self:setSpriteFrame(frame)
+	local animate = cc.Animate:create(animation)
+	local action = nil
+	if not looptimes or looptimes < 0 then
+		action = cc.RepeatForever:create(animate)
+	else
+		action = cc.Repeat:create(animate,looptimes)
+	end
+
+	action:setTag(playActTag)
+	self:runAction(action)
+end

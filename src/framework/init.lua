@@ -82,3 +82,11 @@ end
 if config.iap then
 	cclog("uber's iap module coming soon..")
 end
+
+uber.TimingBegin = function()
+	uber.beginTime = getMSTime()
+end
+uber.TimingEnd = function(output)
+	uber.endTime = getMSTime()
+	cclog(output..uber.endTime-uber.beginTime)
+end
