@@ -538,9 +538,12 @@ local function main()
     {v = "shaders/TPC_noMvp.vsh", f = "shaders/IceShader.fsh", n = "IceShader"},
     {v = "shaders/TPC_noMvp.vsh", f = "shaders/PoisonShader.fsh", n = "PoisonShader"},
     {v = "shaders/TPC_noMvp.vsh", f = "shaders/StoneShader.fsh", n = "StoneShader"},
+    {v = "shaders/TPC_noMvp.vsh", f = "shaders/bright.fsh", n = "brightShader"},
     --{v = "shaders/TPC_noMvp.vsh", f = "shaders/ghostlike_filterX.fsh", n = "ghostlike_filterX"},
     }
-    
+    for k,v in ipairs(shaders) do
+        display.addShader(v.v,v.f,v.n)
+    end
     local scene = cc.Scene:create()
     local layer = cc.LayerColor:create(cc.c4b(100, 100, 200, 255),winSize.width,winSize.height)
     scene:addChild(layer)
@@ -564,13 +567,27 @@ local function main()
         local node = tolua.cast(label:getVirtualRenderer(),"cc.Label")
         node:enableOutline(cc.c4b(0,0,0,255),2)
     end
-    
+    ]]
     ccs.ArmatureDataManager:getInstance():addArmatureFileInfo("Character/bandiangou/bandiangou.ExportJson")
     local armature = ccs.Armature:create("bandiangou")
     armature:setPosition(cc.CENTER)
     
     armature:getAnimation():play("跑步")
     layer:addChild(armature)
+
+    local bones = armature:getBoneDic()
+    for name,bone in pairs(bones) do
+        local displayType = bone:getDisplayRenderNodeType()
+        if displayType == ccs.DisplayType.sprite then
+            local display = tolua.cast(bone:getDisplayRenderNode(),"cc.Sprite")
+            display._brightness = 0.0
+            display:setShader("brightShader")
+            local glProgramState = display:getGLProgramState()
+            local glProgram = glProgramState:getGLProgram()
+            glProgram:use()
+            glProgramState:setUniformFloat("brightness",display._brightness)
+        end
+    end
     
     local label = ccui.label({
         text = 1.0,
@@ -587,42 +604,26 @@ local function main()
         y = cc.CENTER.y-60,
         eventHandle = function(uiwidget)
             local percent = uiwidget:getPercent()
-            armature:getAnimation():setSpeedScale(2*percent/100)
-            label:setString(string.format("%.2f",2*percent/100))
+            --armature:getAnimation():setSpeedScale(2*percent/100)
+            for name,bone in pairs(bones) do
+                local displayType = bone:getDisplayRenderNodeType()
+                if displayType == ccs.DisplayType.sprite then
+                    local display = tolua.cast(bone:getDisplayRenderNode(),"cc.Sprite")
+                    display._brightness = percent/100*2-1
+                    local glProgramState = display:getGLProgramState()
+                    local glProgram = glProgramState:getGLProgram()
+                    glProgram:use()
+                    glProgramState:setUniformFloat("brightness",display._brightness)
+                end
+            end
+
+            label:setString(string.format("%.2f",2*percent/100-1))
         end,
         })
     slider:setPercent(50)
     
     layer:addChild(slider)
-    ]]
-
-    local resTable = {
-                        "warrior","priest","mage","dz_zt_02a","dz_sk_xs","qs_sk_04","qs_zt_05",
-                        "ms_sk_04f","qs_zt_02","ms_sk_03g","fs_ht_09","npc_sk_03_1","fs_ht_07",
-                        "npc_sk_03_5","buf_sanbi","lr_zt_01","buf_shjs","buf_kongju","buf_zhuzhou1",
-                        "buf_hunmi","zs_sk_05f","zs_sk_05g","fs_sk_04","lr_zt_dk","qs_zt_03","zs_sk_09f",
-                        "zs_sk_09g","zs_ht_02","buf_jiansu","zs_sk_07","zs_at_04","ms_at_02","ms_at_01",
-                        "ms_cs_01","ms_zt_04","ms_sk_01","ms_sk_02","ms_at_03","ms_cs_03","ms_at_fly2",
-                        "fs_at_01","fs_fly_01","fs_at_03","fa_hurt_03","fs_fly_02","fs_at_02","fs_ht_04",
-                        "fs_fly_03","npc_sk_03_2","fs_skill_07_1","fs_ht_10","wolfg","dragonfb","dz_ht_bj",
-                        "buf_pojia","buf_meihuo","lr_sk_bx","ws_cs_qgp","ws_cs_qgp2"
-                    }
     
-    cclog("gonna loading")
-    uber.TimingBegin()
-    for i = 1,#resTable do
-        local sprite = cc.Sprite:create()
-        sprite:load(resTable[i])
-        sprite:playAction("stand")
-        sprite:setPosition(cc.p(100*(i%6 + 1),300 + (math.modf(i/6))*100))
-        layer:addChild(sprite)
-    end
-    uber.TimingEnd("loading time:")
-    local label = ccui.label({text = "耗时:"..uber.endTime-uber.beginTime})
-    label:setColor(cc.c3b(0,0,0))
-    label:setPosition(cc.p(cc.CENTER.x,200))
-    layer:addChild(label)
-
     cc.runScene(scene)
     require("MyApp"):new()
 end
