@@ -15,8 +15,14 @@ uber = uber or {}
 			  增加了audio模块
 			  增加Opengl模块
 			  增加helper模块
+	ver 3.0.1 升级到cocos2dx-3.2rc0
+			  display模块
+			  	-废除shaderEx,增加spriteEx
+			  	-NodeEx添加了对于shader的扩展
+			  ccs模块
+			  	-增加了armatureEx,封装了对armature的Bone添加滤镜
 ]]
-uber.ver  = "3.0.0"
+uber.ver  = "3.0.1"
 cclog("uber.ver : ".. uber.ver)
 local CURRENT_MODULE_NAME = ...
 uber.PACKAGE_NAME = string.sub(CURRENT_MODULE_NAME, 1, -6)
@@ -64,6 +70,7 @@ end
 
 if config.display then
 	import(".display.display")
+	import(".ccs.armatureEx")
 end
 
 if config.audio then

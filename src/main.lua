@@ -542,7 +542,7 @@ local function main()
     --{v = "shaders/TPC_noMvp.vsh", f = "shaders/ghostlike_filterX.fsh", n = "ghostlike_filterX"},
     }
     for k,v in ipairs(shaders) do
-        display.addShader(v.v,v.f,v.n)
+        display.addShader(v)
     end
     local scene = cc.Scene:create()
     local layer = cc.LayerColor:create(cc.c4b(100, 100, 200, 255),winSize.width,winSize.height)
@@ -575,19 +575,10 @@ local function main()
     armature:getAnimation():play("跑步")
     layer:addChild(armature)
 
-    local bones = armature:getBoneDic()
-    for name,bone in pairs(bones) do
-        local displayType = bone:getDisplayRenderNodeType()
-        if displayType == ccs.DisplayType.sprite then
-            local display = tolua.cast(bone:getDisplayRenderNode(),"cc.Sprite")
-            display._brightness = 0.0
-            display:setShader("brightShader")
-            local glProgramState = display:getGLProgramState()
-            local glProgram = glProgramState:getGLProgram()
-            glProgram:use()
-            glProgramState:setUniformFloat("brightness",display._brightness)
-        end
-    end
+    armature:setFilter("brightShader")
+
+    local brightness = 0.0
+    armature:setUniform("brightness",brightness)
     
     local label = ccui.label({
         text = 1.0,
@@ -604,19 +595,9 @@ local function main()
         y = cc.CENTER.y-60,
         eventHandle = function(uiwidget)
             local percent = uiwidget:getPercent()
+            brightness = percent/100*2-1
             --armature:getAnimation():setSpeedScale(2*percent/100)
-            for name,bone in pairs(bones) do
-                local displayType = bone:getDisplayRenderNodeType()
-                if displayType == ccs.DisplayType.sprite then
-                    local display = tolua.cast(bone:getDisplayRenderNode(),"cc.Sprite")
-                    display._brightness = percent/100*2-1
-                    local glProgramState = display:getGLProgramState()
-                    local glProgram = glProgramState:getGLProgram()
-                    glProgram:use()
-                    glProgramState:setUniformFloat("brightness",display._brightness)
-                end
-            end
-
+            armature:setUniform("brightness",brightness)
             label:setString(string.format("%.2f",2*percent/100-1))
         end,
         })
