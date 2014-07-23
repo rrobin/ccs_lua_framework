@@ -120,6 +120,7 @@ void InAppPurchaseDelegate::queryProducts()
 	for(size_t i = 0; i < m_Products.size(); ++i)
 		productIdArray[i] = m_Products[i].productId.c_str();
 	InAppPurchaseInterface::queryProductInfo( productIdArray, m_Products.size() );
+	delete [] productIdArray;
 	m_bQuery = true;
 }
 
