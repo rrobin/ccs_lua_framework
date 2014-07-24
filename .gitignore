@@ -54,3 +54,6 @@ frameworks/runtime-src/proj.win32/Debug.win32/ccs_lua_framework.unsuccessfulbuil
 frameworks/runtime-src/proj.ios_mac/ccs_lua_framework.xcodeproj/project.pbxproj
 
 frameworks/runtime-src/proj.ios_mac/ccs_lua_framework.xcodeproj/xcuserdata/shilu.xcuserdatad/xcdebugger/Breakpoints_v2.xcbkptlist
+frameworks/cocos2d-x/cocos/2d/cocos2d.vcxproj.user
+frameworks/cocos2d-x/cocos/scripting/lua-bindings/proj.win32/liblua.vcxproj
+frameworks/framework_src/doc/netwok模块.docx

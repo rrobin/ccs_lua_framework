@@ -34,6 +34,8 @@ AppDelegate::~AppDelegate()
     SimpleAudioEngine::end();
 }
 
+#define  LOAD_PRECOMPILE
+
 bool AppDelegate::applicationDidFinishLaunching()
 {
     // initialize director
@@ -63,7 +65,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 	register_all_game_manual(L);
 
 #ifdef LOAD_PRECOMPILE
-	pStack->loadChunksFromZIP("game.bat");
+	pStack->loadChunksFromZIP("framework_precompiled.zip");
 #endif
 	CCLog("load main.lua");
 	if(engine->executeScriptFile("main.lua") != 0)

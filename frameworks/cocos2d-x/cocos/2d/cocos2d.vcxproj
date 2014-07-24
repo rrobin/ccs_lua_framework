@@ -177,6 +177,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\win32-specific\gles\prebuilt\*.*" "$(Ou
     <ClCompile Include="..\..\external\edtaa3func\edtaa3func.cpp" />
     <ClCompile Include="..\..\external\tinyxml2\tinyxml2.cpp" />
     <ClCompile Include="..\..\external\unzip\ioapi.cpp" />
+    <ClCompile Include="..\..\external\unzip\ioapi_mem.cpp" />
     <ClCompile Include="..\..\external\unzip\unzip.cpp" />
     <ClCompile Include="..\..\external\xxhash\xxhash.c" />
     <ClCompile Include="..\3d\CCAnimate3D.cpp" />
@@ -355,6 +356,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\win32-specific\gles\prebuilt\*.*" "$(Ou
     <ClInclude Include="..\..\external\edtaa3func\edtaa3func.h" />
     <ClInclude Include="..\..\external\tinyxml2\tinyxml2.h" />
     <ClInclude Include="..\..\external\unzip\ioapi.h" />
+    <ClInclude Include="..\..\external\unzip\ioapi_mem.h" />
     <ClInclude Include="..\..\external\unzip\unzip.h" />
     <ClInclude Include="..\..\external\xxhash\xxhash.h" />
     <ClInclude Include="..\3d\CCAnimate3D.h" />

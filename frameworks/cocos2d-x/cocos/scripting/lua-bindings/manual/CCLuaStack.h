@@ -133,7 +133,9 @@ public:
     virtual void cleanupXXTEAKeyAndSign();
     
     int luaLoadBuffer(lua_State *L, const char *chunk, int chunkSize, const char *chunkName);
-    
+
+	virtual int loadChunksFromZIP(const char *zipFilePath);
+	static int lua_loadChunksFromZIP(lua_State *L);
 protected:
     LuaStack(void)
     : _state(nullptr)
