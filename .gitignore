@@ -57,3 +57,4 @@ frameworks/runtime-src/proj.ios_mac/ccs_lua_framework.xcodeproj/xcuserdata/shilu
 frameworks/cocos2d-x/cocos/2d/cocos2d.vcxproj.user
 frameworks/cocos2d-x/cocos/scripting/lua-bindings/proj.win32/liblua.vcxproj
 frameworks/framework_src/doc/netwok模块.docx
+*.unsuccessfulbuild
