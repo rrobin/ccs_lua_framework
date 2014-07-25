@@ -28,6 +28,13 @@ public:
     static void initTapjoy();
     static void initLimeiCPC();
     static void showiAd( bool bshow );
+	static bool DirectoryExists(const std::string dir);
+	static bool FileExists(const std::string path);
+
+	static const std::string OpenFolder(std::string baseDir);
+	static int CALLBACK BrowseFolderCallback(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
+
+	static const std::string OpenFile(std::string dir,const char* filer);
 protected:
 private:
 };

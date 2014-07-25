@@ -11,6 +11,9 @@ public:
 	ByteBuffer* getFileData(const char* filename);
 
 	Texture2D* openImage(const char* jpgFile,const char* maskFile);
+
+	// for "SWF" file
+	bool unZipFile(/*int outSize*/);
 private:
 	ByteBuffer readBuffer;
 };

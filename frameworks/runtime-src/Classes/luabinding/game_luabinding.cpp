@@ -1,6 +1,6 @@
 /*
 ** Lua binding: game
-** Generated automatically by tolua++-1.0.92 on 07/15/14 11:06:34.
+** Generated automatically by tolua++-1.0.92 on 07/25/14 10:54:25.
 */
 
 /****************************************************************************
@@ -5141,6 +5141,98 @@ static int tolua_game_PlatformUtility_setDeviceValue00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: DirectoryExists of class  PlatformUtility */
+#ifndef TOLUA_DISABLE_tolua_game_PlatformUtility_DirectoryExists00
+static int tolua_game_PlatformUtility_DirectoryExists00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertable(tolua_S,1,"PlatformUtility",0,&tolua_err) ||
+     !tolua_iscppstring(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  const std::string dir = ((const std::string)  tolua_tocppstring(tolua_S,2,0));
+  {
+   bool tolua_ret = (bool)  PlatformUtility::DirectoryExists(dir);
+   tolua_pushboolean(tolua_S,(bool)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'DirectoryExists'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: OpenFolder of class  PlatformUtility */
+#ifndef TOLUA_DISABLE_tolua_game_PlatformUtility_OpenFolder00
+static int tolua_game_PlatformUtility_OpenFolder00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertable(tolua_S,1,"PlatformUtility",0,&tolua_err) ||
+     !tolua_iscppstring(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  std::string baseDir = ((std::string)  tolua_tocppstring(tolua_S,2,0));
+  {
+   const std::string tolua_ret = (const std::string)  PlatformUtility::OpenFolder(baseDir);
+   tolua_pushcppstring(tolua_S,(const char*)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'OpenFolder'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
+/* method: OpenFile of class  PlatformUtility */
+#ifndef TOLUA_DISABLE_tolua_game_PlatformUtility_OpenFile00
+static int tolua_game_PlatformUtility_OpenFile00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertable(tolua_S,1,"PlatformUtility",0,&tolua_err) ||
+     !tolua_iscppstring(tolua_S,2,0,&tolua_err) ||
+     !tolua_isstring(tolua_S,3,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,4,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  std::string dir = ((std::string)  tolua_tocppstring(tolua_S,2,0));
+  const char* filer = ((const char*)  tolua_tostring(tolua_S,3,0));
+  {
+   const std::string tolua_ret = (const std::string)  PlatformUtility::OpenFile(dir,filer);
+   tolua_pushcppstring(tolua_S,(const char*)tolua_ret);
+  }
+ }
+ return 1;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'OpenFile'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: create of class  FileIO */
 #ifndef TOLUA_DISABLE_tolua_game_FileIO_create00
 static int tolua_game_FileIO_create00(lua_State* tolua_S)
@@ -5568,6 +5660,9 @@ TOLUA_API int tolua_game_open (lua_State* tolua_S)
    tolua_function(tolua_S,"showiAd",tolua_game_PlatformUtility_showiAd00);
    tolua_function(tolua_S,"getDeviceValue",tolua_game_PlatformUtility_getDeviceValue00);
    tolua_function(tolua_S,"setDeviceValue",tolua_game_PlatformUtility_setDeviceValue00);
+   tolua_function(tolua_S,"DirectoryExists",tolua_game_PlatformUtility_DirectoryExists00);
+   tolua_function(tolua_S,"OpenFolder",tolua_game_PlatformUtility_OpenFolder00);
+   tolua_function(tolua_S,"OpenFile",tolua_game_PlatformUtility_OpenFile00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"FileIO","FileIO","CCObject",NULL);
   tolua_beginmodule(tolua_S,"FileIO");

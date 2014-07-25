@@ -25,4 +25,8 @@ public:
     static void showiAd( bool bshow );
 	static bool getDeviceValue(int flag);
     static void setDeviceValue(int flag);
+
+    static bool DirectoryExists(const std::string dir);
+    static const std::string OpenFolder(std::string baseDir);
+    static const std::string OpenFile(std::string dir,const char* filer);
 };

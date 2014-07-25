@@ -1,6 +1,7 @@
 #include "PlatformUtility.h"
 #include <windows.h>
 #include <conio.h>
+#include <Shlobj.h>
 #include "cocos2d.h"
 USING_NS_CC;
 
@@ -132,4 +133,85 @@ bool PlatformUtility::getDeviceValue(int flag)
 void PlatformUtility::setDeviceValue(int flag)
 {
 
+}
+
+bool PlatformUtility::DirectoryExists(const std::string dir)	
+{
+	DWORD dwAttrib = GetFileAttributesA(dir.c_str());
+	return (dwAttrib != INVALID_FILE_ATTRIBUTES && (dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+bool PlatformUtility::FileExists(const std::string path)
+{
+	DWORD dwAttrib = GetFileAttributesA(path.c_str());
+	return (dwAttrib != INVALID_FILE_ATTRIBUTES && !(dwAttrib & FILE_ATTRIBUTE_DIRECTORY));
+}
+
+const std::string PlatformUtility::OpenFolder(std::string baseDir)
+{
+	char buff[MAX_PATH + 1] = {0};
+	WCHAR curr[MAX_PATH + 1] = {0};
+
+	if (baseDir.length() > 0)
+	{
+		MultiByteToWideChar(CP_UTF8, 0, baseDir.c_str(), baseDir.length(), curr, MAX_PATH);
+	}
+	else
+	{
+		GetCurrentDirectory(MAX_PATH + 1, curr);
+	}
+
+	BROWSEINFOA bi = {0};
+	bi.hwndOwner = GetActiveWindow();
+	bi.pszDisplayName = buff;
+	bi.lpszTitle = "Select Folder";
+	bi.lParam = reinterpret_cast<LPARAM>(curr);
+	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NONEWFOLDERBUTTON | BIF_NEWDIALOGSTYLE;
+	bi.lpfn = BrowseFolderCallback;
+
+	PIDLIST_ABSOLUTE pid = SHBrowseForFolderA(&bi);
+	if (pid)
+	{
+		SHGetPathFromIDListA(pid, buff);
+		return std::string(buff);
+	}
+	else
+	{
+		return std::string("");
+	}
+}
+
+int CALLBACK PlatformUtility::BrowseFolderCallback(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
+{
+	if (uMsg == BFFM_INITIALIZED && lpData)
+	{
+		LPCTSTR path = reinterpret_cast<LPCTSTR>(lpData);
+		SendMessage(hwnd, BFFM_SETSELECTION, true, (LPARAM)path);
+	}
+	return 0;
+}
+
+const std::string PlatformUtility::OpenFile(std::string dir, const char* filer)
+{
+	char buff[MAX_PATH + 1] = {0};
+
+	OPENFILENAMEA ofn = {0};
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = GetActiveWindow();
+	ofn.lpstrFilter = filer;
+	ofn.lpstrTitle = "Select File";
+	if (DirectoryExists(dir.c_str()))
+	{
+		ofn.lpstrInitialDir = dir.c_str();
+	}
+	ofn.Flags = OFN_DONTADDTORECENT | OFN_ENABLESIZING | OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST;
+	ofn.lpstrFile = buff;
+	ofn.nMaxFile = MAX_PATH;
+
+	if (GetOpenFileNameA(&ofn))
+	{
+		return std::string(buff);
+	}
+	else
+		return std::string("");
 }

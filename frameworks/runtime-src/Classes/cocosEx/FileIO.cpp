@@ -51,3 +51,17 @@ Texture2D* FileIO::openImage(const char* jpgFile,const char* maskFile)
 	SAFE_DELETE(_mask);
 	return ret;
 }
+
+bool FileIO::unZipFile(/*int outSize*/)
+{
+	unsigned int len = readBuffer.size()-readBuffer.rpos();
+	unsigned char* out = NULL;
+	unsigned char* buffer = new unsigned char[len];
+	readBuffer.read(buffer,len);
+	int deflatedLen = ZipUtils::ccInflateMemory(buffer,len,&out);
+	//assert(outSize == deflatedLen);
+	//CCLog("unpackage size = %d",deflatedLen);
+	readBuffer.clear();
+	readBuffer.append(out,deflatedLen);
+	return true; 
+}
