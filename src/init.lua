@@ -1,5 +1,6 @@
 require("frameworkConfig")
 require("framework.init")
+require("command.init")
 require("config")
 --require("opcodes")
 sharedFileUtils:addSearchPath("res")

@@ -75,3 +75,13 @@ end
 function Node:getSize()
     return self:getContentSize()
 end
+
+function Node:pos(x,y)
+    if x and y then 
+        self:setPosition(x,y)
+    elseif x and not y then
+        self:setPosition(x.x,x.y)
+    end
+    return cc.p(self:getPosition())
+end
+

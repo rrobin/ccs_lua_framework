@@ -15,7 +15,7 @@ dir /s/b src | find "framework_precompiled.zip" > ___tmp___
 
 for /f %%f in (___tmp___) do (
     echo %%f
-    copy framework_precompiled\framework_precompiled.zip %%f > NUL
+    copy frameworks\framework_precompiled\framework_precompiled.zip %%f > NUL
 )
 
 del ___tmp___
