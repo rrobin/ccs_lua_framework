@@ -21,27 +21,22 @@ function Layer:update( dt )
 end
 
 function Layer:getChild(name)
-    local child = nil
     while true
     do
     if not name then break end
     local children = self:getChildren()
     local uiwidget = nil
     for _,v in ipairs(children) do
-        if tolua.type(tolua.cast(v,UI_WIDGET)) == "userdata" then
+        if string.find(tolua.type(v),"ccui.") ~= nil then
             if type(name) == "string" then
                 uiwidget = helper:seekWidgetByName(v,name)
             elseif type(name) == "number" then
-                uiwidget = helper:seekWidgetByName(v,name)
+                uiwidget = helper:seekWidgetByTag(v,name)
             end
         end 
     end
-    
-    if not uiwidget or not widget_table[uiwidget:getDescription()] then break end
-    child = tolua.cast(uiwidget,widget_table[uiwidget:getDescription()].name)
-    break
+    return uiwidget
     end
-    return child
 end
 
 function Layer:insterGroup(groupId,...)

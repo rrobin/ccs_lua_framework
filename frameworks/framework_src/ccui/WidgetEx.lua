@@ -123,7 +123,6 @@ function Widget:init(params)
 end
 
 function Widget:getChild(name)
-    local child = nil
     while true
     do
     if not name then break end
@@ -133,11 +132,8 @@ function Widget:getChild(name)
     elseif type(name) == "number" then
         uiwidget = helper:seekWidgetByTag(self,name)
     end
-    if not uiwidget or not widget_table[uiwidget:getDescription()] then break end
-    child = tolua.cast(uiwidget,widget_table[uiwidget:getDescription()].name)
-    break
+    return uiwidget
     end
-    return child
 end
 
 function Widget:FadeToEx( duration, opacity )

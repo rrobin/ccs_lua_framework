@@ -10,6 +10,7 @@ echo.
 echo updating all framework_precompiled.zip
 echo.
 
+cd ..
 dir /s/b src | find "framework_precompiled.zip" > ___tmp___
 
 for /f %%f in (___tmp___) do (
@@ -22,3 +23,5 @@ del ___tmp___
 echo.
 echo DONE
 echo.
+
+cd %DIR%
