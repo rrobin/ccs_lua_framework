@@ -69,7 +69,7 @@ widget_table =
  }
 
 function ccui.layer()
-	local layer = cc.layer:create()
+	local layer = cc.Layer:create()
 	return layer
 end
 
