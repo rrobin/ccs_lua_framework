@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-  <command>E:\lab\ccs_lua_framework\frameworks\runtime-src\proj.win32\Debug.win32\ccs_lua_framework.exe</command>
-  <working_directory>E:\lab\ccs_lua_framework\</working_directory>
+  <command>E:\lab\ccs_lua_framework\frameworks\runtime-src\bin\ccs_lua_framework.exe</command>
+  <working_directory>E:\lab\ccs_lua_framework</working_directory>
   <symbols_directory></symbols_directory>
   <command_arguments></command_arguments>
   <scc>

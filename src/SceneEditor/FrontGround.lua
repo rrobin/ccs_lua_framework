@@ -13,7 +13,7 @@ function FrontGround:removeLayer(index)
 end
 
 function FrontGround:getLayer()
-	self.super.getLayer(self,0)
+	return self.super.getLayer(self,0)
 end
 
 return FrontGround

@@ -14,7 +14,9 @@ function Ground:addLayer(layer)
 		l = GroundLayer.new(self,name)
 	end
 	self._layersVector:push_back(l)
+	local index = self._count
 	self._count = self._count + 1
+	return index
 end
 
 function Ground:removeLayer(index)

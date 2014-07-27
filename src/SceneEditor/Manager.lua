@@ -14,6 +14,7 @@ SceneObject =
 GroundLayer = import(".GroundLayer")
 Ground = import(".Ground")
 FrontGround = import(".FrontGround")
+Floor = import(".Floor")
 GameScene = import(".GameScene")
 
 local SceneManager = class("SceneManager")
@@ -24,14 +25,24 @@ function SceneManager:ctor()
 end
 
 function SceneManager:addScene(name,width)
-	assert(self._Scenes[name] == nil)
-	self._Scenes[name] = GameScene.new(name,width)
-	return self._Scenes[name]
+	if name and width then
+		assert(self._Scenes[name] == nil)
+		self._Scenes[name] = GameScene.new(name,width)
+		return self._Scenes[name]
+	elseif type(name) == "table" then
+		local scene = name
+		self._Scanes[scene._name] = scene
+	end
+	return nil
 end
 
-function SceneManager:removeScene(name)
-	if self._Scenes[name] then
-		self._Scenes[name] = nil
+function SceneManager:removeScene(param)
+	if type(param) == "string" then
+		if self._Scenes[param] then
+			self._Scenes[param] = nil
+		end
+	elseif type(param) == "table" then
+		self._Scanes[param._name] = nil
 	end
 end
 

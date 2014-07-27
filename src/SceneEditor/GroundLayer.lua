@@ -4,6 +4,7 @@ GroundLayer.__index = GroundLayer
 function GroundLayer:ctor(owner,name)
 	self._ownerGround = owner
 	self._objectsVector = vector.new()
+	self._name = name
 end
 
 function GroundLayer:tile()
@@ -24,7 +25,7 @@ function GroundLayer:tile()
 end
 
 function GroundLayer:addObject(object,pos)
-	if not pos then pos = self._objectsVector:size() end
+	if not pos then pos = self._objectsVector:count() end
 	self._objectsVector:insert(object,pos)
 end
 
@@ -32,9 +33,12 @@ function GroundLayer:getObject(pos)
 	return self._objectsVector:at(pos)
 end
 
-
 function GroundLayer:getGround()
 	return self._ownerGround
+end
+
+function GroundLayer:rename(new_name)
+	self._name = new_name
 end
 
 return GroundLayer

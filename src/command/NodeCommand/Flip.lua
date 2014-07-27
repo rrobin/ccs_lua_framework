@@ -7,6 +7,7 @@ cc.axis_both = 2
 
 function cc.FlipCommand:ctor(sprite,axis)
 	self.super.ctor(self,sprite)
+	self._tips = "Flip Node"
 	self._axis = axis	
 end
 
