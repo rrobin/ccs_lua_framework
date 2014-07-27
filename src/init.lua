@@ -1,5 +1,7 @@
 require("frameworkConfig")
 require("framework.init")
+stack = require("Common.stack")
+vector = require("Common.vector")
 require("command.init")
 require("config")
 --require("opcodes")

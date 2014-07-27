@@ -3,9 +3,9 @@ GameScene.__index = GameScene
 
 function GameScene:ctor(name,width)
 	self._width = width
-	self._BackGround = BackGround.new()
-	self._Floor = Floor.new()
-	self._FrontGround = FrontGround.new()
+	self._BackGround = Ground.new(self)
+	self._Floor = Floor.new(self)
+	self._FrontGround = FrontGround.new(self)
 	self._name = name
 end
 

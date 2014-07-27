@@ -28,12 +28,23 @@ function vector:pop_front()
 	table.remove(self._values,1)
 end
 
+function vector:insert(value,pos)
+	if pos == self:count()-1 then
+		self:push_back(value)
+	elseif pos == 0 then
+		self:push_front(value)
+	else
+		assert(pos < self:count())
+		table.insert(self._values,pos+1,value)
+	end
+end
+
 function vector:earse(pos)
 	assert(pos >= 0 and pos < #self._values)
 	table.remove(self._values,pos)
 end
 
-function vector:size()
+function vector:count()
 	return #self._values
 end
 

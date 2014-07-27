@@ -1,4 +1,3 @@
-stack = require("Common.stack")
 import(".Base")
 import(".NodeCommand.NodeBase")
 import(".NodeCommand.Move")
