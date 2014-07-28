@@ -185,7 +185,7 @@ function ccui.image(params)
     assert(type(params) == "table","[ccui.image] invalid params")
     local image = params.image
     assert(image and type(image) == "string", "[ccui.image] invalid params.image")
-    local imageView = widget_table[UI_IMAGEVIEW].extend(widget_table[UI_IMAGEVIEW].create())
+    local imageView = widget_table[UI_IMAGEVIEW].create()
 
     if imageView:init(params) == false then
         assert(false,"[ccui.image] failed to initialize!")
@@ -205,7 +205,7 @@ function ccui.labelBMFont(params)
     assert(font and type(font) == "string","[ccui.labelBMFont] invalid params.font")
     local text      = tostring(params.text)
 
-    local labelBMF = widget_table[UI_LABELBMFONT].extend(widget_table[UI_LABELBMFONT].create())
+    local labelBMF = widget_table[UI_LABELBMFONT].create()
 
     if labelBMF:init(params) == false then
         assert(false,"[ccui.labelBMF] failed to initialize!")
@@ -228,7 +228,7 @@ function ccui.checkBox(params)
     local checkboxListener  = params.checkboxListener
     assert(normal and type(normal) == "string","[ccui.checkBox] invalid params.normal")
     
-    local checkBox = widget_table[UI_CHECKBOX].extend(widget_table[UI_CHECKBOX].create())
+    local checkBox = widget_table[UI_CHECKBOX].create()
 
     if checkBox:init(params) == false then
         assert(false,"[ccui.checkBox] failed to initialize!")
@@ -287,7 +287,7 @@ function ccui.loadingbar(params)
     local percent   = params.percent or 100 
     local direction = params.dir
 
-    local loadingbar = widget_table[UI_LOADINGBAR].extend(widget_table[UI_LOADINGBAR].create())
+    local loadingbar = widget_table[UI_LOADINGBAR].create()
 
     if loadingbar:init(params) == false then
         assert(false,"[ccui.loadingbar] failed to initialize!")
@@ -314,7 +314,7 @@ function ccui.textField(params)
     local passwordText      = params.passwordText or "*"
     local textFieldListener = params.textFieldListener
 
-    local textField = widget_table[UI_TEXTFIELD].extend(widget_table[UI_TEXTFIELD].create())
+    local textField = widget_table[UI_TEXTFIELD].create()
 
     if textField:init(params) == false then
         assert(false,"[ccui.textField] failed to initialize!")
@@ -353,7 +353,7 @@ end
 function ccui.panel(params)
     assert(type(params) == "table","[ccui.plane] invalid params")
 
-    local panel = widget_table[UI_PANEL].extend(widget_table[UI_PANEL].create())
+    local panel = widget_table[UI_PANEL].create()
 
     if panel:initlayout(params) == false then
         assert(false, "[ccui.panel] failed to initialize!")
@@ -369,7 +369,7 @@ function ccui.listView(params)
     local listViewListener = params.listListener
     local gravity = params.gravity
 
-    local listView = widget_table[UI_LISTVIEW].extend(widget_table[UI_LISTVIEW].create())
+    local listView = widget_table[UI_LISTVIEW].create()
 
     if listView:initlayout(params) == false then
         assert(false, "[ccui.listView] failed to initialize!")
@@ -405,7 +405,7 @@ function ccui.scrollView(params)
     local innerSize = params.innerSize
     local scrollViewListener = params.scrollListener
 
-    local scrollView = widget_table[UI_SCROLLVIEW].extend(widget_table[UI_SCROLLVIEW].create())
+    local scrollView = widget_table[UI_SCROLLVIEW].create()
 
     if scrollView:initlayout(params) == false then
         assert(false, "[ccui.scrollView] failed to initialize!")
@@ -440,7 +440,7 @@ end
 function ccui.pageView(params)
     assert(type(params) == "table","[ccui.pageView] invalid params")
     local eventHandle = params.eventHandle
-    local pageView = widget_table[UI_PAGEVIEW].extend(widget_table[UI_PAGEVIEW].create())
+    local pageView = widget_table[UI_PAGEVIEW].create()
 
     if pageView:initlayout(params) == false then
         assert(false, "[ccui.pageView] failed to initialize!")

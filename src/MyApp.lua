@@ -3,7 +3,7 @@ MyApp.__index = MyApp
 
 function MyApp:ctor()
 	MyApp.super.ctor(self)
-	local scene = require("MainScene").new()
+	local scene = require("SceneEditor.ui.SceneEditorUI").new()
     cc.runScene(scene)
 end
 

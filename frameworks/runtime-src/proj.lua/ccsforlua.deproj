@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
   <file>
+    <filename>..\..\..\src\command\Manager.lua</filename>
+  </file>
+  <file>
+    <filename>..\..\..\src\SceneEditor\ui\SceneEditorUI.lua</filename>
+  </file>
+  <file>
+    <filename>..\..\..\src\ui\TreeControl.lua</filename>
+  </file>
+  <file>
     <filename>..\..\..\src\framework\ccs\armatureEx.lua</filename>
+  </file>
+  <file>
+    <filename>..\..\..\src\command\init.lua</filename>
+  </file>
+  <file>
+    <filename>..\..\..\src\command\mutilCommand.lua</filename>
   </file>
 </project>

@@ -29,7 +29,7 @@ function layout:initlayout(params)
             self:setBackGroundColorType(colorType)
             if colorType == LAYOUT_COLOR_GRADIENT then
                 if color and endColor then
-                    init = (tolua.type(color) == "ccColor3B" or tolua.type(color) == "const ccColor3B")
+                    init = (type(color) == "table")
                     assert(init,"layout invalid params.color")
                     init = (tolua.type(endColor) == "ccColor3B")
                     assert(init,"layout invalid params.endColor")
@@ -38,7 +38,7 @@ function layout:initlayout(params)
                 end
             else
                 if color then
-                    init = (tolua.type(color) == "ccColor3B" or tolua.type(color) == "const ccColor3B")
+                    init = (type(color) == "table")
                     assert(init,"layout invalid params.color")
                     if init == false then break end
                     self:setBackGroundColor(color)

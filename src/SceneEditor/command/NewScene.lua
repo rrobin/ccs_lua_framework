@@ -7,13 +7,13 @@ function command.NewScene:ctor(name,width)
 end
 
 function command.NewScene:undo()
-	local name = self._param[0]
-	ScaneManager:removeScene(name)
+	local name = self._param[1]
+	SceneManager:removeScene(name)
 end
 
 function command.NewScene:redo()
-	local name = self._param[0]
-	local width = self._param[1]
+	local name = self._param[1]
+	local width = self._param[2]
 	SceneManager:addScene(name,width)
 end
 

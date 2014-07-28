@@ -5,8 +5,7 @@ AppDelegate.event.enterBackground = "APP_ENTER_BACKGROUND"
 AppDelegate.event.enterforeground = "APP_ENTER_FOREGROUND"
 
 function AppDelegate:ctor()
-	local node = cc.Node:create()
-	local eventDispatcher = node:getEventDispatcher()
+	local eventDispatcher = sharedDirector:getEventDispatcher()
     local customListenerBg =  cc.EventListenerCustom:create(AppDelegate.event.enterBackground,
      								handler(self, self.onEnterBackground))
     eventDispatcher:addEventListenerWithFixedPriority(customListenerBg, 1)
@@ -19,11 +18,11 @@ function AppDelegate:run()
 end
 
 function AppDelegate:onEnterBackground()
-	self:dispatchEvent({name = AppDelegate.event.enterBackground})
+    cclog("onEnterBackground")
 end
 
 function AppDelegate:onEnterForeground()
-	self:dispatchEvent({name = AppDelegate.event.enterforeground})
+	cclog("onEnterForeground")
 end
 
 function AppDelegate:exit()

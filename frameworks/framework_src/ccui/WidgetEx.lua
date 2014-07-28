@@ -84,14 +84,14 @@ function Widget:init(params)
         end
 
         if color then
-            init = (tolua.type(color) == "ccColor3B" or tolua.type(color) == "const ccColor3B")
+            init = (type(color) == "table")
             assert(init,"widget invalid params.color")
             if init == false then break end
             self:setColor(color)
         end
 
         if size then
-            init = (tolua.type(size) == "CCSize" or tolua.type(size) == "const CCSize")
+            init = (type(size) == "table")
             assert(init,"widget invaild params.size")
             if init == false then break end
             self:setSize(size)

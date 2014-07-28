@@ -80,7 +80,8 @@ void AppDelegate::applicationDidEnterBackground()
     Director::getInstance()->stopAnimation();
 
     SimpleAudioEngine::getInstance()->pauseBackgroundMusic();
-    __NotificationCenter::getInstance()->postNotification(AppEvent[ENTER_BACKGROUND]);
+	auto dispatcher = Director::getInstance()->getEventDispatcher();
+	dispatcher->dispatchCustomEvent(AppEvent[ENTER_BACKGROUND]);
 }
 
 // this function will be called when the app is active again
@@ -89,5 +90,6 @@ void AppDelegate::applicationWillEnterForeground()
     CCDirector::sharedDirector()->startAnimation();
 
     SimpleAudioEngine::getInstance()->resumeBackgroundMusic();
-    __NotificationCenter::getInstance()->postNotification(AppEvent[ENTER_FOREGROUND]);
+	auto dispatcher = Director::getInstance()->getEventDispatcher();
+	dispatcher->dispatchCustomEvent(AppEvent[ENTER_FOREGROUND]);
 }

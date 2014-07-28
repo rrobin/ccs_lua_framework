@@ -16,3 +16,5 @@ end
 function Command:destory()
 	-- body
 end
+
+return Command

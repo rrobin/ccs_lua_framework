@@ -1,4 +1,5 @@
 import(".Base")
+import(".mutilCommand")
 import(".NodeCommand.NodeBase")
 import(".NodeCommand.Move")
 import(".NodeCommand.Rotate")
@@ -8,8 +9,8 @@ import(".NodeCommand.Flip")
 local CommandManager = class("CommandManager")
 CommandManager.__index = CommandManager
 --[[
-	workStack 保存执行中的command链表,最近执行的command从末尾添加
-	reserveStack 保存撤销的command链表,最近撤销的command从末尾添加
+	workStack 保存执行中的command栈
+	reserveStack 保存撤销的command栈
 ]]
 
 function CommandManager:ctor()

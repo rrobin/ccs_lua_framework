@@ -72,6 +72,10 @@ function Node:removeSelf(cleanup)
     end
 end
 
+function Node:setSize(size)
+    self:setContentSize(size)
+end
+
 function Node:getSize()
     return self:getContentSize()
 end

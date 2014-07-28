@@ -29,13 +29,7 @@ local function main()
     for k,v in ipairs(shaders) do
         display.addShader(v)
     end
-    --require("MyApp"):new()
-    SceneManager = require("SceneEditor.Manager").new()
-    local scene = SceneManager:addScene("测试层",960*2)
-    local layer = scene._FrontGround:getLayer()
-    local object = clone(SceneObject)
-    object.Filename = "1.png"
-    layer:addObject(object)
+    require("MyApp"):new()
 end
 
 xpcall(main, __G__TRACKBACK__)
