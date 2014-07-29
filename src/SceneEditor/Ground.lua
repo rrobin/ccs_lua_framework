@@ -7,7 +7,7 @@ function Ground:ctor(owner)
 	self._count = 0
 end
 
-function Ground:addLayer(layer)
+function Ground:addLayer(name)
 	local l = layer
 	if not l then
 		local name = "层"..tostring(self._count+1)

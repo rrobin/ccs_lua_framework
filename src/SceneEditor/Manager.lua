@@ -32,6 +32,7 @@ function SceneManager:addScene(name,width)
 	elseif type(name) == "table" then
 		local scene = name
 		self._Scanes[scene._name] = scene
+		return scene
 	end
 	return nil
 end

@@ -13,8 +13,8 @@ function mutilCommand:redo()
 end
 
 function mutilCommand:undo()
-	for _,command in pairs(self._commands) do
-		command:undo()
+	for i=#self._commands,1,-1 do
+		self._commands[i]:undo()
 	end
 end
 

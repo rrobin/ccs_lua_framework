@@ -37,3 +37,11 @@ end
 
 function TextField:onDeleteBackWard(textField)
 end
+
+function TextField:setString(string)
+    self:setText(string)
+end
+
+function TextField:getString()
+    return self:getStringValue()
+end

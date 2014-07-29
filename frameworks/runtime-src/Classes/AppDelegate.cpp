@@ -4,8 +4,28 @@
 #include "SimpleAudioEngine.h"
 #include "luabinding/game_luabinding.h"
 #include "luabinding/game_manual.h"
-
+USING_NS_CC;
 using namespace CocosDenshion;
+
+void keyEventCallback(EventKeyboard::KeyCode code, Event *event)
+{ 
+	typedef EventKeyboard::KeyCode KeyCode;
+	switch(code)
+	{ 
+	case KeyCode::KEY_BACKSPACE:
+#if CC_TARGET_PLATFORM == CC_PLATFORM_WIN32 
+		IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
+#else 
+		Director::getInstance()->end();
+#endif 
+		break; 
+	case KeyCode::KEY_DELETE:
+		IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
+		break;
+// 	case KeyCode::KEY_RETURN:
+// 		IMEDispatcher::sharedDispatcher()->detachDelegateWithIME();
+	}
+};
 
 enum
 {
@@ -70,6 +90,10 @@ bool AppDelegate::applicationDidFinishLaunching()
 	CCLog("load main.lua");
 	if(engine->executeScriptFile("main.lua") != 0)
 		return false;
+
+	EventListenerKeyboard *listener = EventListenerKeyboard::create(); 
+	listener->onKeyReleased = keyEventCallback; 
+	director->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1); 
 
     return true;
 }

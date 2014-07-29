@@ -7,7 +7,7 @@ return
 	P 		= nil,		-- 父节点		Parent
 	B		= nil,		-- 兄弟节点		Brother
 	C		= nil,		-- 首孩子节点	Child
-	E 		= false,	-- 是否展开		Extend
+	E 		= true,		-- 是否展开		Extend
 	N 		= 0,		-- 孩子数量		Number
 	H		= 0,		-- 高度			Height		
 	D		= 0,		-- 深度			Depth
@@ -239,6 +239,8 @@ function TreeControl:Layout()
 		end
 		if node.C == nil then
 			node.W:getChild("extendBtn"):setVisible(false)
+		else
+			node.W:getChild("extendBtn"):setVisible(true)
 		end
 		node.W:setVisible(true)
 		node.W:getChild("Label"):setTouchEnabled(true)

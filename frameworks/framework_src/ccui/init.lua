@@ -392,7 +392,7 @@ function ccui.listView(params)
 end
 
 function ccui.dragPanel(params)
-    params.direction = SCROLLVIEW_DIR_BOTH
+    params.direction = ccui.ScrollViewDir.both
     local dragPanel = ccui.scrollView(params)
     return dragPanel
 end

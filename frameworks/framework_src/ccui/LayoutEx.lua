@@ -12,6 +12,7 @@ function layout:initlayout(params)
     local ltype         = params.type
     local clip          = params.clip
     local opacity       = params.opacity
+    local colorVector   = params.colorVector
 
 
     local init = true
@@ -35,6 +36,7 @@ function layout:initlayout(params)
                     assert(init,"layout invalid params.endColor")
                     if init == false then break end
                     self:setBackGroundColor(color,endColor)
+                    self:setBackGroundColorVector(colorVector)
                 end
             else
                 if color then

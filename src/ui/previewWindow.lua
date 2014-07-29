@@ -31,6 +31,7 @@ end
 
 function previewWindow:add(node)
 	local size = node:getSize()
+	
 end
 
 return previewWindow
