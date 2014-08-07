@@ -37,6 +37,8 @@
 #include "math/CCAffineTransform.h"
 #include "math/CCMath.h"
 #include "renderer/ccGLStateCache.h"
+#include "renderer/CCRenderer.h"
+#include "renderer/CCCustomCommand.h"
 #include "CCGL.h"
 
 NS_CC_BEGIN
@@ -51,7 +53,7 @@ class Component;
 class ComponentContainer;
 class EventDispatcher;
 class Scene;
-class Renderer;
+//class Renderer;
 class GLProgram;
 class GLProgramState;
 #if CC_USE_PHYSICS
@@ -1052,6 +1054,10 @@ public:
     virtual void draw(Renderer *renderer, const Mat4& transform, uint32_t flags);
     virtual void draw() final;
 
+	virtual void drawBound(Renderer* renderer);
+	virtual void drawBoundCallBack();
+	CC_SYNTHESIZE(bool,_drawBound,DrawBound);	
+
     /**
      * Visits this node's children and draw them recursively.
      */
@@ -1519,7 +1525,7 @@ private:
     void addChildHelper(Node* child, int localZOrder, int tag, const std::string &name, bool setTag);
     
 protected:
-
+	CustomCommand	_customCommand;
     float _rotationX;               ///< rotation on the X-axis
     float _rotationY;               ///< rotation on the Y-axis
 
@@ -1618,7 +1624,6 @@ protected:
     std::function<void()> _onExitCallback;
     std::function<void()> _onEnterTransitionDidFinishCallback;
     std::function<void()> _onExitTransitionDidStartCallback;
-
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(Node);
     

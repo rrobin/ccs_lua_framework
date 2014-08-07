@@ -1,10 +1,13 @@
 import(".Base")
 import(".mutilCommand")
+import(".CustomCommand")
 import(".NodeCommand.NodeBase")
 import(".NodeCommand.Move")
 import(".NodeCommand.Rotate")
 import(".NodeCommand.Scale")
 import(".NodeCommand.Flip")
+import(".NodeCommand.Opactiy")
+import(".NodeCommand.Reorder")
 
 local CommandManager = class("CommandManager")
 CommandManager.__index = CommandManager
@@ -22,9 +25,10 @@ end
 	执行一个command,并且重置撤销链表
 ]]
 function CommandManager:execute(command)
+	--先执行清理
+	self:clearReservedCommands()
 	command:redo()
 	self._workStack:push(command)
-	self:clearReservedCommands()
 end
 
 --[[

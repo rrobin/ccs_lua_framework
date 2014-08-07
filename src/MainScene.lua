@@ -12,6 +12,7 @@ function MainScene:ctor()
 	undoBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.testUndo)})
 	local redoBtn = layer:getChild("RedoBtn")
 	redoBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.testRedo)})
+	--[[
 	self._sprite = cc.Sprite:create("denglu/NARUTO_denglu_10101.png")
 	self._sprite:setShader("outline")
 	self._sprite:setUniform("u_outlineColor",{x=1.0, y=0.2, z=0.3})
@@ -19,33 +20,26 @@ function MainScene:ctor()
 	self._sprite:setUniform("u_threshold",1.75)
 	layer:addChild(self._sprite)
 	self._sprite:pos(cc.CENTER)
+	]]
+	local s = layer:getChild("Panel_20"):getSize()
+	local scrollview = ccui.scrollView({size = cc.size(s.width,640),innerSize = cc.size(960*3,640),direction = ccui.ScrollViewDir.both
+		,colorType = ccui.LayoutBackGroundColorType.solid,color = cc.c3b(0,0,255)})
+	self._scrollview = scrollview
+	layer:getChild("Panel_20"):addChild(scrollview,0)
 end
 
 function MainScene:openFile(btn)
-	--[[
 	local filename = PlatformUtility:OpenFile("","CocoStudio UI File(*.ExportJson;*csb)\0*.ExportJson;*.csb\0")
 	if filename ~= "" then
 		cclog("filename : ".. filename)
 	end
-	]]
-	local random = math.random()
-    cclog("random = " .. random)
-    local command = nil
-    if random < 0.2 then
-    	command = cc.MoveCommand.new(self._sprite,cc.pAdd(self._sprite:pos(),cc.p(20,10)))
-    elseif random < 0.4 then
-    	command = cc.RotateCommand.new(self._sprite,self._sprite:getRotation()+20)
-    elseif random < 0.6 then
-    	local scale = random / 0.6 * 1000 / 100
-    	cclog("scale = " .. scale)
-    	command = cc.ScaleCommand.new(self._sprite,scale)
-    else
-    	local axis = math.floor((random / 0.8 * 1000) % 3)
-    	cclog("axis = "..axis)
-    	command = cc.FlipCommand.new(self._sprite,axis)
-    end
-	if command == nil then return end
-	DoCmd(command)
+
+	ccs.ArmatureDataManager:getInstance():addArmatureFileInfo(filename)
+	local name = string.ipextension(string.ippath(filename))
+	local armature = ccs.Armature:create(name)
+	self._scrollview:addChild(armature)
+	local size = armature:getSize()
+	armature:pos(cc.p(0,size.height/2))
 end
 
 function MainScene:testUndo(btn)

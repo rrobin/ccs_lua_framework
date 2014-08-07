@@ -16,8 +16,8 @@ function cc.ScaleCommand:undo()
 		local scale = self._object:getScale()
 		self._object:setScale(scale+self._delta)
 	else
-		local x = self:getScaleX()
-		local y = self:getScaleY()
+		local x = self._object:getScaleX()
+		local y = self._object:getScaleY()
 		self._object:setScaleX(x+self._delta.x)
 		self._object:setScaleY(y+self._delta.y)
 	end
@@ -28,8 +28,8 @@ function cc.ScaleCommand:redo()
 		local scale = self._object:getScale()
 		self._object:setScale(scale-self._delta)
 	else
-		local x = self:getScaleX()
-		local y = self:getScaleY()
+		local x = self._object:getScaleX()
+		local y = self._object:getScaleY()
 		self._object:setScaleX(x-self._delta.x)
 		self._object:setScaleY(y-self._delta.y)
 	end

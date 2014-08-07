@@ -2,9 +2,9 @@
 SceneObject = 
 {
 	Filename = "SceneObject.png",
-	FlipX 	= false,
-	FlipY	= false,
+	Flip 	= { x=false, y=false },
 	Pos 	= { x=0, y=0 },
+	zOrder  = 0,
 	Rotation = 0,
 	Scale   = { x=1, y=1 },
 	Opacity = 255,  -- 不透明度,0-255

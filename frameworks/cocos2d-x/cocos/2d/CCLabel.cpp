@@ -897,6 +897,13 @@ void Label::draw(Renderer *renderer, const Mat4 &transform, uint32_t flags)
     }
 }
 
+void Label::setDrawBound(bool var)
+{
+	if(_textSprite)
+		_textSprite->setDrawBound(var);
+	Node::setDrawBound(var);
+}
+
 void Label::createSpriteWithFontDefinition()
 {
     _currentLabelType = LabelType::STRING_TEXTURE;
@@ -1106,6 +1113,7 @@ void Label::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t pare
     else
     {
         draw(renderer, _modelViewTransform, flags);
+		drawBound(renderer);
     }
 
     director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);

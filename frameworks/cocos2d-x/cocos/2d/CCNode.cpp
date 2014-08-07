@@ -55,6 +55,8 @@ THE SOFTWARE.
 #include "physics/CCPhysicsBody.h"
 #endif
 
+#include "CCDrawingPrimitives.h"
+
 
 #if CC_NODE_RENDER_SUBPIXEL
 #define RENDER_IN_SUBPIXEL
@@ -128,6 +130,7 @@ Node::Node(void)
 , _usingNormalizedPosition(false)
 , _name("")
 , _hashOfName(0)
+,_drawBound(false)
 {
     // set default scheduler and actionManager
     Director *director = Director::getInstance();
@@ -1215,6 +1218,36 @@ void Node::draw(Renderer* renderer, const Mat4 &transform, uint32_t flags)
 {
 }
 
+void Node::drawBound(Renderer* renderer)
+{
+	if (!_drawBound) return;
+	_customCommand.init(_globalZOrder);
+	_customCommand.func = CC_CALLBACK_0(Node::drawBoundCallBack, this);
+	renderer->addCommand(&_customCommand);
+}
+
+void Node::drawBoundCallBack()
+{
+	Director* director = Director::getInstance();
+	CCASSERT(nullptr != director, "Director is null when seting matrix stack");
+	Mat4 oldModelView;
+	oldModelView = director->getMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+	director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
+	DrawPrimitives::setDrawColor4F(0.0f,1.0f,0.0f,1.0f);
+	auto size = getContentSize();
+	// draw bounding box
+	Vec2 vertices[4] = {
+		Vec2( 0,0 ),
+		Vec2( size.width,0),
+		Vec2( size.width, size.height ),
+		Vec2( 0, size.height ),
+	};
+	DrawPrimitives::drawPoly(vertices, 4, true);
+	DrawPrimitives::setDrawColor4F(1.0,1.0,1.0,1.0);
+
+	director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, oldModelView);
+}
+
 void Node::visit()
 {
     auto renderer = Director::getInstance()->getRenderer();
@@ -1279,13 +1312,14 @@ void Node::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t paren
         }
         // self draw
         this->draw(renderer, _modelViewTransform, flags);
-
+		this->drawBound(renderer);
         for(auto it=_children.cbegin()+i; it != _children.cend(); ++it)
             (*it)->visit(renderer, _modelViewTransform, flags);
     }
     else
     {
         this->draw(renderer, _modelViewTransform, flags);
+		this->drawBound(renderer);
     }
 
     director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);

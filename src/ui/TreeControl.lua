@@ -139,6 +139,7 @@ end
 function TreeControl:removeItem(name)
 	local node = self._nodes[name]
 	if node then
+		node.W:removeFromParent()
 		local parent = node.P
 		if parent then -- 有父节点
 			if parent.C == name then -- 是父节点的首孩子节点
@@ -161,6 +162,7 @@ function TreeControl:removeItem(name)
 		-- 将自己的孩子从nodes表里删除
 		function deleteNode(node)
 			if node == nil then return end
+			node.W:removeSelf(true)
 			self._nodes[node.name] = nil
 			if node.C then
 				local child = self._nodes[node.C]
@@ -193,10 +195,10 @@ function TreeControl:createItem(node)
 	widget:getChild("Label"):setString(node.value)
 	widget:getChild("Label"):addTouchEvent({[ccui.TouchEventType.ended] = function(uiwidget)
 			if self._SelectItem then
-				--self._nodes[self._SelectItem].W:getChild("Label"):getVirtualRenderer():setShowBound(false)
+				self._nodes[self._SelectItem].W:getChild("Label"):getVirtualRenderer():setDrawBound(false)
 			end	
 			self._SelectItem = node.name
-			--node.W:getChild("Label"):getVirtualRenderer():setShowBound(true)
+			node.W:getChild("Label"):getVirtualRenderer():setDrawBound(true)
 			self:onSelected()
 		end})
 	self:addChild(widget)

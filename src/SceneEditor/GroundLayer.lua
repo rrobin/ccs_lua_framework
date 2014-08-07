@@ -26,7 +26,13 @@ end
 
 function GroundLayer:addObject(object,pos)
 	if not pos then pos = self._objectsVector:count() end
+	cclog("GroundLayer:addObject pos:"..pos)
 	self._objectsVector:insert(object,pos)
+	return pos
+end
+
+function GroundLayer:removeObject(pos)
+	self._objectsVector:earse(pos)
 end
 
 function GroundLayer:getObject(pos)

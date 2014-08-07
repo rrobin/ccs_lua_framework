@@ -275,6 +275,8 @@ public:
 
     CC_DEPRECATED_ATTRIBUTE int getCommonLineHeight() const { return getLineHeight();}
 
+	virtual void setDrawBound(bool var);
+
 protected:
     void onDraw(const Mat4& transform, bool transformUpdated);
 

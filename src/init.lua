@@ -8,6 +8,7 @@ SceneManager = require("SceneEditor.Manager").new()
 --require("opcodes")
 sharedFileUtils:addSearchPath("res")
 sharedFileUtils:addSearchPath("res/Editor")
+sharedFileUtils:addSearchPath("res/test")
 --sharedFileUtils:addSearchPath("res/dbc")
 
 sharedDirector:getOpenGLView():setFrameSize(config.width,config.height)

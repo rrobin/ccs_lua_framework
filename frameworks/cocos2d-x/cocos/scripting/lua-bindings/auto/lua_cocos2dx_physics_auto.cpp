@@ -4305,52 +4305,6 @@ int lua_cocos2dx_physics_PhysicsBody_getPosition(lua_State* tolua_S)
 
     return 0;
 }
-int lua_cocos2dx_physics_PhysicsBody_setEnable(lua_State* tolua_S)
-{
-    int argc = 0;
-    cocos2d::PhysicsBody* cobj = nullptr;
-    bool ok  = true;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_Error tolua_err;
-#endif
-
-
-#if COCOS2D_DEBUG >= 1
-    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsBody",0,&tolua_err)) goto tolua_lerror;
-#endif
-
-    cobj = (cocos2d::PhysicsBody*)tolua_tousertype(tolua_S,1,0);
-
-#if COCOS2D_DEBUG >= 1
-    if (!cobj) 
-    {
-        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsBody_setEnable'", nullptr);
-        return 0;
-    }
-#endif
-
-    argc = lua_gettop(tolua_S)-1;
-    if (argc == 1) 
-    {
-        bool arg0;
-
-        ok &= luaval_to_boolean(tolua_S, 2,&arg0);
-        if(!ok)
-            return 0;
-        cobj->setEnable(arg0);
-        return 0;
-    }
-    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "setEnable",argc, 1);
-    return 0;
-
-#if COCOS2D_DEBUG >= 1
-    tolua_lerror:
-    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsBody_setEnable'.",&tolua_err);
-#endif
-
-    return 0;
-}
 int lua_cocos2dx_physics_PhysicsBody_setGravityEnable(lua_State* tolua_S)
 {
     int argc = 0;
@@ -4842,6 +4796,52 @@ int lua_cocos2dx_physics_PhysicsBody_setAngularVelocity(lua_State* tolua_S)
 #if COCOS2D_DEBUG >= 1
     tolua_lerror:
     tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsBody_setAngularVelocity'.",&tolua_err);
+#endif
+
+    return 0;
+}
+int lua_cocos2dx_physics_PhysicsBody_setEnable(lua_State* tolua_S)
+{
+    int argc = 0;
+    cocos2d::PhysicsBody* cobj = nullptr;
+    bool ok  = true;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_Error tolua_err;
+#endif
+
+
+#if COCOS2D_DEBUG >= 1
+    if (!tolua_isusertype(tolua_S,1,"cc.PhysicsBody",0,&tolua_err)) goto tolua_lerror;
+#endif
+
+    cobj = (cocos2d::PhysicsBody*)tolua_tousertype(tolua_S,1,0);
+
+#if COCOS2D_DEBUG >= 1
+    if (!cobj) 
+    {
+        tolua_error(tolua_S,"invalid 'cobj' in function 'lua_cocos2dx_physics_PhysicsBody_setEnable'", nullptr);
+        return 0;
+    }
+#endif
+
+    argc = lua_gettop(tolua_S)-1;
+    if (argc == 1) 
+    {
+        bool arg0;
+
+        ok &= luaval_to_boolean(tolua_S, 2,&arg0);
+        if(!ok)
+            return 0;
+        cobj->setEnable(arg0);
+        return 0;
+    }
+    CCLOG("%s has wrong number of arguments: %d, was expecting %d \n", "setEnable",argc, 1);
+    return 0;
+
+#if COCOS2D_DEBUG >= 1
+    tolua_lerror:
+    tolua_error(tolua_S,"#ferror in function 'lua_cocos2dx_physics_PhysicsBody_setEnable'.",&tolua_err);
 #endif
 
     return 0;
@@ -6242,7 +6242,6 @@ int lua_register_cocos2dx_physics_PhysicsBody(lua_State* tolua_S)
         tolua_function(tolua_S,"getWorld",lua_cocos2dx_physics_PhysicsBody_getWorld);
         tolua_function(tolua_S,"getAngularVelocity",lua_cocos2dx_physics_PhysicsBody_getAngularVelocity);
         tolua_function(tolua_S,"getPosition",lua_cocos2dx_physics_PhysicsBody_getPosition);
-        tolua_function(tolua_S,"setEnable",lua_cocos2dx_physics_PhysicsBody_setEnable);
         tolua_function(tolua_S,"setGravityEnable",lua_cocos2dx_physics_PhysicsBody_setGravityEnable);
         tolua_function(tolua_S,"getGroup",lua_cocos2dx_physics_PhysicsBody_getGroup);
         tolua_function(tolua_S,"setMoment",lua_cocos2dx_physics_PhysicsBody_setMoment);
@@ -6254,6 +6253,7 @@ int lua_register_cocos2dx_physics_PhysicsBody(lua_State* tolua_S)
         tolua_function(tolua_S,"getShapes",lua_cocos2dx_physics_PhysicsBody_getShapes);
         tolua_function(tolua_S,"getContactTestBitmask",lua_cocos2dx_physics_PhysicsBody_getContactTestBitmask);
         tolua_function(tolua_S,"setAngularVelocity",lua_cocos2dx_physics_PhysicsBody_setAngularVelocity);
+        tolua_function(tolua_S,"setEnable",lua_cocos2dx_physics_PhysicsBody_setEnable);
         tolua_function(tolua_S,"world2Local",lua_cocos2dx_physics_PhysicsBody_world2Local);
         tolua_function(tolua_S,"isEnabled",lua_cocos2dx_physics_PhysicsBody_isEnabled);
         tolua_function(tolua_S,"removeShape",lua_cocos2dx_physics_PhysicsBody_removeShape);

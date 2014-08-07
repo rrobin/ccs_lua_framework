@@ -15,11 +15,6 @@
 -- @param #cc.TableView::VerticalFillOrder verticalfillorder
         
 --------------------------------
--- @function [parent=#TableView] scrollViewDidZoom 
--- @param self
--- @param #cc.ScrollView scrollview
-        
---------------------------------
 -- @function [parent=#TableView] _updateContentSize 
 -- @param self
         
@@ -48,6 +43,11 @@
 --------------------------------
 -- @function [parent=#TableView] reloadData 
 -- @param self
+        
+--------------------------------
+-- @function [parent=#TableView] scrollViewDidZoom 
+-- @param self
+-- @param #cc.ScrollView scrollview
         
 --------------------------------
 -- @function [parent=#TableView] insertCellAtIndex 

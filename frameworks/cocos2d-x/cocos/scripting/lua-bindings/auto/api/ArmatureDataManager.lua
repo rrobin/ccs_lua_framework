@@ -5,11 +5,6 @@
 -- @parent_module ccs
 
 --------------------------------
--- @function [parent=#ArmatureDataManager] getAnimationDatas 
--- @param self
--- @return map_table#map_table ret (return value: map_table)
-        
---------------------------------
 -- @function [parent=#ArmatureDataManager] removeAnimationData 
 -- @param self
 -- @param #string str
@@ -93,6 +88,11 @@
 -- @param #string str
 -- @param #ccs.TextureData texturedata
 -- @param #string str
+        
+--------------------------------
+-- @function [parent=#ArmatureDataManager] getAnimationDatas 
+-- @param self
+-- @return map_table#map_table ret (return value: map_table)
         
 --------------------------------
 -- @function [parent=#ArmatureDataManager] isAutoLoadSpriteFile 

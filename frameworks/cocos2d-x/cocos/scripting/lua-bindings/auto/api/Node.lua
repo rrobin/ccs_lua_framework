@@ -116,6 +116,11 @@
 -- @param #float float
         
 --------------------------------
+-- @function [parent=#Node] setDrawBound 
+-- @param self
+-- @param #bool bool
+        
+--------------------------------
 -- @function [parent=#Node] setonEnterTransitionDidFinishCallback 
 -- @param self
 -- @param #function func
@@ -222,6 +227,10 @@
 -- @param #bool bool
 
 --------------------------------
+-- @function [parent=#Node] drawBoundCallBack 
+-- @param self
+        
+--------------------------------
 -- @function [parent=#Node] getNodeToParentAffineTransform 
 -- @param self
 -- @return AffineTransform#AffineTransform ret (return value: cc.AffineTransform)
@@ -240,6 +249,11 @@
 -- @function [parent=#Node] getName 
 -- @param self
 -- @return string#string ret (return value: string)
+        
+--------------------------------
+-- @function [parent=#Node] drawBound 
+-- @param self
+-- @param #cc.Renderer renderer
         
 --------------------------------
 -- @function [parent=#Node] getRotation3D 
@@ -332,6 +346,11 @@
 -- @function [parent=#Node] getAnchorPoint 
 -- @param self
 -- @return vec2_table#vec2_table ret (return value: vec2_table)
+        
+--------------------------------
+-- @function [parent=#Node] getDrawBound 
+-- @param self
+-- @return bool#bool ret (return value: bool)
         
 --------------------------------
 -- @function [parent=#Node] getNumberOfRunningActions 

@@ -19,6 +19,10 @@
 -- @return bool#bool ret (return value: bool)
         
 --------------------------------
+-- @function [parent=#Menu] alignItemsHorizontally 
+-- @param self
+        
+--------------------------------
 -- @function [parent=#Menu] alignItemsHorizontallyWithPadding 
 -- @param self
 -- @param #float float
@@ -27,10 +31,6 @@
 -- @function [parent=#Menu] alignItemsVerticallyWithPadding 
 -- @param self
 -- @param #float float
-        
---------------------------------
--- @function [parent=#Menu] alignItemsHorizontally 
--- @param self
         
 --------------------------------
 -- overload function: addChild(cc.Node, int)

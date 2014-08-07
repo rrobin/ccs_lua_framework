@@ -47,6 +47,11 @@
 
 
 --------------------------------------------------------
+-- the cc GLProgram
+-- @field [parent=#cc] GLProgram#GLProgram GLProgram preloaded module
+
+
+--------------------------------------------------------
 -- the cc Node
 -- @field [parent=#cc] Node#Node Node preloaded module
 
@@ -734,11 +739,6 @@
 --------------------------------------------------------
 -- the cc DrawNode
 -- @field [parent=#cc] DrawNode#DrawNode DrawNode preloaded module
-
-
---------------------------------------------------------
--- the cc GLProgram
--- @field [parent=#cc] GLProgram#GLProgram GLProgram preloaded module
 
 
 --------------------------------------------------------

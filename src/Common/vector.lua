@@ -34,14 +34,14 @@ function vector:insert(value,pos)
 	elseif pos == 0 then
 		self:push_front(value)
 	else
-		assert(pos < self:count())
+		assert(pos < self:count()+1)
 		table.insert(self._values,pos+1,value)
 	end
 end
 
 function vector:earse(pos)
 	assert(pos >= 0 and pos < #self._values)
-	table.remove(self._values,pos)
+	table.remove(self._values,pos+1)
 end
 
 function vector:count()

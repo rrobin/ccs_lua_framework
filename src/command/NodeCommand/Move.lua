@@ -9,13 +9,13 @@ end
 
 function cc.MoveCommand:redo()
 	local pos = self._object:pos()
-	local dst = cc.pAdd(pos,self._delta)
+	local dst = cc.pSub(pos,self._delta)
 	self._object:pos(dst)
 end
 
 function cc.MoveCommand:undo()
 	local pos = self._object:pos()
-	local dst = cc.pSub(pos,self._delta)
+	local dst = cc.pAdd(pos,self._delta)
 	self._object:pos(dst)
 end
 
