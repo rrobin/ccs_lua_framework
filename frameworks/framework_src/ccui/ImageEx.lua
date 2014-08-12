@@ -1,19 +1,18 @@
-local c = cc
-local Node = c.Node
+local ui = ccui
+local image = ui.ImageView
 local d = display
---[[
-	主要针对shader扩展
-]]
-function Node:setShader(shaderName)
-    local glprogram = d.getShader(shaderName)
+
+function image:setShader(shaderName)
+	local glprogram = d.getShader(shaderName)
     if glprogram and self:getGLProgram() ~= glprogram then
         cclog("setShader "..shaderName)
-        self:setGLProgram(glprogram)
+        self:getVirtualRenderer():setGLProgram(glprogram)
+        self:getVirtualRenderer():setDirty(true)
     end
 end
 
-function Node:setUniform(name,value)
-	local GLProgramState = self:getGLProgramState()
+function image:setUniform(name,value)
+	local GLProgramState = self:getVirtualRenderer():getGLProgramState()
 	local GLProgram = GLProgramState:getGLProgram()
 	local uniform = GLProgram:getUniform(name)
 	if uniform then

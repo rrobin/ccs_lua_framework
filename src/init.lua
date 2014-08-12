@@ -14,6 +14,7 @@ sharedFileUtils:addSearchPath("res/test")
 sharedDirector:getOpenGLView():setFrameSize(config.width,config.height)
 sharedDirector:getOpenGLView():setDesignResolutionSize(config.designWidth,config.designHeight,config.policy)
 sharedDirector:setDisplayStats(config.fps)
+sharedDirector:setAnimationInterval(1.0/config.interval)
 cc.init()
 
 

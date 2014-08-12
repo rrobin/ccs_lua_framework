@@ -1,10 +1,12 @@
 local MyApp = class("MyApp", cc.AppBase)
 MyApp.__index = MyApp
 
+local SceneEditor = require("SceneEditor.ui.SceneEditorUI")
+--local testScene = require("testScene")
+
 function MyApp:ctor()
 	MyApp.super.ctor(self)
-	--require("MainScene").new()
-	local scene = require("SceneEditor.ui.SceneEditorUI").new()--require("testScene").new()--require("SceneEditor.ui.SceneEditorUI").new()
+	local scene = SceneEditor.new()
     cc.runScene(scene)
 end
 

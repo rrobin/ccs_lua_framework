@@ -8,6 +8,8 @@ require("SceneEditor.command.NewLayer")
 require("SceneEditor.command.NewScene")
 require("SceneEditor.command.RenameScene")
 require("SceneEditor.command.modifyObject")
+local BrtFilterUI = import(".BrtFilterUI")
+local HueFilterUI = import(".HueFilterUI")
 
 function SceneEditorUI:ctor()
 	local layer = ccui.loadLayer("SceneEditor.ExportJson")
@@ -46,13 +48,17 @@ function SceneEditorUI:ctor()
 	local delObjBtn = layer:getChild("DelObjBtn")
 	delObjBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.removeObject)})
 
+	local flierProPanel = self._layer:getChild("FlierProPanel")
+	flierProPanel:setTouchEnabled(false)
+	flierProPanel:setVisible(false)
+
 	self._previewWindow = layer:getChild("preview_Win")
 	self._designFactor = self._previewWindow:getSize().width/960
 	self._center = cc.s2p(self._previewWindow:getSize())
 	self._center.x = self._center.x/2
 	self._center.y = self._center.y/2
 	self:initObjectPanel()
-
+    self:initLayerPanel()
 	local treePanel = layer:getChild("TreePanel")
 	self._tree = require("ui.TreeControl").new(treePanel:getSize(),"MainTree",handler(self,self.touchTree))
 	local Layout = treePanel:getLayoutParameter()
@@ -69,6 +75,147 @@ function SceneEditorUI:ctor()
 	self._ui = {}
 	self._object = nil
 end
+
+function SceneEditorUI:initLayerPanel()
+	local function setText(widget,string)
+          widget:setString(string)
+	end
+    local Rx = self._layer:getChild("RatioX")    -- 图层x速率
+    Rx:addTextFieldEvent({
+    	[ccui.TextFiledEventType.detach_with_ime] = 
+    	    function(widget)
+                local preXValue = self._curLayer.data._ratio.x  -- 先前zorder值
+                local XValue = tonumber(widget:getString())
+
+                local rwpanel = 
+				{
+					tips = "设置文本框",
+					init = function()
+						CC_SAFE_RETAIN(widget)
+					end,
+					redo = function()
+					    if XValue ~= nil then
+					    	self._curLayer.data._ratio.x = XValue
+					    	setText(widget,string.format("%d",XValue))
+					    end
+					end,
+					undo = function()
+					    if preXValue ~= nil then
+                            self._curLayer.data._ratio.x = preXValue
+                            setText(widget,string.format("%d",preXValue))
+                        end
+					end,
+					destory = function()
+						CC_SAFE_RELEASE(widget)
+					end,
+				}
+				local rwcmd = CustomCommand.new(rwpanel)   -- 重写面板数据
+				Do(rwcmd)
+    	    end
+    })
+
+    local Ry = self._layer:getChild("RatioY")    -- 图层y速率
+    Ry:addTextFieldEvent({
+    	[ccui.TextFiledEventType.detach_with_ime] = 
+    	    function(widget)
+                local preYValue = self._curLayer.data._ratio.y  -- 先前zorder值
+                local YValue = tonumber(widget:getString())
+
+                local rwpanel = 
+				{
+					tips = "设置文本框",
+					init = function()
+						CC_SAFE_RETAIN(widget)
+					end,
+					redo = function()
+					    if YValue ~= nil then
+					    	self._curLayer.data._ratio.y = YValue
+					    	setText(widget,string.format("%d",YValue))
+					    end
+					end,
+					undo = function()
+					    if preYValue ~= nil then
+                            self._curLayer.data._ratio.y = preYValue
+                            setText(widget,string.format("%d",preYValue))
+                        end
+					end,
+					destory = function()
+						CC_SAFE_RELEASE(widget)
+					end,
+				}
+				local rwcmd = CustomCommand.new(rwpanel)   -- 重写面板数据
+				Do(rwcmd)
+    	    end
+    })
+
+	local LayerZorder = self._layer:getChild("LayerZorder") -- 图层层次
+    LayerZorder:addTextFieldEvent({
+    	[ccui.TextFiledEventType.detach_with_ime] = 
+    	    function(widget)
+                local prezoValue = self._curLayer.data._zOrder  -- 先前zorder值
+                local zoValue = tonumber(widget:getString())
+                cclog("aa")
+                if self._curLayer.ui == nil then
+                    cclog("----------- ui 为空 initLayerPanel ------------")
+                end
+                local reordercmd = cc.reorderCommand.new(self._curLayer.ui,zoValue) --重新排列层
+                --local reorderdatacmd = command.modifyObject.new()  --重新刷新层数据
+                -- local cmd2 = command.modifyObject.new(self._object.data,6,z)
+
+                local rwpanel = 
+				{
+					tips = "设置文本框",
+					init = function()
+						CC_SAFE_RETAIN(widget)
+					end,
+					redo = function()
+					    if zoValue ~= nil then
+					    	cclog("--------layerpanel zorder ----------")
+					    	self._curLayer.data._zOrder = zoValue
+					    	setText(widget,string.format("%d",zoValue))
+					    end
+					end,
+					undo = function()
+					    if prezoValue ~= nil then
+					    	cclog("-------layerpanel prezorder -------")
+                            self._curLayer.data._zOrder = prezoValue
+                            setText(widget,string.format("%d",prezoValue))
+                        end
+					end,
+					destory = function()
+						CC_SAFE_RELEASE(widget)
+					end,
+				}
+				local rwcmd = CustomCommand.new(rwpanel)   -- 重写面板数据
+				Do(reordercmd,rwcmd)
+			end
+	})
+	self:setupLayerPanel(nil)
+end
+
+
+function SceneEditorUI:setupLayerPanel(groundLayer)
+
+	local panel = self._layer:getChild("LayerProPanel")
+
+	if groundLayer == nil then
+		panel:setTouchEnabled(false)
+		panel:setVisible(false)
+		return 
+	else
+		panel:setTouchEnabled(true)
+		panel:setVisible(true)
+	end
+	local ratiox = self._layer:getChild("RatioX")
+	ratiox:setString(groundLayer._ratio.x)
+	local ratioy = self._layer:getChild("RatioY")
+	ratioy:setText(string.format("%d",groundLayer._ratio.y))
+	local layerZorder = self._layer:getChild("LayerZorder")
+	layerZorder:setText(string.format("%d",groundLayer._zOrder))
+
+end
+
+
 
 function SceneEditorUI:initObjectPanel()
 	--local filename = layer:getChild("ObjFile_Label")
@@ -369,7 +516,105 @@ function SceneEditorUI:initObjectPanel()
 			local cmd9 = CustomCommand.new(t)
 			Do(cmd1,cmd2,cmd3,cmd4,cmd5,cmd6,cmd7,cmd8,cmd9)
 		end})
+
+	local function createFilterWindow(filter,object,data)
+		if not filter or not filter.class then return end
+		local flierProPanel = self._layer:getChild("FlierProPanel")
+		flierProPanel:setTouchEnabled(true)
+		flierProPanel:setVisible(true)
+		local shaderPanel = filter.ui
+		if not shaderPanel then
+			cclog("new filter UI :"..filter.text)
+			local filterClass = filter.class
+			local Layout = flierProPanel:getLayoutParameter()
+			shaderPanel = filterClass.new()
+			CC_SAFE_RETAIN(shaderPanel)
+			shaderPanel:setName("FlierProPanel")
+			shaderPanel:setLayoutParameter(Layout)
+			filter.ui = shaderPanel
+		end
+		if flierProPanel ~= shaderPanel then
+			self._layer:getChild("ScenePanel"):removeChild(flierProPanel)
+			self._layer:getChild("ScenePanel"):addChild(shaderPanel)
+		end
+		shaderPanel:setProperty(object,data)
+	end
+
+	self._FilterTable = 
+	{
+		["Null"] = { text = "无", func = function(_,object,data)
+			if data then
+				local flierProPanel = self._layer:getChild("FlierProPanel")
+				flierProPanel:setTouchEnabled(false)
+				flierProPanel:setVisible(false)
+				if data.Filter then
+					object:setShader(cc.SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP)
+					data.Filter = nil
+				end
+			end
+		end, class = nil},
+		["brightShader"] = { text = "明度", func = createFilterWindow, class = BrtFilterUI},
+		["hueShader"] = { text = "色调", func = createFilterWindow, class = HueFilterUI},
+	}
+	local FilterList = self._layer:getChild("FilterListView")
+	local FilterBtn = self._layer:getChild("FilterButton")
+	FilterList:setItemModel(FilterBtn)
+	local i = 1
+	for k,v in pairs(self._FilterTable) do
+		FilterList:pushBackDefaultItem()
+		local item = FilterList:getItem(i-1)
+		item:setTag(i)
+		item:addTouchEvent({[ccui.TouchEventType.ended] = function(button)
+			FilterBtn:setTouchEnabled(true)
+			FilterBtn:setVisible(true)
+			FilterList:setTouchEnabled(false)
+			FilterList:setVisible(false)
+			local text = FilterBtn:getTitleText()
+			local prevName = "Null"
+			local filter = self._object.data.Filter
+			if filter then
+				prevName = filter.name
+			end
+			local m = 
+			{
+				tips = "设置滤镜"
+			}
+			m.filter = clone(filter)
+			m.init = function()
+					CC_SAFE_RETAIN(FilterBtn)
+				end
+			m.redo = function()
+					if not self._object.data.Filter then
+						self._object.data.Filter = {}
+					end
+					self._object.data.Filter.name = k
+					self:setupFilter(self._object,self._object.data)
+				end
+			m.undo = function()
+					self._object.data.Filter = clone(m.filter)
+					self:setupFilter(self._object,self._object.data)
+				end
+			m.destory = function()
+					CC_SAFE_RELEASE(FilterBtn)
+				end
+			local cmd = CustomCommand.new(m)
+			Do(cmd)
+		end,})
+		item:setName("FilterItem"..i)
+		item:setTitleText(v.text)
+		i = i+1
+	end
+	FilterBtn:addTouchEvent({[ccui.TouchEventType.ended] =
+		function(button)
+			button:setTouchEnabled(false)
+			button:setVisible(false)
+			FilterList:setTouchEnabled(true)
+			FilterList:setVisible(true)
+		end
+		})
+
 	self:setupObjectPanel(nil)
+	self:setupFilter(nil,nil)
 end
 
 function SceneEditorUI:setupObjectPanel(SceneObject)
@@ -408,6 +653,29 @@ function SceneEditorUI:setupObjectPanel(SceneObject)
 	OpacityLabel:setString(tostring(SceneObject.Opacity))
 	local zOder = self._layer:getChild("zOrder")
 	zOder:setString(string.format("%d",SceneObject.zOrder))
+end
+
+function SceneEditorUI:setupFilter(object,data)
+	local flierProPanel = self._layer:getChild("FlierProPanel")
+	flierProPanel:setTouchEnabled(false)
+	flierProPanel:setVisible(false)
+
+	if object == nil then 	
+		return 
+	end
+
+	local name = "Null"
+	if data and data.Filter then
+		name =  data.Filter.name
+	end
+	if data then
+		cclog(data.Filename.." set filter : "..name)
+	end
+	local v = self._FilterTable[name]
+	local FilterBtn = self._layer:getChild("FilterButton")
+	cclog("text : "..v.text)
+	FilterBtn:setTitleText(v.text)
+	v.func(v,object,data)
 end
 
 -- SceneOp
@@ -455,8 +723,12 @@ end
 
 -- GroundLayerOp
 function SceneEditorUI:addLayer()
+
+	local layInfo = clone(LPData)
+
 	if self._curGround.name == "背景" then
 		local name = "层"..self._curGround.data:LayerCount()+1
+        
 		local node = nil
 		local s = self:getSize()
 		s.width = self._curScene.data._width/960*s.width
@@ -475,14 +747,17 @@ function SceneEditorUI:addLayer()
 			self._curGround.ui:removeChild(panel)
 			self._tree:removeItem(node)
 			self._tree:Layout()
-		end,
+			self._tree:print()
+		end,            
 			redo = function()
 			local l = GroundLayer.new(self._curGround.data,name)
 			index = self._curGround.data:addLayer(l)
+
 			self._layers[self._curGround.name..name] = panel
 			self._curGround.ui:addChild(panel)
 			node = self._tree:addItem(name,self._curGround.treeNode)
 			self._tree:Layout()
+			self._tree:print()
 		end,
 			destory = function()
 			CC_SAFE_RELEASE(self._tree)
@@ -495,6 +770,7 @@ function SceneEditorUI:addLayer()
 end
 
 function SceneEditorUI:removeLayer()
+    
 end
 
 function SceneEditorUI:renameLayer()
@@ -511,6 +787,11 @@ function SceneEditorUI:addObject()
 	local filename = PlatformUtility:OpenFile("E:\\","Png;Jpg(*.png,*.Jpg)\0*.png;*.jpg\0")
 	local name = self._curLayer.data._name
 	cclog("cur layer name:"..name)
+	if filename == "" then return end
+	self:addImage(filename,name)
+end
+
+function SceneEditorUI:addImage(filename,layername)
 	local sprite = ccui.image({image=filename})
 	local objInfo = clone(SceneObject)
 	local pos = nil
@@ -544,9 +825,11 @@ function SceneEditorUI:addObject()
 			if prevObject then
 				data = prevObject.data
 				prevObject:getVirtualRenderer():setDrawBound(true)
+				self._object.index = nil  
 			end
-			self._layers[self._curGround.name..name]:removeChild(sprite)
+			self._layers[self._curGround.name..layername]:removeChild(sprite)
 			self:setupObjectPanel(data)
+			self:setupFilter(self._object,data)
 		end,
 		redo = function()
 			if prevObject then
@@ -554,11 +837,13 @@ function SceneEditorUI:addObject()
 			end
 			self._object = sprite
 			sprite:getVirtualRenderer():setDrawBound(true)
-			self._layers[self._curGround.name..name]:addChild(sprite)
+			self._layers[self._curGround.name..layername]:addChild(sprite)
 			self:setupObjectPanel(objInfo)
+			self:setupFilter(self._object,objInfo)
 			pos = self._curLayer.data:addObject(objInfo)
 			cclog("add data pos : ".. pos)
 			self._object.data = objInfo
+			self._object.index = pos
 		end,
 		destory = function()
 			CC_SAFE_RELEASE(sprite)
@@ -571,38 +856,48 @@ end
 
 function SceneEditorUI:touchSprite(image)
 	local prevObject = self._object
-	local m = 
-	{
-		tips = "选择物件",
-		init = function()
-			CC_SAFE_RETAIN(prevObject)
-			CC_SAFE_RETAIN(image)
-		end,
-		redo = function()
-			if prevObject then
-				prevObject:getVirtualRenderer():setDrawBound(false)
-			end
-			image:getVirtualRenderer():setDrawBound(true)
-			self._object = image
-			self:setupObjectPanel(self._object.data)
-			self._object.spos = self._object:pos()
-		end,
-		undo = function()
-			image:getVirtualRenderer():setDrawBound(false)
-			if prevObject then
-				prevObject:getVirtualRenderer():setDrawBound(true)
-			end
-			self._object = prevObject
-			self:setupObjectPanel(self._object.data)
-		end,
-		destory = function()
-			CC_SAFE_RELEASE(prevObject)
-			CC_SAFE_RELEASE(image)
-		end,
-	}
-	local cmd = CustomCommand.new(m)
-	Do(cmd)
+	if prevObject ~= image then -- 重复点击就不记录了
+		local m = 
+		{
+			tips = "选择物件",
+			init = function()
+				CC_SAFE_RETAIN(prevObject)
+				CC_SAFE_RETAIN(image)
+			end,
+			redo = function()
+				if prevObject then
+					prevObject:getVirtualRenderer():setDrawBound(false)
+				end
+				image:getVirtualRenderer():setDrawBound(true)
+				self._object = image
+				self:setupObjectPanel(self._object.data)
+				self:setupFilter(self._object,self._object.data)
+			end,
+			undo = function()
+				image:getVirtualRenderer():setDrawBound(false)
+				if prevObject then
+					prevObject:getVirtualRenderer():setDrawBound(true)
+				end
+				self._object = prevObject
+				local data = nil
+				if self._object then
+					data = self._object.data
+				end
+				self:setupObjectPanel(data)
+				self:setupFilter(self._object,data)
+			end,
+			destory = function()
+				CC_SAFE_RELEASE(prevObject)
+				CC_SAFE_RELEASE(image)
+			end,
+		}
+		local cmd = CustomCommand.new(m)
+		Do(cmd)
+	end
 	self._spos = image:getTouchBeganPosition()
+	if self._object then
+		self._object.spos = self._object:pos()
+	end
 	local scrollview = self._layer:getChild("preview_Scroll")
 	local inner_pos = scrollview:getInnerContainer():pos()
 	self._offset = {x=100,y=100}
@@ -614,7 +909,6 @@ function SceneEditorUI:touchSprite(image)
 	if delta > 0 then
 		self._offset.y = inner_pos.y/delta*100
 	end
-	cclog("self._offset x:"..self._offset.x.." y:"..self._offset.y)
 end
 
 function SceneEditorUI:moveSprite(image)
@@ -631,48 +925,92 @@ end
 
 function SceneEditorUI:stopSprite(image)
 	local epos = image:getTouchEndPosition()
-	local spos = self._object.spos
 	local Pos_x = self._layer:getChild("Pos_x")
 	local Pos_y = self._layer:getChild("Pos_y")
 	local object = self._object
 	local delay = cc.pSub(epos,self._spos)
-	local cmdtable = 
-	{
-		tips = "移动物件",
-		init = function()
-			CC_SAFE_RETAIN(object)
-			CC_SAFE_RETAIN(Pos_x)
-			CC_SAFE_RETAIN(Pos_y)
-		end,
-		undo = function()
-			local pos = object:pos(spos)
-			pos.x = math.floor(pos.x/self._designFactor)
-			pos.y = math.floor(pos.y/self._designFactor)
-			Pos_x:setText(string.format("%d",pos.x))
-			Pos_y:setText(string.format("%d",pos.y))
-			object.data.Pos = pos
-		end,
-		redo = function()
-			local pos = object:pos(cc.pAdd(spos,delay))
-			pos.x = math.floor(pos.x/self._designFactor)
-			pos.y = math.floor(pos.y/self._designFactor)
-			Pos_x:setText(string.format("%d",pos.x))
-			Pos_y:setText(string.format("%d",pos.y))
-			object.data.Pos = pos
-		end,
-		destory = function()
-			CC_SAFE_RELEASE(object)
-			CC_SAFE_RELEASE(Pos_x)
-			CC_SAFE_RELEASE(Pos_y)
-		end,
-	}
-	local cmd = CustomCommand.new(cmdtable)
-	Do(cmd)
+	--cclog("delay x:"..delay.x.." y:"..delay.y)
+	if math.abs(delay.x) > 1 or math.abs(delay.y) > 1 then -- 精度到1像素
+		local spos = self._object.spos
+		local cmdtable = 
+		{
+			tips = "移动物件",
+			init = function()
+				CC_SAFE_RETAIN(object)
+				CC_SAFE_RETAIN(Pos_x)
+				CC_SAFE_RETAIN(Pos_y)
+			end,
+			undo = function()
+				local pos = object:pos(spos)
+				pos.x = math.floor(pos.x/self._designFactor)
+				pos.y = math.floor(pos.y/self._designFactor)
+				Pos_x:setText(string.format("%d",pos.x))
+				Pos_y:setText(string.format("%d",pos.y))
+				object.data.Pos = pos
+			end,
+			redo = function()
+				local pos = object:pos(cc.pAdd(spos,delay))
+				pos.x = math.floor(pos.x/self._designFactor)
+				pos.y = math.floor(pos.y/self._designFactor)
+				Pos_x:setText(string.format("%d",pos.x))
+				Pos_y:setText(string.format("%d",pos.y))
+				object.data.Pos = pos
+			end,
+			destory = function()
+				CC_SAFE_RELEASE(object)
+				CC_SAFE_RELEASE(Pos_x)
+				CC_SAFE_RELEASE(Pos_y)
+			end,
+		}
+		local cmd = CustomCommand.new(cmdtable)
+		Do(cmd)
+	end
 	self._layer:getChild("preview_Scroll"):scrollToPercentHorizontal(self._offset.x,0.01,false)
-	cclog("stop sprite")
+	--cclog("stop sprite")
 end
 
 function SceneEditorUI:removeObject()
+    local prevObject = self._object
+    --local objInfot = clone(SceneObject)
+
+    if self._curLayer.data == 0 or prevObject == nil then
+   		return 
+  	end
+  	local fn = self._curLayer.data._name
+    local cmdt = 
+    {
+          tips = "删除物体",
+          init = function()
+	          --CC_SAFE_RETAIN(sprite)
+			  CC_SAFE_RETAIN(prevObject)
+          end,
+
+          undo = function()
+          	self._object = prevObject
+          	if prevObject then 
+				local objInfotemp = prevObject.data
+				self._layers[self._curGround.name..fn]:addChild(prevObject)
+				self:setupObjectPanel(objInfotemp)
+				self:setupFilter(self._object,objInfotemp)
+                local indextemp = nil
+				indextemp = self._curLayer.data:addObject(objInfotemp,self._object.index)
+			    cclog("add data index : ".. self._object.index)
+          	end
+          end,
+          redo = function()
+	        self._curLayer.data:removeObject(self._object.index)
+          	self._layers[self._curGround.name..fn]:removeChild(self._object)
+          	self:setupObjectPanel(nil)
+          	self:setupFilter(nil,nil)
+          	self._object = nil
+          end,
+          destory = function()
+                --CC_SAFE_RELEASE(sprite)
+			    CC_SAFE_RELEASE(prevObject)
+          end,
+    }
+	local cmd = CustomCommand.new(cmdt)
+	Do(cmd)
 end
 
 --CommondOp
@@ -719,9 +1057,12 @@ function SceneEditorUI:touchTree(tree_name)
 			redo = function()
 				self._curLayer.data = self._curGround.data:getLayer(self._selected.value)
 				self._curLayer.treeNode = self._selected.name
+				self._curLayer.ui = self._layers[self._curGround.name..self._selected.value]
+				self:setupLayerPanel(self._curLayer.data)
 			end,
 			undo = function()
 				self._curlayer = prevSelected
+				self:setupLayerPanel(self._curLayer.data)
 			end,
 		}
 

@@ -5,6 +5,8 @@ function GroundLayer:ctor(owner,name)
 	self._ownerGround = owner
 	self._objectsVector = vector.new()
 	self._name = name
+	self._ratio = {x=1,y=1}
+	self._zOrder = 0
 end
 
 function GroundLayer:tile()

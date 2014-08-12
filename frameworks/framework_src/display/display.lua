@@ -15,13 +15,14 @@ import(".SpriteEx")
     }
 ]]
 
---d.shaders = {}
+display.shaders = {}
+
 function display.addShader(shader)
     local name = shader.n
     local vsh = shader.v
     local fsh = shader.f
-    local Progam = display.getShader(name)
-    if Progam then return end
+    local Program = display.getShader(name)
+    if Program then return end
     local fileUtiles = cc.FileUtils:getInstance()
     if string.find(vsh,".vsh") ~= nil then
         vsh = fileUtiles:getStringFromFile( vsh )
@@ -30,14 +31,34 @@ function display.addShader(shader)
     if string.find(fsh,".fsh") ~= nil then
         fsh = fileUtiles:getStringFromFile( fsh )
     end
-    Progam = cc.GLProgram:createWithByteArrays( vsh, fsh )
-    local ProgamCache = cc.GLProgramCache:getInstance()
-    ProgamCache:addGLProgram( Progam, name )
+    Program = cc.GLProgram:createWithByteArrays( vsh, fsh )
+    local GLProgramstate = cc.GLProgramState:create(Program)
+    if GLProgramstate:getUniformCount() > 0 then
+        display.shaders[name] = {v=vsh,f=fsh}
+    else
+        local ProgamCache = cc.GLProgramCache:getInstance()
+        ProgamCache:addGLProgram( Program, name )
+    end
     cclog("add shader : ".. name)
 end
 
 function display.getShader(name)
-    --return d.shaders[name]
-    local ProgamCache = cc.GLProgramCache:getInstance()
-    return ProgamCache:getGLProgram(name)
+    local shader = display.shaders[name]
+    if shader then
+        local vsh = shader.v
+        local fsh = shader.f
+        local fileUtiles = cc.FileUtils:getInstance()
+        if string.find(vsh,".vsh") ~= nil then
+            vsh = fileUtiles:getStringFromFile( vsh )
+        end
+
+        if string.find(fsh,".fsh") ~= nil then
+            fsh = fileUtiles:getStringFromFile( fsh )
+        end
+        Program = cc.GLProgram:createWithByteArrays( vsh, fsh )
+        return Program
+    else
+        local ProgamCache = cc.GLProgramCache:getInstance()
+        return ProgamCache:getGLProgram(name)
+    end
 end

@@ -71,6 +71,7 @@ end
 if config.display then
 	import(".display.display")
 	import(".ccs.armatureEx")
+	import(".ccui.ImageEx")
 end
 
 if config.audio then

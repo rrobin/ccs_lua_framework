@@ -6,4 +6,5 @@ config =
 	designHeight = 640,
 	policy = cc.ResolutionPolicy.SHOW_ALL,
 	fps = false,
+	interval = 60,
 }

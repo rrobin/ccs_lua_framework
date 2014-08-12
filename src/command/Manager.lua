@@ -27,6 +27,7 @@ end
 function CommandManager:execute(command)
 	--先执行清理
 	self:clearReservedCommands()
+	cclog("执行:"..command._tips)
 	command:redo()
 	self._workStack:push(command)
 end
@@ -52,6 +53,7 @@ function CommandManager:undo(step)
 	if self._workStack:count() < step then step = self._workStack:count() end
 	for i=1,step do
 		local command = self._workStack:pop()
+		cclog("撤销:"..command._tips)
 		command:undo()
 		self._reserveStack:push(command)
 	end
@@ -67,6 +69,7 @@ function CommandManager:redo(step)
 	if self._reserveStack:count() < step then step = self._reserveStack:count() end
 	for i=1,step do
 		local command = self._reserveStack:pop()
+		cclog("重做:"..command._tips)
 		command:redo()
 		self._workStack:push(command)
 	end

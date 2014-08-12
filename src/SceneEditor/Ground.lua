@@ -4,16 +4,23 @@ Ground.__index = Ground
 function Ground:ctor(owner)
 	self._ownerScene = owner
 	self._layersVector = vector.new()
+	self.layerNo = 0
 end
 
-function Ground:addLayer(layer)
+function Ground:addLayer(layer,pos)
 	local l = layer
-	local index = self:LayerCount()
+	local index = nil
+	if pos == nil then
+	    self.layerNo = self.layerNo + 1
+        index = self:LayerCount()
+	else
+	    index = pos
+    end
 	if not l then
 		local name = "层"..tostring(index+1)
 		l = GroundLayer.new(self,name)
 	end
-	self._layersVector:push_back(l)
+	self._layersVector:insert(l,index)
 	return index
 end
 

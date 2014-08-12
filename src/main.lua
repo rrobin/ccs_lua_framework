@@ -25,6 +25,7 @@ local function main()
     {v = "shaders/TPC_noMvp.vsh", f = "shaders/StoneShader.fsh", n = "StoneShader"},
     {v = "shaders/TPC_noMvp.vsh", f = "shaders/bright.fsh", n = "brightShader"},
     {v = "shaders/TPC_noMvp.vsh", f = "shaders/outline.fsh", n = "outline"},
+    {v = "shaders/TPC_noMvp.vsh", f = "shaders/Hue.fsh", n = "hueShader"},
     --{v = "shaders/TPC_noMvp.vsh", f = "shaders/ghostlike_filterX.fsh", n = "ghostlike_filterX"},
     }
     for k,v in ipairs(shaders) do
