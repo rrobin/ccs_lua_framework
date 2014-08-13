@@ -17,9 +17,7 @@ function BrtFilterUI:setProperty(object,info)
 	cclog("info.Filter.name:"..info.Filter.name)
 	if info.Filter.name ~= "brightShader" or not info.Filter.brightness then
 		cclog("not Filter")
-		info.Filter = {}
-		info.Filter.name = "brightShader"
-		info.Filter.brightness = 0.0 	-- [-1,1]
+		info.Filter = brtFilter.new()
 	end
 	self._info = info
 	self._brightness = info.Filter.brightness

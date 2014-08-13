@@ -1,3 +1,18 @@
+require(uber.PACKAGE_NAME..".helper"..".json")
+function pArray(p)
+	if not p then return nil end
+	local a = {}
+	if p.x ~= nil then
+		a["x"] = p.x
+	end
+	if p.y ~= nil then
+		a["y"] = p.y
+	end
+	if p.z ~= nil then
+		a["z"] = p.z
+	end
+	return a
+end
 
 SceneObject = 
 {
@@ -9,7 +24,43 @@ SceneObject =
 	Scale   = { x=1, y=1 },
 	Opacity = 255,  -- 不透明度,0-255
 	Filter  = nil,  -- filter表,保存滤镜名称和参数值
+	locked  = false, --  界面锁定,锁定之后不可对其做任何操作
+	visible = true, -- 可视,暂时预留
 }
+
+function SceneObject:getJsonData()
+	local data = {}
+	data["FileName"] = self.Filename
+	data["Pos"] = pArray(self.Pos)
+	data["Flip"] = pArray(self.Flip)
+	data["zOrder"] = self.zOrder
+	data["Rotation"] = self.Rotation
+	data["Scale"] = pArray(self.Scale)
+	data["Opacity"] = self.Opacity
+	if self.Filter then
+		data["Filter"] = self.Filter:getJsonData()
+	end
+	data["locked"] = self.locked
+	data["visible"] = self.visible
+	return data
+end
+
+function SceneObject:serialize(jsonValue)
+	self.Filename = jsonValue["FileName"]
+	self.Pos = jsonValue["Pos"]
+	self.Flip = jsonValue["Flip"]
+	self.zOrder = jsonValue["zOrder"]
+	self.Rotation = jsonValue["Rotation"]
+	self.Scale = jsonValue["Scale"]
+	self.Opacity = jsonValue["Opacity"]
+	self.locked = jsonValue["locked"]
+	self.visible = jsonValue["visible"]
+	local filter = jsonValue["Filter"]
+	if filter then
+		self.Filter = ccs.ObjectFactory.getInstance():createObject(filter["name"])
+		self.Filter:serialize(filter)
+	end
+end
 
 
 GroundLayer = import(".GroundLayer")
@@ -61,12 +112,29 @@ function SceneManager:renameScene(old_name,new_name)
 	end
 end
 
-function SceneManager:Save(path)
-	cclog("还未考虑好是保存json还是xml还是二进制")
+function SceneManager:Save(name,path)
+	local scenedata = self:findScene(name):getJsonData()
+	local json_str = json.encode(scenedata)
+	local filePath = path.."\\".."aaa.json"
+	local file = io.open(filePath,"w+")
+	if file then
+		cclog("保存成功")
+		file:write(json_str) 
+		file:close()
+	end
 end
 
 function SceneManager:Load(path)
-	cclog("敬请期待")
+	local file = io.open("e:\\output\\aaa.json")
+	if file then
+		local json_str = file:read("*a")
+		cclog(json_str)
+		local parseTable = json.decode(json_str,1)
+		local scene = GameScene.new("test",1234)
+		scene:serialize(parseTable)
+		return scene
+	end
+	return nil
 end
 
 return SceneManager

@@ -55,4 +55,24 @@ function Ground:getScene()
 	return self._ownerScene
 end
 
+function Ground:getJsonData()
+	local data = {}
+	local layers = {}
+	for i=1,self:LayerCount() do
+		local l = self:getLayer(i-1)
+		layers[i] = l:getJsonData()
+	end
+	data["layers"] = layers
+	return data
+end
+
+function Ground:serialize(jsonValue)
+	local layers = jsonValue["layers"]
+	for i=1,#layers do
+		self:addLayer()
+		local l = self:getLayer(i-1)
+		l:serialize(layers[i])
+	end
+end
+
 return Ground

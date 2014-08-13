@@ -28,9 +28,7 @@ function HueFilterUI:setProperty(object,info)
 	self._info = info
 	if info.Filter.name ~= "hueShader" or not info.Filter.HSL then
 		cclog("not Filter")
-		info.Filter = {}
-		info.Filter.name = "hueShader"
-		info.Filter.HSL = cc.Vertex3F(0,0,0) -- [-1,1]
+		info.Filter = hueFilter.new(0)
 	end
 	self._hsl = info.Filter.HSL
 	self._object:setShader("hueShader",true)

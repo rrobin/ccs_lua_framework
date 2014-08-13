@@ -49,4 +49,29 @@ function GroundLayer:rename(new_name)
 	self._name = new_name
 end
 
+function GroundLayer:getJsonData()
+	local data = {}
+	data["name"] = self._name
+	data["ratio"] = self._ratio
+	data["z"] = self._zOrder
+	local childs = {}
+	data["childs"] = childs
+	for i=1,self._objectsVector:count() do
+		childs[i] = self:getObject(i-1):getJsonData()
+	end
+	
+	return data
+end
+
+function GroundLayer:serialize(jsonValue)
+	self._name = jsonValue["name"]
+	self._ratio = jsonValue["ratio"]
+	self._zOrder = jsonValue["z"]
+	local childs = jsonValue["childs"]
+	for i=1,#childs do
+		local obj = clone(SceneObject)
+		obj:serialize(childs[i])
+	end
+end
+
 return GroundLayer

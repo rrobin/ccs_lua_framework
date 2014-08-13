@@ -681,9 +681,18 @@ end
 -- SceneOp
 function SceneEditorUI:saveScene()
 	-- body
+	SceneManager:Save(self._curScene.data._name,"e:\\output")
 end
 
 function SceneEditorUI:loadScene()
+	local scene = SceneManager:Load("")
+	if not scene then return end 
+	local parent = self._tree:addItem("新场景")
+	self._Grounds[self._tree:addItem("背景",parent)] = scene._BackGround
+	self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
+	self._Grounds[self._tree:addItem("前景",parent)] = scene._FrontGround
+	self._tree:extend(parent)
+	self:addSceneUI(960*2)
 end
 
 function SceneEditorUI:newScene()
@@ -733,7 +742,7 @@ function SceneEditorUI:addLayer()
 		local s = self:getSize()
 		s.width = self._curScene.data._width/960*s.width
 		local panel = ccui.panel({size = s})
-		local index = 0
+		local index = 0 
 		local cmdt = 
 		{
 			tips = "新建层",

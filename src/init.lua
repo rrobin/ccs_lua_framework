@@ -4,6 +4,13 @@ stack = require("Common.stack")
 vector = require("Common.vector")
 require("command.init")
 require("config")
+
+brtFilter = require("filter.brightness")
+hueFilter = require("filter.hue")
+
+ccs.registerTriggerClass("brightShader",brtFilter.new)
+ccs.registerTriggerClass("hueShader",hueFilter.new)
+
 SceneManager = require("SceneEditor.Manager").new()
 --require("opcodes")
 sharedFileUtils:addSearchPath("res")

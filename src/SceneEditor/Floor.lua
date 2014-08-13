@@ -16,4 +16,14 @@ function Floor:removeObject(name)
 	end
 end
 
+function Floor:getJsonData()
+	local data = {}
+	local objects = {}
+	data["objects"] = objects
+	return data 
+end
+
+function Floor:serialize(jsonValue)
+end
+
 return Floor

@@ -49,6 +49,7 @@ import(".helper.shortcuts")
 import(".cc.Cocos2d")
 import(".ccui.init")
 import(".ccs.StudioConstants")
+import(".ccs.CocoStudio")
 import(".opengl.OpenglConstants")
 
 if config.deprecated then
