@@ -66,7 +66,7 @@ function Widget:init(params)
             init = (type(zOrder) == "number")
             assert(init,"widget invaild params.z")
             if init == false then break end
-            self:setZOrder(zOrder)
+            self:setLocalZOrder(zOrder)
         end
         
         if name then

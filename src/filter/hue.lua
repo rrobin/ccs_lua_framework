@@ -17,4 +17,9 @@ function HueFilter:serialize(jsonValue)
 	self.HSL = jsonValue["HSL"]
 end
 
+function HueFilter:ApplyTo(object)
+	object:setShader(self.name)
+	object:setUniform("u_dHSL",self.HSL)
+end
+
 return HueFilter

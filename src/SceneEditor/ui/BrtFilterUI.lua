@@ -22,7 +22,7 @@ function BrtFilterUI:setProperty(object,info)
 	self._info = info
 	self._brightness = info.Filter.brightness
 	self._object = object
-	self._object:setShader("brightShader",true)
+	self._object:setShader("brightShader")
 	self:updateUI()
 end
 

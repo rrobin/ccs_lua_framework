@@ -118,7 +118,6 @@ function SceneManager:Save(name,path)
 	local filePath = path.."\\".."aaa.json"
 	local file = io.open(filePath,"w+")
 	if file then
-		cclog("保存成功")
 		file:write(json_str) 
 		file:close()
 	end
@@ -128,7 +127,6 @@ function SceneManager:Load(path)
 	local file = io.open("e:\\output\\aaa.json")
 	if file then
 		local json_str = file:read("*a")
-		cclog(json_str)
 		local parseTable = json.decode(json_str,1)
 		local scene = GameScene.new("test",1234)
 		scene:serialize(parseTable)

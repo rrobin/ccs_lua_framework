@@ -79,7 +79,7 @@ function TreeControl:addItem(name,parent,pos,tnname)   --tnname树节点内部�
 			node.value = node.name
 		end
 	else
-		if tnname == nil then
+		if tnname == nil then    --当没传名字，取默认名字
 		    self._Ccount = self._Ccount + 1
 		    node.name = "Child"..self._Ccount
         else
@@ -160,7 +160,7 @@ end
 function TreeControl:removeItem(name)
 	--cclog("------- 删除节点前---".."\n")
 	--self:print()
-	cclog("--------name:"..name)
+--	cclog("--------name:"..name)
 	local node = self._nodes[name]
 	cclog("删除节点名字："..node.name)
 	if node then
@@ -222,8 +222,6 @@ function TreeControl:removeItem(name)
 				prev = self._nodes[v]
 			end
 		end
-
-
 		self._nodes[name] = nil
 		self._SelectItem = nil
 		--cclog("------- 删除节点后---".."\n")

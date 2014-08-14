@@ -28,10 +28,10 @@ function HueFilterUI:setProperty(object,info)
 	self._info = info
 	if info.Filter.name ~= "hueShader" or not info.Filter.HSL then
 		cclog("not Filter")
-		info.Filter = hueFilter.new(0)
+		info.Filter = hueFilter.new()
 	end
 	self._hsl = info.Filter.HSL
-	self._object:setShader("hueShader",true)
+	self._object:setShader("hueShader")
 	self:updateUI()
 end
 

@@ -25,7 +25,21 @@ function Ground:addLayer(layer,pos)
 end
 
 function Ground:removeLayer(index)
-	self._layersVector:earse(index)
+	if type(index) == "number" then 
+		self._layersVector:earse(index)
+	elseif type(index) == "string" then
+		local count = self._layersVector:count()-1
+		for i=0,count do
+			local l = self._layersVector:at(i)
+			if l._name == index then
+				self._layersVector:earse(i)
+				break
+			end
+		end
+	else
+		assert(false)
+		cclog("invalid key")
+	end
 end
 
 function Ground:LayerCount()
@@ -49,6 +63,24 @@ function Ground:getLayer(key)
 	end
 
 	return nil
+end
+
+-- 根据层名得到其在vector的位置
+function Ground:getIndex(lname)
+    --[[for k,v in ipairs(self._layersVector) do
+		if k._name == name then
+			--cclog("node idx:"..idx)
+			return v
+		end
+	end]]
+    --cclog("lname:"..lname)
+	local count = self._layersVector:count() - 1
+	for i=0,count do
+		local l = self._layersVector:at(i)
+		if l._name == lname then
+			return i
+        end
+    end
 end
 
 function Ground:getScene()

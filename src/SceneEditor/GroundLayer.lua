@@ -1,4 +1,4 @@
-local GroundLayer = class("GroundLayer")
+ local GroundLayer = class("GroundLayer")
 GroundLayer.__index = GroundLayer
 
 function GroundLayer:ctor(owner,name)
@@ -34,11 +34,26 @@ function GroundLayer:addObject(object,pos)
 end
 
 function GroundLayer:removeObject(pos)
-	self._objectsVector:earse(pos)
+	if type(pos) == "number" then 
+	    self._objectsVector:earse(pos)
+    else
+    	local count = self._objectsVector:count()-1
+    	for i=0,count do
+    		local obj = self._objectsVector:at(i)
+    		if obj == pos then
+    			self._objectsVector:earse(i)
+    			break
+    		end
+    	end
+    end
 end
 
 function GroundLayer:getObject(pos)
 	return self._objectsVector:at(pos)
+end
+
+function GroundLayer:getObjectCount()
+	return self._objectsVector:count()
 end
 
 function GroundLayer:getGround()
@@ -71,6 +86,7 @@ function GroundLayer:serialize(jsonValue)
 	for i=1,#childs do
 		local obj = clone(SceneObject)
 		obj:serialize(childs[i])
+		self:addObject(obj)
 	end
 end
 

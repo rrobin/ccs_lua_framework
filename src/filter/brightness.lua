@@ -17,4 +17,9 @@ function BrightnessFilter:serialize(jsonValue)
 	self.brightness = jsonValue["brightness"]
 end
 
+function BrightnessFilter:ApplyTo(object)
+	object:setShader(self.name)
+	object:setUniform("brightness",self.brightness)
+end
+
 return BrightnessFilter

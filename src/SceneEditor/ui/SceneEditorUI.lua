@@ -48,6 +48,8 @@ function SceneEditorUI:ctor()
 	local delObjBtn = layer:getChild("DelObjBtn")
 	delObjBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.removeObject)})
 
+	local ObjList = layer:getChild("ListView_Obj")
+
 	local flierProPanel = self._layer:getChild("FlierProPanel")
 	flierProPanel:setTouchEnabled(false)
 	flierProPanel:setVisible(false)
@@ -72,6 +74,7 @@ function SceneEditorUI:ctor()
 	self._curLayer = {data=0,ui=0,treeNode = 0}
 	self._Grounds = {}
 	self._layers = {}
+	self._objects = {}   -- 用来存储object对象列表
 	self._ui = {}
 	self._object = nil
 end
@@ -154,7 +157,6 @@ function SceneEditorUI:initLayerPanel()
     	    function(widget)
                 local prezoValue = self._curLayer.data._zOrder  -- 先前zorder值
                 local zoValue = tonumber(widget:getString())
-                cclog("aa")
                 if self._curLayer.ui == nil then
                     cclog("----------- ui 为空 initLayerPanel ------------")
                 end
@@ -688,11 +690,46 @@ function SceneEditorUI:loadScene()
 	local scene = SceneManager:Load("")
 	if not scene then return end 
 	local parent = self._tree:addItem("新场景")
-	self._Grounds[self._tree:addItem("背景",parent)] = scene._BackGround
+	
+	local function createGround(treeNode,ground,gname)
+		for i=1,ground:LayerCount() do
+			local l = ground:getLayer(i-1)
+			local s = self._previewWindow:getSize()
+			s.width = s.width*self._designFactor
+			local panel = ccui.panel({size = s})
+			local name = l._name
+			self._layers[gname..name] = panel
+			self._ui[gname]:addChild(panel)
+			node = self._tree:addItem(name,treeNode)
+			for j=1,l:getObjectCount() do
+				local obj = l:getObject(j-1)
+				local sprite = ccui.image({image=obj.Filename,z=obj.zOrder})
+				sprite:setScaleX(self._designFactor*obj.Scale.x)
+				sprite:setScaleY(self._designFactor*obj.Scale.y)
+				sprite:pos(cc.pMul(obj.Pos,self._designFactor))
+				sprite:setFlippedX(obj.Flip.x)
+				sprite:setFlippedY(obj.Flip.y)
+				sprite:setRotation(obj.Rotation)
+				sprite:setOpacity(obj.Opacity)
+				sprite:addTouchEvent({[ccui.TouchEventType.began] = handler(self,self.touchSprite),
+									[ccui.TouchEventType.moved] = handler(self,self.moveSprite),
+									[ccui.TouchEventType.ended] = handler(self,self.stopSprite),
+									[ccui.TouchEventType.canceled] = handler(self,self.stopSprite),
+									})
+				if obj.Filter then
+					obj.Filter:ApplyTo(sprite)
+				end
+				panel:addChild(sprite)
+			end
+		end
+		self._Grounds[treeNode] = ground
+	end
+	self:addSceneUI(scene._width)	
+	createGround(self._tree:addItem("背景",parent),scene._BackGround,"背景")
+	--createGround(self._tree:addItem("地板",parent),scene._Floor,"地板")
 	self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
-	self._Grounds[self._tree:addItem("前景",parent)] = scene._FrontGround
-	self._tree:extend(parent)
-	self:addSceneUI(960*2)
+	createGround(self._tree:addItem("前景",parent),scene._FrontGround,"前景")
+	self._tree:Layout()
 end
 
 function SceneEditorUI:newScene()
@@ -704,7 +741,8 @@ function SceneEditorUI:newScene()
 	self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
 	self._Grounds[self._tree:addItem("前景",parent)] = scene._FrontGround
 	self._tree:extend(parent)
-	self:addSceneUI(960*2)
+	self:addSceneUI(scene._width)
+	self._tree:Layout()
 	--[[
 	local cmd1 = command.NewScene.new("新场景",960*2)
 	local cmd2 = command.addTreeItem.new(self._tree,"新场景")
@@ -732,17 +770,17 @@ end
 
 -- GroundLayerOp
 function SceneEditorUI:addLayer()
-
-	local layInfo = clone(LPData)
-
 	if self._curGround.name == "背景" then
-		local name = "层"..self._curGround.data:LayerCount()+1
+		local name = "层"..self._curGround.data.layerNo+1
         
-		local node = nil
-		local s = self:getSize()
-		s.width = self._curScene.data._width/960*s.width
+		local node = nil    -- 为数节点内部名称：如child1
+		local s = self._previewWindow:getSize()
+		s.width = s.width*self._designFactor
 		local panel = ccui.panel({size = s})
-		local index = 0 
+		local layerData = nil
+		local index = 0
+		local nodeNo = nil
+		local undotype = 0    -- 判断有没有执行undo语句块
 		local cmdt = 
 		{
 			tips = "新建层",
@@ -754,19 +792,32 @@ function SceneEditorUI:addLayer()
 			self._curGround.data:removeLayer(index)
 			self._layers[self._curGround.name..name] = nil
 			self._curGround.ui:removeChild(panel)
+			--nodeNo = self._tree:getNodePos(treeN)
 			self._tree:removeItem(node)
 			self._tree:Layout()
-			self._tree:print()
+			undotype = 1
+			--self._tree:print()
 		end,            
 			redo = function()
-			local l = GroundLayer.new(self._curGround.data,name)
-			index = self._curGround.data:addLayer(l)
 
-			self._layers[self._curGround.name..name] = panel
-			self._curGround.ui:addChild(panel)
-			node = self._tree:addItem(name,self._curGround.treeNode)
+			if undotype == 1 then 
+				index = self._curGround.data:addLayer(layerData,index)
+				self._layers[self._curGround.name..name] = { ui = panel, lname = name }
+				self._curGround.ui:addChild(panel)
+			    node = self._tree:addItem(name,self._curGround.treeNode,nodeNo,node)
+			    nodeNo = self._tree:getNodePos(node)
+			else
+				local l = GroundLayer.new(self._curGround.data,name)
+				index = self._curGround.data:addLayer(l)
+				layerData = self._curGround.data:getLayer(index)
+				self._layers[self._curGround.name..name] = { ui = panel, lname = name }
+				self._curGround.ui:addChild(panel)
+                node = self._tree:addItem(name,self._curGround.treeNode)
+                nodeNo = self._tree:getNodePos(node)
+
+			end
 			self._tree:Layout()
-			self._tree:print()
+			--self._tree:print()
 		end,
 			destory = function()
 			CC_SAFE_RELEASE(self._tree)
@@ -776,10 +827,56 @@ function SceneEditorUI:addLayer()
 		local cmd = CustomCommand.new(cmdt)
 		Do(cmd)
 	end
+	self._tree:print()
 end
 
 function SceneEditorUI:removeLayer()
-    
+--	cclog("-----删除层前----")
+--	self._tree:print()
+    --local indexL = self._curLayer.ui.idx
+    local lName = self._curLayer.ui.lname
+    --local layerN = self._curLayer.data._name
+    local panelL = self._curLayer.ui.ui
+    --local layerData = self._curGround.data:getLayer(lName)
+    local layerData = self._curLayer.data
+    local indexL = self._curGround.data:getIndex(lName)
+    local treeN  = self._curLayer.treeNode
+--    cclog("--lname:"..lName.."   indexl:"..indexL.."   treeN:"..treeN)
+    local nodeNo = nil
+    local cmdt = 
+    {
+        tips = "删除层",
+        init = function()
+			CC_SAFE_RETAIN(self._tree)
+			CC_SAFE_RETAIN(panelL)
+		end,
+        undo = function()
+			self._curGround.data:addLayer(layerData,indexL)
+			self._layers[self._curGround.name..lName] ={ ui = panelL, lname = lName }
+			self._curGround.ui:addChild(panelL)
+			treeN = self._tree:addItem(lName,self._curGround.treeNode,nodeNo,treeN)
+			cclog("treeN:"..treeN)
+			self._curLayer.treeNode = treeN
+			self._tree:Layout()
+        end,
+        redo = function()
+            self._curGround.data:removeLayer(indexL)
+            self._layers[self._curGround.name..lName] = nil
+            self._curGround.ui:removeChild(panelL)
+            nodeNo = self._tree:getNodePos(treeN)
+            cclog("删除层：nodePos:"..nodeNo.."  treeNode:"..treeN.."  index:"..indexL)
+            self._tree:removeItem(treeN)
+            self._tree:Layout()   
+            	cclog("-----删除层后----")
+	self._tree:print()
+        end,
+			destory = function()
+			CC_SAFE_RELEASE(self._tree)
+			CC_SAFE_RELEASE(panelL)
+		end
+    }
+	local cmd = CustomCommand.new(cmdt)
+	Do(cmd)
 end
 
 function SceneEditorUI:renameLayer()
@@ -824,7 +921,14 @@ function SceneEditorUI:addImage(filename,layername)
 			objInfo.Pos = cc.p(self._center.x/self._designFactor,self._center.y/self._designFactor)
 		end,
 		undo = function()
-			self._curLayer.data:removeObject(pos)
+
+            for k,v in pairs(self._objects) do 
+                if k == self._object then
+                    self._object.data = v
+                end
+            end
+
+			self._curLayer.data:removeObject(self._object.data)
 			cclog("remove data pos : ".. pos)
 			if self._object then
 				self._object:getVirtualRenderer():setDrawBound(false)
@@ -836,7 +940,7 @@ function SceneEditorUI:addImage(filename,layername)
 				prevObject:getVirtualRenderer():setDrawBound(true)
 				self._object.index = nil  
 			end
-			self._layers[self._curGround.name..layername]:removeChild(sprite)
+			self._layers[self._curGround.name..layername].ui:removeChild(sprite)
 			self:setupObjectPanel(data)
 			self:setupFilter(self._object,data)
 		end,
@@ -846,7 +950,9 @@ function SceneEditorUI:addImage(filename,layername)
 			end
 			self._object = sprite
 			sprite:getVirtualRenderer():setDrawBound(true)
-			self._layers[self._curGround.name..layername]:addChild(sprite)
+			self._layers[self._curGround.name..layername].ui:addChild(sprite)
+			self._objects[sprite] = objInfo   -- 增加了图片与数据的关联
+			--self._objects[self._curGround.name..layername ] = { ui = panel, lname = name }
 			self:setupObjectPanel(objInfo)
 			self:setupFilter(self._object,objInfo)
 			pos = self._curLayer.data:addObject(objInfo)
@@ -865,6 +971,13 @@ end
 
 function SceneEditorUI:touchSprite(image)
 	local prevObject = self._object
+    for k,v in pairs(self._objects) do 
+    	if k == self._object then
+            self._object.data = v
+    	end
+    end
+    prevObject.data = self._object.data
+
 	if prevObject ~= image then -- 重复点击就不记录了
 		local m = 
 		{
@@ -872,6 +985,13 @@ function SceneEditorUI:touchSprite(image)
 			init = function()
 				CC_SAFE_RETAIN(prevObject)
 				CC_SAFE_RETAIN(image)
+
+                for k,v in pairs(self._objects) do 
+                	if k == image then
+                        self._object.data = v
+                	end
+                end
+
 			end,
 			redo = function()
 				if prevObject then
@@ -888,9 +1008,10 @@ function SceneEditorUI:touchSprite(image)
 					prevObject:getVirtualRenderer():setDrawBound(true)
 				end
 				self._object = prevObject
+				self._object.data = prevObject.data
 				local data = nil
-				if self._object then
-					data = self._object.data
+				if prevObject.data then
+					data = prevObject.data
 				end
 				self:setupObjectPanel(data)
 				self:setupFilter(self._object,data)
@@ -998,17 +1119,17 @@ function SceneEditorUI:removeObject()
           	self._object = prevObject
           	if prevObject then 
 				local objInfotemp = prevObject.data
-				self._layers[self._curGround.name..fn]:addChild(prevObject)
+				self._layers[self._curGround.name..fn].ui:addChild(prevObject)
 				self:setupObjectPanel(objInfotemp)
 				self:setupFilter(self._object,objInfotemp)
                 local indextemp = nil
-				indextemp = self._curLayer.data:addObject(objInfotemp,self._object.index)
-			    cclog("add data index : ".. self._object.index)
+				indextemp = self._curLayer.data:addObject(objInfotemp)
+			    cclog("add data index : ")
           	end
           end,
           redo = function()
-	        self._curLayer.data:removeObject(self._object.index)
-          	self._layers[self._curGround.name..fn]:removeChild(self._object)
+	        self._curLayer.data:removeObject(self._object)
+          	self._layers[self._curGround.name..fn].ui:removeChild(self._object)
           	self:setupObjectPanel(nil)
           	self:setupFilter(nil,nil)
           	self._object = nil
@@ -1036,6 +1157,7 @@ function SceneEditorUI:touchTree(tree_name)
 	self._selected = self._tree:getSelectedItem()
 	self._selectedType = -1
 	local node = self._selected
+	local prevGround = self._curGround
 	while node ~= nil
 		do
 		 if node.P == nil then
@@ -1057,20 +1179,30 @@ function SceneEditorUI:touchTree(tree_name)
 		 node = node.P
 		 self._selectedType = self._selectedType + 1
 	end
+	--[[cclog("curGround data:")
+    for i=0,self._curGround.data:LayerCount()-1 do
+    	cclog("..layername:"..self._curGround.data:getLayer(i)._name.."   no:"..i)
+    end]]
+
 
 	if self._selectedType == 2 then
-		local prevSelected = self._curlayer
+		local prevLayer = self._curLayer
+
+		local innerNode = self._selected
 		local cmdt = 
 		{
 			tips = "选择层:"..self._selected.value,
 			redo = function()
 				self._curLayer.data = self._curGround.data:getLayer(self._selected.value)
+				cclog("_curLayer.data:  name:"..self._curLayer.data._name)
 				self._curLayer.treeNode = self._selected.name
 				self._curLayer.ui = self._layers[self._curGround.name..self._selected.value]
 				self:setupLayerPanel(self._curLayer.data)
+                cclog("--------bbb--------")
 			end,
 			undo = function()
-				self._curlayer = prevSelected
+				self._curlayer = prevLayer
+				self._curGround = prevGround
 				self:setupLayerPanel(self._curLayer.data)
 			end,
 		}
