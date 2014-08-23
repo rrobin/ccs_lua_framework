@@ -4,6 +4,18 @@ stack = require("Common.stack")
 vector = require("Common.vector")
 require("command.init")
 require("config")
+require("lfs")
+require('Common.fileSystem')
+
+ccui.particle = function(filename)
+	return require("ui.particle").new(filename)
+end
+
+ccui.animationNode = function(filename)
+	return require("ui.animationNode").new(filename)
+end
+
+KeyBoardManager = require("Common.KeyBoardManager").new()
 
 brtFilter = require("filter.brightness")
 hueFilter = require("filter.hue")
@@ -11,7 +23,11 @@ hueFilter = require("filter.hue")
 ccs.registerTriggerClass("brightShader",brtFilter.new)
 ccs.registerTriggerClass("hueShader",hueFilter.new)
 
+EditorConfig = require("Data.EditorConfig").new()
+
 SceneManager = require("SceneEditor.Manager").new()
+ProjectManager = require('Data.ProjectManager').new()
+
 --require("opcodes")
 sharedFileUtils:addSearchPath("res")
 sharedFileUtils:addSearchPath("res/Editor")

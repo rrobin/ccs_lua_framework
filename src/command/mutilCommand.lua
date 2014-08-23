@@ -20,6 +20,10 @@ end
 
 function mutilCommand:destory()
 	for _,command in pairs(self._commands) do
+		if not command.destory then
+			cclog("错误的命令,没有析构函数,命令名:"..command._tips)
+		end
+		cclog("释放:"..command._tips)
 		command:destory()
 	end
 end

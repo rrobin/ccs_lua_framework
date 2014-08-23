@@ -41,6 +41,7 @@ function GroundLayer:removeObject(pos)
     	for i=0,count do
     		local obj = self._objectsVector:at(i)
     		if obj == pos then
+    			cclog("remove object pos:"..i)
     			self._objectsVector:earse(i)
     			break
     		end

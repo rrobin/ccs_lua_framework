@@ -258,6 +258,18 @@ function TreeControl:createItem(node)
 	node.W = widget
 end
 
+
+function TreeControl:selectNode(prevnodename,curnodename)
+	if prevnodename then		
+        self._nodes[prevnodename].W:getChild("Label"):getVirtualRenderer():setDrawBound(false)
+	end
+	if curnodename then
+		self._nodes[curnodename].W:getChild("Label"):getVirtualRenderer():setDrawBound(true)
+	end
+
+end
+
+
 function TreeControl:extend(name)
 	local node = self._nodes[name]
 	function disableC(node)
@@ -383,6 +395,7 @@ end
 
 function TreeControl:onSelected()
 	if self._handle then
+		cclog("--onSelected:"..self._name)
 		self._handle(self._name)
 	end
 	return self

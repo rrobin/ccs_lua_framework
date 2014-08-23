@@ -26,6 +26,7 @@ SceneObject =
 	Filter  = nil,  -- filter表,保存滤镜名称和参数值
 	locked  = false, --  界面锁定,锁定之后不可对其做任何操作
 	visible = true, -- 可视,暂时预留
+	name = "Object",
 }
 
 function SceneObject:getJsonData()
@@ -42,6 +43,7 @@ function SceneObject:getJsonData()
 	end
 	data["locked"] = self.locked
 	data["visible"] = self.visible
+	data["name"] = self.name
 	return data
 end
 
@@ -55,6 +57,7 @@ function SceneObject:serialize(jsonValue)
 	self.Opacity = jsonValue["Opacity"]
 	self.locked = jsonValue["locked"]
 	self.visible = jsonValue["visible"]
+	self.name = jsonValue["name"]
 	local filter = jsonValue["Filter"]
 	if filter then
 		self.Filter = ccs.ObjectFactory.getInstance():createObject(filter["name"])
@@ -112,10 +115,10 @@ function SceneManager:renameScene(old_name,new_name)
 	end
 end
 
-function SceneManager:Save(name,path)
+function SceneManager:Save(path,name,ext)
 	local scenedata = self:findScene(name):getJsonData()
 	local json_str = json.encode(scenedata)
-	local filePath = path.."\\".."aaa.json"
+	local filePath = path.."/"..name..ext
 	local file = io.open(filePath,"w+")
 	if file then
 		file:write(json_str) 
@@ -123,13 +126,14 @@ function SceneManager:Save(name,path)
 	end
 end
 
-function SceneManager:Load(path)
-	local file = io.open("e:\\output\\aaa.json")
+function SceneManager:Load(filePath)
+	local file = io.open(filePath)
 	if file then
 		local json_str = file:read("*a")
 		local parseTable = json.decode(json_str,1)
-		local scene = GameScene.new("test",1234)
+		local scene = self:addScene("newScene",960*2)
 		scene:serialize(parseTable)
+		file:close()
 		return scene
 	end
 	return nil

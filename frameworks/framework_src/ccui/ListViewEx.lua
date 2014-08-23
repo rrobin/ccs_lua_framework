@@ -4,14 +4,15 @@ local ListView = ui.ListView
 function ListView:addListVeiwEvent(params)
     while true
     do
-        if not func then
+        if params and type(params) ~= "table" then return end
         local defaultCallbacks = 
         {
-            [ui.ListViewEventType.onsSelectedItem] = handler(self,self.onsSelectedItem),
+            [ui.ListViewEventType.onSelectedItem_start] = handler(self,self.onSelectedItemStart),
+            [ui.ListViewEventType.onSelectedItem_end] = handler(self,self.onSelectedItemEnd),
         }
         self.listViewlistener = defaultCallbacks
-        else 
-            self.listViewlistener = { [ccs.ListViewEventType.onsSelectedItem] = func,}
+        if params and table.nums(params) ~= 0 then
+            table.merge(defaultCallbacks,params)
         end
         handle = function(uiwidget,event)
             if self.listViewlistener[event] then
@@ -23,5 +24,8 @@ function ListView:addListVeiwEvent(params)
     end
 end
 
-function ListView:onsSelectedItem(listView)
+function ListView:onSelectedItemStart(listView)
+end
+
+function ListView:onSelectedItemEnd(listView)
 end

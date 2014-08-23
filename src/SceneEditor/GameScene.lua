@@ -7,6 +7,7 @@ function GameScene:ctor(name,width)
 	self._Floor = Floor.new(self)
 	self._FrontGround = FrontGround.new(self)
 	self._name = name
+	self._objCount = 0
 end
 
 function GameScene:getJsonData()
@@ -16,6 +17,7 @@ function GameScene:getJsonData()
 	data["BackGround"] = self._BackGround:getJsonData()
 	data["Floor"] = 	 self._Floor:getJsonData()
 	data["FrontGround"] = self._FrontGround:getJsonData()
+	data["ObjCount"] = self._objCount
 	return data
 end
 
@@ -25,5 +27,7 @@ function GameScene:serialize(jsonValue)
 	self._BackGround:serialize(jsonValue["BackGround"])
 	self._Floor:serialize(jsonValue["Floor"])
 	self._FrontGround:serialize(jsonValue["FrontGround"])
+	self._objCount = jsonValue["ObjCount"]
 end
+
 return GameScene

@@ -39,6 +39,7 @@ function CommandManager:clearReservedCommands()
 	while self._reserveStack:empty() == false
 		do
 		local command = self._reserveStack:pop()
+		cclog("释放:"..command._tips)
 		command:destory()
 	end
 end

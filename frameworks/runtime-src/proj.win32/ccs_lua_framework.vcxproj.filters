@@ -34,6 +34,9 @@
     <Filter Include="Classes\pthread">
       <UniqueIdentifier>{c08772a7-f3b8-41d3-b555-02f324116770}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Classes\lua_extensions">
+      <UniqueIdentifier>{3b3d36b1-2516-4991-a29d-125d017a38a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h">
@@ -127,6 +130,12 @@
     <ClInclude Include="..\Classes\pthread\semaphore.h">
       <Filter>Classes\pthread</Filter>
     </ClInclude>
+    <ClInclude Include="..\Classes\lua_extensions\lfs.h">
+      <Filter>Classes\lua_extensions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\lua_extensions\game_lua_extensions.h">
+      <Filter>Classes\lua_extensions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
@@ -176,6 +185,12 @@
     </ClCompile>
     <ClCompile Include="..\Classes\cocosEx\FileIO.cpp">
       <Filter>Classes\cocosEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\lua_extensions\game_lua_extensions.c">
+      <Filter>Classes\lua_extensions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\lua_extensions\lfs.c">
+      <Filter>Classes\lua_extensions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

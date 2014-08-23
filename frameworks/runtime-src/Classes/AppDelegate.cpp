@@ -4,6 +4,7 @@
 #include "SimpleAudioEngine.h"
 #include "luabinding/game_luabinding.h"
 #include "luabinding/game_manual.h"
+#include "game_lua_extensions.h"
 USING_NS_CC;
 using namespace CocosDenshion;
 
@@ -83,6 +84,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 	auto L = pStack->getLuaState();
 	tolua_game_open(L);
 	register_all_game_manual(L);
+	game_lua_extensions(L);
 
 #ifdef LOAD_PRECOMPILE
 	pStack->loadChunksFromZIP("framework_precompiled.zip");

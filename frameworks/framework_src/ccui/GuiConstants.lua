@@ -160,7 +160,8 @@ ccui.ListViewMoveDirection = {
 }
 
 ccui.ListViewEventType = {
-    onsSelectedItem = 0,
+   onSelectedItem_start = 0,
+   onSelectedItem_end = 1,
 }
 
 ccui.PageViewEventType = {

@@ -4,7 +4,7 @@ cc.RotateCommand.__index = cc.RotateCommand
 function cc.RotateCommand:ctor(Node,rotation)
 	self.super.ctor(self,Node)
 	self._tips = "Rotate Node"
-	self._delta = Node:getRotation() - rotation
+	self._delta = rotation - Node:getRotation()
 end
 
 function cc.RotateCommand:undo()

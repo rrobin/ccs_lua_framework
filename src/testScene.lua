@@ -1,12 +1,80 @@
+require("Common.fileSystem")
 local testScene = class("testScene",function()
  	return cc.Scene:create() 
 end)
 testScene.__index = testScene
 
 function testScene:ctor()
+
 	local layer = ccui.layer()
 	self:addChild(layer)
-	local image = ccui.image({image = "1.png"})
+	local filename = "NO.ExportJson"
+	ccs.ArmatureDataManager:getInstance():addArmatureFileInfo(filename)
+	local name = string.ipextension(filename)
+	local armature = ccs.Armature:create(name)
+	armature:pos(cc.CENTER)
+	--armature:getAnimation():play("Autumn_Maple Leaf_fall1")
+	layer:addChild(armature)
+	--[[
+
+	local p = ccui.particle("Particles/BurstPipe.plist")
+	p:pos(cc.CENTER)
+	layer:addChild(p)
+	local pos = nil
+	local spos = nil
+	p:addTouchEvent({[ccui.TouchEventType.began] = function(widget)
+			spos = widget:getTouchBeganPosition()
+			pos = p:pos()
+		end,
+		[ccui.TouchEventType.moved] =  function (widget)
+			local mpos = widget:getTouchMovePosition()
+			local offset = cc.pSub(mpos,spos)
+			local _pos = cc.pAdd(pos,offset)
+			widget:pos(_pos)
+		end})
+]]
+	--[[
+	local list = ccui.listView({size=winSize})
+	local label = ccui.label({text="test"})
+	list:setItemModel(label)
+	local t = fs.Browse(lfs.currentdir(),"*",2)
+	local function logTable(tab,p)
+		for k,v in pairs(tab) do
+			if type(v) == "table" then
+				local n = k
+				if p then
+					n = p.."/"..k
+				end
+				logTable(v,n)
+			else
+				local f = v
+				if p then
+					f = p.."/"..f
+				end
+				cclog(f)
+			end
+		end
+	end
+	logTable(t)
+	local r,e = fs.rmfiles(lfs.currentdir(),"%.txt")
+	if e then
+		cclog(e)
+	end
+	--[[
+	local i = 0
+	while filename ~= nil
+		do
+		list:pushBackDefaultItem()
+		local item = list:getItem(i)
+		item:setString(filename)
+		local f = lfs.attributes(lfs.currentdir().."/"..filename)
+		cclog(filename..":"..f.mode)
+		filename = dir_obj:next()
+		i = i+1
+	end
+	layer:addChild(list)
+	]]
+	--[[local image = ccui.image({image = "1.png"})
 	image:pos(cc.CENTER)
 	image:setShader("brightShader")
 	image:setUniform("brightness",0.5)
@@ -36,6 +104,7 @@ function testScene:ctor()
 	local child1_1_10 = self._tree:addItem("孙子1-1-10",child1_1)
 	self._tree:print()
 	self._tree:getNodePos(child1_1_7)
+	]]
 	--[[
 	local scrollview = ccui.scrollView({size = cc.size(960,640),innerSize = cc.size(960*3,640),direction = ccui.ScrollViewDir.horizontal})
 	local filename = "back.ExportJson"

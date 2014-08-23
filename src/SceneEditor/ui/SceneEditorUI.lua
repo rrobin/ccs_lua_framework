@@ -49,6 +49,21 @@ function SceneEditorUI:ctor()
 	delObjBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.removeObject)})
 
 	local ObjList = layer:getChild("ListView_Obj")
+	ObjList:setTouchEnabled(false)
+	local ObjItem = ccui.loadWidget("ObjItem.ExportJson")
+	local s = ObjItem:getSize()
+	s.width = ObjList:getSize().width
+	ObjItem:setSize(s)
+	ObjList:setItemModel(ObjItem)
+	self._ObjList = ObjList
+	self._prevItem = nil
+	ObjList:addListVeiwEvent({[ccui.ListViewEventType.onSelectedItem_end] = function(listView)
+			local idx = listView:getCurSelectedIndex()
+			local item = listView:getItem(idx)
+			local sprite = self._objects[item:getChild("Label"):getString()]
+			self:CMD_SelectSprite(sprite)
+			self._prevItem = item
+		end})
 
 	local flierProPanel = self._layer:getChild("FlierProPanel")
 	flierProPanel:setTouchEnabled(false)
@@ -69,6 +84,22 @@ function SceneEditorUI:ctor()
 	layer:getChild("ScenePanel"):removeChild(treePanel)
 	layer:getChild("ScenePanel"):addChild(self._tree)
 
+	local SceneBtn = layer:getChild("SceneBtn")
+	local ObjBtn = layer:getChild("ObjBtn")
+	SceneBtn:addTouchEvent({[ccui.TouchEventType.ended] = function()
+			self._tree:setTouchEnabled(true)
+			self._tree:setVisible(true)
+			self._ObjList:setTouchEnabled(false)
+			self._ObjList:setVisible(false)
+		end})
+	ObjBtn:addTouchEvent({[ccui.TouchEventType.ended] = function()
+			self._tree:setTouchEnabled(false)
+			self._tree:setVisible(false)
+			self._ObjList:setTouchEnabled(true)
+			self._ObjList:setVisible(true)
+		end})
+	
+
 	self._curScene = {data=0,ui=0,treeNode = 0}
 	self._curGround = {data=0,ui=nil,treeNode = 0,name=""}
 	self._curLayer = {data=0,ui=0,treeNode = 0}
@@ -76,8 +107,149 @@ function SceneEditorUI:ctor()
 	self._layers = {}
 	self._objects = {}   -- 用来存储object对象列表
 	self._ui = {}
+	self.selectedType = -1 --´æ´¢½ÚµãÀàÐÍ
 	self._object = nil
+	self._ObjCount  = 0
+
+	-- 设置快捷键
+	local keyshortcut = KeyBoardManager:getShortcuts("SceneEditor")
+	if not keyshortcut then
+		keyshortcut = KeyShortcuts.new("SceneEditor")
+		keyshortcut:add("KEY_Z",handler(self,self.undo),nil,ctrl_type)
+		keyshortcut:add("KEY_Y",handler(self,self.redo),nil,ctrl_type)
+		KeyBoardManager:add(keyshortcut)
+	end
+	KeyBoardManager:apply("SceneEditor")
 end
+
+---------------------------------------------------------
+
+--- 			SceneEditor's command 				  ---
+
+---------------------------------------------------------
+
+function SceneEditorUI:CMD_SelectSprite(sprite)
+	local prevObject = self._object
+
+	if prevObject ~= sprite then -- 重复点击就不记录了
+		local m = 
+		{
+			tips = "选择物件",
+			init = function()
+				CC_SAFE_RETAIN(prevObject)
+				CC_SAFE_RETAIN(sprite)
+			end,
+			redo = function()
+				if prevObject then
+					prevObject:getVirtualRenderer():setDrawBound(false)
+				end
+				sprite:getVirtualRenderer():setDrawBound(true)
+				self._object = sprite
+				self:setupObjectPanel(self._object.data)
+				self:setupFilter(self._object,self._object.data)
+				self:updateObjList(self._object)
+
+			end,
+			undo = function()
+				sprite:getVirtualRenderer():setDrawBound(false)
+				local data = nil
+				if prevObject then
+					prevObject:getVirtualRenderer():setDrawBound(true)
+					data = prevObject.data
+				end
+				self._object = prevObject
+				self:setupObjectPanel(data)
+				self:setupFilter(self._object,data)
+				self:updateObjList(self._object)
+			end,
+			destory = function()
+				CC_SAFE_RELEASE(prevObject)
+				CC_SAFE_RELEASE(sprite)
+			end,
+		}
+		local cmd = CustomCommand.new(m)
+		Do(cmd)
+	end
+end
+
+function SceneEditorUI:CMD_MoveObject(object,epos)
+	local Pos_x = self._layer:getChild("Pos_x")
+	local Pos_y = self._layer:getChild("Pos_y")
+	local spos = object.data.Pos
+	epos.x = math.floor(epos.x)
+	epos.y = math.floor(epos.y)
+	local delay = cc.pSub(epos,spos)
+	if math.abs(delay.x) > 1 or math.abs(delay.y) > 1 then -- 精度到1像素
+		local cmdtable = 
+		{
+			tips = "移动物件",
+			init = function()
+				CC_SAFE_RETAIN(object)
+				CC_SAFE_RETAIN(Pos_x)
+				CC_SAFE_RETAIN(Pos_y)
+			end,
+			undo = function()
+				local pos = object:pos(cc.pMul(spos,self._designFactor))
+				Pos_x:setText(string.format("%d",spos.x))
+				Pos_y:setText(string.format("%d",spos.y))
+				object.data.Pos = spos
+			end,
+			redo = function()
+				object:pos(cc.pMul(cc.pAdd(spos,delay),self._designFactor))
+				Pos_x:setText(string.format("%d",epos.x))
+				Pos_y:setText(string.format("%d",epos.y))
+				object.data.Pos = epos
+			end,
+			destory = function()
+				CC_SAFE_RELEASE(object)
+				CC_SAFE_RELEASE(Pos_x)
+				CC_SAFE_RELEASE(Pos_y)
+			end,
+		}
+		local cmd = CustomCommand.new(cmdtable)
+		Do(cmd)
+	end
+end
+
+function SceneEditorUI:CMD_ScaleObject(object,scale)
+	local Scale_x = self._layer:getChild("Scale_X")
+	local Scale_y = self._layer:getChild("Scale_Y")
+	local oScale = object.data.Scale
+	local cmdtable = 
+	{
+		tips = "缩放物件",
+		init = function()
+			CC_SAFE_RETAIN(object)
+			CC_SAFE_RETAIN(Scale_x)
+			CC_SAFE_RETAIN(Scale_y)
+		end,
+		undo = function()
+			object:setScaleX(oScale.x*self._designFactor)
+			object:setScaleY(oScale.y*self._designFactor)
+			Scale_x:setText(string.format("%.2f",oScale.x))
+			Scale_y:setText(string.format("%.2f",oScale.y))
+			object.data.Scale = oScale
+		end,
+		redo = function()
+			object:setScaleX(scale.x*self._designFactor)
+			object:setScaleY(scale.y*self._designFactor)
+			Scale_x:setText(string.format("%.2f",scale.x))
+			Scale_y:setText(string.format("%.2f",scale.y))
+			object.data.Scale = scale
+		end,
+		destory = function()
+			CC_SAFE_RELEASE(object)
+			CC_SAFE_RELEASE(Scale_x)
+			CC_SAFE_RELEASE(Scale_y)
+		end,
+	}
+	local cmd = CustomCommand.new(cmdtable)
+	Do(cmd)
+end
+
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
+--------------------------------------------------------------------------
 
 function SceneEditorUI:initLayerPanel()
 	local function setText(widget,string)
@@ -218,7 +390,6 @@ function SceneEditorUI:setupLayerPanel(groundLayer)
 end
 
 
-
 function SceneEditorUI:initObjectPanel()
 	--local filename = layer:getChild("ObjFile_Label")
 	local Pos_x = self._layer:getChild("Pos_x")
@@ -227,123 +398,42 @@ function SceneEditorUI:initObjectPanel()
 	end
 	Pos_x:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
-			local pos = self._object:pos()
+			local pos = self._object.data.Pos
 			pos.x = tonumber(widget:getString())
-			local cmd1 = cc.MoveCommand.new(self._object,cc.p(pos.x*self._designFactor,pos.y))
-			local cmd2 = command.modifyObject.new(self._object.data,1,pos)
-			local org = self._object.data.Pos.x
-			local t = 
-			{
-				tips = "设置文本框",
-				init = function()
-					CC_SAFE_RETAIN(widget)
-				end,
-				redo = function()
-					setText(widget,string.format("%d",pos.x))
-				end,
-				undo = function()
-					setText(widget,string.format("%d",org))
-				end,
-				destory = function()
-					CC_SAFE_RELEASE(widget)
-				end,
-			}
-			local cmd3 = CustomCommand.new(t)
-			Do(cmd1,cmd2,cmd3)
+			self:CMD_MoveObject(self._object,pos)
 		end})
-	--Pos_x:setText("")
+
 	local Pos_y = self._layer:getChild("Pos_y")
 	Pos_y:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
-			local pos = self._object:pos()
-			pos.y = tonumber(widget:getString())
-			local cmd1 = cc.MoveCommand.new(self._object,cc.p(pos.x,pos.y*self._designFactor))
-			local cmd2 = command.modifyObject.new(self._object.data,1,pos)
-			local org = self._object.data.Pos.y
-			local t = 
-			{
-				tips = "设置文本框",
-				init = function()
-					CC_SAFE_RETAIN(widget)
-				end,
-				redo = function()
-					setText(widget,string.format("%d",pos.y))
-				end,
-				undo = function()
-					setText(widget,string.format("%d",org))
-				end,
-				destory = function()
-					CC_SAFE_RELEASE(widget)
-				end,
-			}
-			local cmd3 = CustomCommand.new(t)
-			Do(cmd1,cmd2,cmd3)
+			local pos = self._object.data.Pos
+			pos.y = tonumber(widget:getString()) * self._designFactor
+			self:CMD_MoveObject(self._object,pos)
 		end})
-	--Pos_y:setText("")
+
 	local Scale_x = self._layer:getChild("Scale_X")
 	Scale_x:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local scale = cc.p(0,0)
 			scale.x = tonumber(widget:getString())
-			scale.y = self._object:getScaleY()
-			local cmd1 = cc.ScaleCommand.new(self._object,scale.x*self._designFactor,scale.y)
-			scale.y = scale.y/self._designFactor
-			local cmd2 = command.modifyObject.new(self._object.data,2,scale)
-			local org = self._object.data.Scale.x
-			local t = 
-			{
-				tips = "设置文本框",
-				init = function()
-					CC_SAFE_RETAIN(widget)
-				end,
-				redo = function()
-					setText(widget,string.format("%f",scale.x))
-				end,
-				undo = function()
-					setText(widget,string.format("%f",org))
-				end,
-				destory = function()
-					CC_SAFE_RELEASE(widget)
-				end,
-			}
-			local cmd3 = CustomCommand.new(t)
-			Do(cmd1,cmd2,cmd3)
+			scale.y = self._object.data.Scale.y
+			self:CMD_ScaleObject(self._object,scale)
 		end})
-	--Scale_x:setText("")
+	
 	local Scale_y = self._layer:getChild("Scale_Y")
 	Scale_y:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local scale = cc.p(0,0)
 			scale.y = tonumber(widget:getString())
-			scale.x = self._object:getScaleX()
-			local cmd1 = cc.ScaleCommand.new(self._object,scale.x,scale.y*self._designFactor)
-			scale.x = scale.x/self._designFactor
-			local cmd2 = command.modifyObject.new(self._object.data,2,scale)
-			local org = self._object.data.Scale.y
-			local t = 
-			{
-				tips = "设置文本框",
-				init = function()
-					CC_SAFE_RETAIN(widget)
-				end,
-				redo = function()
-					setText(widget,string.format("%f",scale.y))
-				end,
-				undo = function()
-					setText(widget,string.format("%f",org))
-				end,
-				destory = function()
-					CC_SAFE_RELEASE(widget)
-				end,
-			}
-			local cmd3 = CustomCommand.new(t)
-			Do(cmd1,cmd2,cmd3)
+			scale.x = self._object.data.Scale.x
+			self:CMD_ScaleObject(self._object,scale)
 		end})
-	--Scale_y:setText("")
+
 	local Rotate = self._layer:getChild("Rotate")
 	Rotate:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local rotate = tonumber(widget:getString())
+			cclog("旋转到"..rotate.."度")
 			local cmd1 = cc.RotateCommand.new(self._object,rotate)
 			local cmd2 = command.modifyObject.new(self._object.data,3,rotate)
 			local orotate = self._object:getRotation()
@@ -627,7 +717,7 @@ function SceneEditorUI:setupObjectPanel(SceneObject)
 		panel:setVisible(false)
 		return 
 	else
-		panel:setTouchEnabled(true)
+		panel:setTouchEnabled(SceneObject.locked == false)
 		panel:setVisible(true)
 	end
 
@@ -642,7 +732,7 @@ function SceneEditorUI:setupObjectPanel(SceneObject)
 	local Scale_y = self._layer:getChild("Scale_Y")
 	Scale_y:setText(SceneObject.Scale.y)
 	local Rotate = self._layer:getChild("Rotate")
-	Rotate:setText(SceneObject.Rotate)
+	Rotate:setText(SceneObject.Rotation)
 	--[[
 	local H_FlipBtn = self._layer:getChild("H_FlipBtn")
 	H_FlipBtn:setBright(SceneObject.FlipX==false)
@@ -680,16 +770,56 @@ function SceneEditorUI:setupFilter(object,data)
 	v.func(v,object,data)
 end
 
+function SceneEditorUI:updateObjList(object)
+	local items = self._ObjList:getItems()
+	for k,v in pairs(items) do
+		v:getChild("Label"):getVirtualRenderer():setDrawBound(false)
+		if object then
+			cclog("24345768975432345679")
+			if v:getChild("Label"):getString() == object.name then
+				cclog("1231231224213")
+				v:getChild("Label"):getVirtualRenderer():setDrawBound(true)
+	            local lockBtn = v:getChild("LockBtn")    -- 锁定按钮
+	            local visibleBtn = v:getChild("VisibleBtn")  -- 隐藏按钮
+				if object.data.locked then
+	            -- 更新按钮对象list锁定状态
+	                lockBtn:loadTextureNormal("lock_16x16.png",ccui.TextureResType.plistType)
+				else
+	            	lockBtn:loadTextureNormal("unlock_16x16.png",ccui.TextureResType.plistType)
+				end
+
+				if object.data.visible then
+		            -- 更新对象list隐藏状态
+	                visibleBtn:loadTextureNormal("cd_16x16.png",ccui.TextureResType.plistType)
+				else
+	                visibleBtn:loadTextureNormal("cancel_16x16.png",ccui.TextureResType.plistType)
+				end
+			end
+		end
+	end
+end
+
+
+
 -- SceneOp
 function SceneEditorUI:saveScene()
 	-- body
-	SceneManager:Save(self._curScene.data._name,"e:\\output")
+	self._curScene.data._objCount = self._ObjCount 
+	ProjectManager:save()
+	EditorConfig:Save()
 end
 
 function SceneEditorUI:loadScene()
-	local scene = SceneManager:Load("")
-	if not scene then return end 
-	local parent = self._tree:addItem("新场景")
+	local scene = SceneManager:findScene("newScene")
+	if not scene then 
+		ProjectManager:load(lfs.currentdir())
+		scene = SceneManager:findScene("newScene")
+	end 
+	if not scene then
+		return
+	end
+	self._ObjCount = scene._objCount
+	local parent = self._tree:addItem("newScene")
 	
 	local function createGround(treeNode,ground,gname)
 		for i=1,ground:LayerCount() do
@@ -698,7 +828,7 @@ function SceneEditorUI:loadScene()
 			s.width = s.width*self._designFactor
 			local panel = ccui.panel({size = s})
 			local name = l._name
-			self._layers[gname..name] = panel
+			self._layers[gname..name] = { ui = panel,lname = name} -- ui = panelL, lname = lName 
 			self._ui[gname]:addChild(panel)
 			node = self._tree:addItem(name,treeNode)
 			for j=1,l:getObjectCount() do
@@ -720,8 +850,12 @@ function SceneEditorUI:loadScene()
 					obj.Filter:ApplyTo(sprite)
 				end
 				panel:addChild(sprite)
+				sprite.data = obj
+				sprite.name = obj.name
+				self._objects[sprite.name] = sprite
 			end
 		end
+
 		self._Grounds[treeNode] = ground
 	end
 	self:addSceneUI(scene._width)	
@@ -733,14 +867,13 @@ function SceneEditorUI:loadScene()
 end
 
 function SceneEditorUI:newScene()
-	local scene = SceneManager:findScene("新场景")
+	local scene = SceneManager:findScene("newScene")
 	if scene then return end 
-	scene = SceneManager:addScene("新场景",960*2)
-	local parent = self._tree:addItem("新场景")
+	scene = ProjectManager:newScene("newScene")
+	local parent = self._tree:addItem("newScene")
 	self._Grounds[self._tree:addItem("背景",parent)] = scene._BackGround
 	self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
 	self._Grounds[self._tree:addItem("前景",parent)] = scene._FrontGround
-	self._tree:extend(parent)
 	self:addSceneUI(scene._width)
 	self._tree:Layout()
 	--[[
@@ -754,7 +887,7 @@ function SceneEditorUI:newScene()
 end
 
 function SceneEditorUI:delScene()
-	SceneManager:removeScene("新场景")
+	SceneManager:removeScene("newScene")
 	self._tree:removeItem(self._curScene)
 	self._curScene = {data=0,ui=0,treeNode = 0}
 	self._curGround = {data=0,ui=0,treeNode = 0}
@@ -776,7 +909,7 @@ function SceneEditorUI:addLayer()
 		local node = nil    -- 为数节点内部名称：如child1
 		local s = self._previewWindow:getSize()
 		s.width = s.width*self._designFactor
-		local panel = ccui.panel({size = s})
+		local panel = ccui.panel({size = s,touch = false})
 		local layerData = nil
 		local index = 0
 		local nodeNo = nil
@@ -787,6 +920,7 @@ function SceneEditorUI:addLayer()
 			init = function()
 			CC_SAFE_RETAIN(self._tree)
 			CC_SAFE_RETAIN(panel)
+
 		end,
 			undo = function()
 			self._curGround.data:removeLayer(index)
@@ -801,6 +935,7 @@ function SceneEditorUI:addLayer()
 			redo = function()
 
 			if undotype == 1 then 
+				cclog("---重做层 layer:"..layerData._name)
 				index = self._curGround.data:addLayer(layerData,index)
 				self._layers[self._curGround.name..name] = { ui = panel, lname = name }
 				self._curGround.ui:addChild(panel)
@@ -814,7 +949,6 @@ function SceneEditorUI:addLayer()
 				self._curGround.ui:addChild(panel)
                 node = self._tree:addItem(name,self._curGround.treeNode)
                 nodeNo = self._tree:getNodePos(node)
-
 			end
 			self._tree:Layout()
 			--self._tree:print()
@@ -834,6 +968,7 @@ function SceneEditorUI:removeLayer()
 --	cclog("-----删除层前----")
 --	self._tree:print()
     --local indexL = self._curLayer.ui.idx
+    if self._curlayer.ui == 0 then return end
     local lName = self._curLayer.ui.lname
     --local layerN = self._curLayer.data._name
     local panelL = self._curLayer.ui.ui
@@ -890,18 +1025,143 @@ function SceneEditorUI:addObject()
 	if self._curLayer.data == 0 then
 		return 
 	end
-	local filename = PlatformUtility:OpenFile("E:\\","Png;Jpg(*.png,*.Jpg)\0*.png;*.jpg\0")
+	local filename = PlatformUtility:OpenFile("E:\\","Png;Jpg(*.png,*.Jpg)\0*.png;*.jpg;*.plist;*.ExportJson\0")
 	local name = self._curLayer.data._name
 	cclog("cur layer name:"..name)
 	if filename == "" then return end
+	self._ObjCount = self._ObjCount+1
 	self:addImage(filename,name)
 end
 
+function SceneEditorUI:addObjItem(name,index)
+	cclog("addObjItem index:"..index)
+	self._ObjList:insertDefaultItem(index)
+	local item = self._ObjList:getItem(index)
+	item:getChild("Label"):setString(name)
+	local lockBtn = item:getChild("LockBtn")
+	local visibleBtn = item:getChild("VisibleBtn")
+
+    local object = nil
+    --循环对象编号寻找指定名字的对象
+    for k,v in pairs(self._objects) do 
+        if k == name then
+           object = v
+        end
+    end
+    if object then
+        lockBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
+		function(btn)
+			cclog("lock btn handler")
+
+            local cmdt = {
+                tips = "点击锁定按钮",
+                init = function()
+                	-- body
+                
+                end,
+                undo = function()
+                	-- body
+					if object.data.locked then
+                    	object.data.locked = false
+        	        else
+                        object.data.locked = true
+        	        end
+        	        self:updateObjList(object)
+        	        object:setTouchEnabled(object.data.locked==false)
+        	        self:setupObjectPanel(object.data)
+                end,
+                redo = function()
+                	-- body
+                	if object.data.locked then
+
+                    	object.data.locked = false
+        	        else
+                        object.data.locked = true
+        	        end
+        	        self:updateObjList(object)
+        	        object:setTouchEnabled(object.data.locked==false)
+        	        self:setupObjectPanel(object.data)
+                end,
+                destory = function()
+
+                end,
+            }
+
+           local cmd = CustomCommand.new(cmdt)
+           Do(cmd)
+		end,})
+
+	    visibleBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
+		function(btn)
+
+            local cmdt = {
+                tips = "点击隐藏按钮",
+                init = function()
+                	-- body
+                
+                end,
+                undo = function()
+                	-- body
+					if object.data.visible then
+                    	object.data.visible = false
+        	        else
+                        object.data.visible = true
+        	        end
+        	        self:updateObjList(object)
+        	        object:setVisible(object.data.visible)
+                end,
+                redo = function()
+                	-- body
+                	if object.data.visible then
+                    	object.data.visible = false
+
+        	        else
+                        object.data.visible = true
+        	        end
+        	        self:updateObjList(object)
+        	        object:setVisible(object.data.visible)
+                end,
+                destory = function()
+
+                end,
+            }
+
+           local cmd = CustomCommand.new(cmdt)
+           Do(cmd)
+		end})
+    end
+end
+
+function SceneEditorUI:removeObjItem(name)
+	local items = self._ObjList:getItems()
+    for k,v in pairs(items) do 
+    	cclog("v:getChild('Label'):getString():"..v:getChild("Label"):getString())
+    	if v:getChild("Label"):getString()  == name then
+            self._ObjList:removeItem(k-1)
+    	end
+	end
+end
+
 function SceneEditorUI:addImage(filename,layername)
-	local sprite = ccui.image({image=filename})
+
+    local sprite = nil
+    local objtype = -1 
+    if string.find(filename,"%.plist") then 
+        sprite = ccui.particle(filename)
+        objtype = 2
+    elseif string.find(filename,"%.ExportJson") then
+    	sprite = ccui.animationNode(filename)
+    	objtype = 3
+    else
+		sprite = ccui.image({image=filename})
+		objtype = 0
+	end
+
 	local objInfo = clone(SceneObject)
 	local pos = nil
 	local prevObject = self._object
+
+	local undotype = -1
 	local cmdt = 
 	{
 		tips = "添加场景物体",
@@ -919,50 +1179,62 @@ function SceneEditorUI:addImage(filename,layername)
 			objInfo.Filename = filename
 			objInfo.zOrder = sprite:getLocalZOrder()
 			objInfo.Pos = cc.p(self._center.x/self._designFactor,self._center.y/self._designFactor)
+			CC_SAFE_RETAIN(self._ObjList)
+			if objtype == 2 then 
+                sprite.name = "Particle"..self._ObjCount
+			elseif objtype == 3 then
+                sprite.name = "Animation"..self._ObjCount
+			else
+                sprite.name = "Object"..self._ObjCount
+			end
+			objInfo.name = sprite.name
+			sprite.data = objInfo
 		end,
 		undo = function()
-
-            for k,v in pairs(self._objects) do 
-                if k == self._object then
-                    self._object.data = v
-                end
-            end
-
+            self:removeObjItem(self._object.name)
 			self._curLayer.data:removeObject(self._object.data)
-			cclog("remove data pos : ".. pos)
+			self._objects[self._object.name] = nil
 			if self._object then
 				self._object:getVirtualRenderer():setDrawBound(false)
 			end
+			self._layers[self._curGround.name..layername].ui:removeChild(sprite)
+
 			self._object = prevObject
 			local data = nil
 			if prevObject then
 				data = prevObject.data
-				prevObject:getVirtualRenderer():setDrawBound(true)
-				self._object.index = nil  
+				prevObject:getVirtualRenderer():setDrawBound(true) 
 			end
-			self._layers[self._curGround.name..layername].ui:removeChild(sprite)
+
 			self:setupObjectPanel(data)
 			self:setupFilter(self._object,data)
+			undotype = 1
+			self:updateObjList(self._object)
 		end,
 		redo = function()
 			if prevObject then
 				prevObject:getVirtualRenderer():setDrawBound(false)
 			end
 			self._object = sprite
+			self._object.data = sprite.data
+			self._object.name = sprite.name
+			cclog(self._object.name)
+			cclog(tostring(self._object.data))
 			sprite:getVirtualRenderer():setDrawBound(true)
+            cclog("self._curGround.name..layername:"..self._curGround.name..layername)
 			self._layers[self._curGround.name..layername].ui:addChild(sprite)
-			self._objects[sprite] = objInfo   -- 增加了图片与数据的关联
-			--self._objects[self._curGround.name..layername ] = { ui = panel, lname = name }
-			self:setupObjectPanel(objInfo)
-			self:setupFilter(self._object,objInfo)
-			pos = self._curLayer.data:addObject(objInfo)
-			cclog("add data pos : ".. pos)
-			self._object.data = objInfo
+			pos = self._curLayer.data:addObject(self._object.data)
 			self._object.index = pos
+			self._objects[self._object.name] = sprite
+			self:setupObjectPanel(self._object.data)
+			self:setupFilter(self._object,self._object.data)
+			self:addObjItem(self._object.name,pos)
+			self:updateObjList(self._object)
 		end,
 		destory = function()
 			CC_SAFE_RELEASE(sprite)
 			CC_SAFE_RELEASE(prevObject)
+			CC_SAFE_RELEASE(self._ObjList)
 		end,
 	}
 	local cmd = CustomCommand.new(cmdt)
@@ -970,63 +1242,11 @@ function SceneEditorUI:addImage(filename,layername)
 end
 
 function SceneEditorUI:touchSprite(image)
-	local prevObject = self._object
-    for k,v in pairs(self._objects) do 
-    	if k == self._object then
-            self._object.data = v
-    	end
-    end
-    prevObject.data = self._object.data
-
-	if prevObject ~= image then -- 重复点击就不记录了
-		local m = 
-		{
-			tips = "选择物件",
-			init = function()
-				CC_SAFE_RETAIN(prevObject)
-				CC_SAFE_RETAIN(image)
-
-                for k,v in pairs(self._objects) do 
-                	if k == image then
-                        self._object.data = v
-                	end
-                end
-
-			end,
-			redo = function()
-				if prevObject then
-					prevObject:getVirtualRenderer():setDrawBound(false)
-				end
-				image:getVirtualRenderer():setDrawBound(true)
-				self._object = image
-				self:setupObjectPanel(self._object.data)
-				self:setupFilter(self._object,self._object.data)
-			end,
-			undo = function()
-				image:getVirtualRenderer():setDrawBound(false)
-				if prevObject then
-					prevObject:getVirtualRenderer():setDrawBound(true)
-				end
-				self._object = prevObject
-				self._object.data = prevObject.data
-				local data = nil
-				if prevObject.data then
-					data = prevObject.data
-				end
-				self:setupObjectPanel(data)
-				self:setupFilter(self._object,data)
-			end,
-			destory = function()
-				CC_SAFE_RELEASE(prevObject)
-				CC_SAFE_RELEASE(image)
-			end,
-		}
-		local cmd = CustomCommand.new(m)
-		Do(cmd)
-	end
+	self:CMD_SelectSprite(image)
 	self._spos = image:getTouchBeganPosition()
 	if self._object then
 		self._object.spos = self._object:pos()
+		self._object.offset = cc.pSub(self._object.spos,self._spos)
 	end
 	local scrollview = self._layer:getChild("preview_Scroll")
 	local inner_pos = scrollview:getInnerContainer():pos()
@@ -1045,6 +1265,8 @@ function SceneEditorUI:moveSprite(image)
 	local mpos =image:getTouchMovePosition()
 	local offset = cc.pSub(mpos,self._spos)
 	local pos = cc.pAdd(self._object.spos,offset)
+	pos.x = math.floor(pos.x)
+	pos.y = math.floor(pos.y)
 	self._object:pos(pos)
 	local Pos_x = self._layer:getChild("Pos_x")
 	Pos_x:setText(string.format("%d",math.floor(pos.x/self._designFactor)))
@@ -1055,48 +1277,13 @@ end
 
 function SceneEditorUI:stopSprite(image)
 	local epos = image:getTouchEndPosition()
-	local Pos_x = self._layer:getChild("Pos_x")
-	local Pos_y = self._layer:getChild("Pos_y")
-	local object = self._object
-	local delay = cc.pSub(epos,self._spos)
-	--cclog("delay x:"..delay.x.." y:"..delay.y)
-	if math.abs(delay.x) > 1 or math.abs(delay.y) > 1 then -- 精度到1像素
-		local spos = self._object.spos
-		local cmdtable = 
-		{
-			tips = "移动物件",
-			init = function()
-				CC_SAFE_RETAIN(object)
-				CC_SAFE_RETAIN(Pos_x)
-				CC_SAFE_RETAIN(Pos_y)
-			end,
-			undo = function()
-				local pos = object:pos(spos)
-				pos.x = math.floor(pos.x/self._designFactor)
-				pos.y = math.floor(pos.y/self._designFactor)
-				Pos_x:setText(string.format("%d",pos.x))
-				Pos_y:setText(string.format("%d",pos.y))
-				object.data.Pos = pos
-			end,
-			redo = function()
-				local pos = object:pos(cc.pAdd(spos,delay))
-				pos.x = math.floor(pos.x/self._designFactor)
-				pos.y = math.floor(pos.y/self._designFactor)
-				Pos_x:setText(string.format("%d",pos.x))
-				Pos_y:setText(string.format("%d",pos.y))
-				object.data.Pos = pos
-			end,
-			destory = function()
-				CC_SAFE_RELEASE(object)
-				CC_SAFE_RELEASE(Pos_x)
-				CC_SAFE_RELEASE(Pos_y)
-			end,
-		}
-		local cmd = CustomCommand.new(cmdtable)
-		Do(cmd)
+	if self._object then
+		self._object:pos(self._object.spos)
+		epos = cc.pAdd(epos,self._object.offset)
+		epos = cc.p(epos.x/self._designFactor,epos.y/self._designFactor)
+		self:CMD_MoveObject(self._object,epos)
 	end
 	self._layer:getChild("preview_Scroll"):scrollToPercentHorizontal(self._offset.x,0.01,false)
-	--cclog("stop sprite")
 end
 
 function SceneEditorUI:removeObject()
@@ -1111,7 +1298,6 @@ function SceneEditorUI:removeObject()
     {
           tips = "删除物体",
           init = function()
-	          --CC_SAFE_RETAIN(sprite)
 			  CC_SAFE_RETAIN(prevObject)
           end,
 
@@ -1122,20 +1308,24 @@ function SceneEditorUI:removeObject()
 				self._layers[self._curGround.name..fn].ui:addChild(prevObject)
 				self:setupObjectPanel(objInfotemp)
 				self:setupFilter(self._object,objInfotemp)
-                local indextemp = nil
-				indextemp = self._curLayer.data:addObject(objInfotemp)
-			    cclog("add data index : ")
+				self._curLayer.data:addObject(objInfotemp,self._object.index)
+				self:addObjItem(self._object.name,self._object.index)
+				self:updateObjList(self._object)
+				self._objects[self._object.name] = self._object
           	end
           end,
           redo = function()
-	        self._curLayer.data:removeObject(self._object)
+	        self._curLayer.data:removeObject(self._object.data)
           	self._layers[self._curGround.name..fn].ui:removeChild(self._object)
           	self:setupObjectPanel(nil)
           	self:setupFilter(nil,nil)
+          	self:removeObjItem(self._object.name)
+          	self._objects[self._object.name] = nil
           	self._object = nil
+
+          	self:updateObjList(self._object)
           end,
           destory = function()
-                --CC_SAFE_RELEASE(sprite)
 			    CC_SAFE_RELEASE(prevObject)
           end,
     }
@@ -1154,67 +1344,395 @@ end
 
 function SceneEditorUI:touchTree(tree_name)
 	cclog("tree_name:"..tree_name)
+
+	local prevTouchNode = self._selected   --记录前一个树节点
+
 	self._selected = self._tree:getSelectedItem()
-	self._selectedType = -1
-	local node = self._selected
-	local prevGround = self._curGround
-	while node ~= nil
-		do
-		 if node.P == nil then
-		 	self._curScene.data = SceneManager:findScene(node.value)
-		 	self._curScene.treeNode = node.name
-		 	cclog("curScene:"..node.value)
-		 end
-		 if self._Grounds[node.name] then
-		 	if self._curGround.ui ~= nil then
-		 		self._curGround.ui:setVisible(false)
-		 	end
-		 	self._curGround.data = self._Grounds[node.name]
-		 	self._curGround.treeNode = node.name
-		 	self._curGround.ui = self._ui[node.value]
-		 	self._curGround.name = node.value
-		 	self._curGround.ui:setVisible(true)
-		 	cclog("curGround:"..node.value)
-		 end
-		 node = node.P
-		 self._selectedType = self._selectedType + 1
+	--[[
+    if prevTouchNode == nil then
+        cclog(" self._selected.name:"..self._selected.name)
+    else
+    	cclog(" prevTouchNode.name:"..prevTouchNode.name.." self._selected.name:"..self._selected.name)
+    end
+    ]]
+    local undotype = nil
+    local curTouchNode = nil
+--    self.touchNode = self._selected
+
+	--local prevObject = self._object   -- 将当前对象赋值给前面对象
+
+    local prevselectType = self.selectedType
+	local prevScene = {} 
+	local prevGround = {}
+	local prevLayer = {}
+    if self.selectedType >= 0 then
+	    prevScene = self._curScene
+	    prevScene.data = self._curScene.data
+	    prevScene.treeNode = self._curScene.treeNode
+    end 
+    if self.selectedType >= 1 then
+	    prevGround = self._curGround
+	    prevGround.data = self._curGround.data
+	    prevGround.treeNode = self._curGround.treeNode
+	    prevGround.ui = self._curGround.ui
+	    prevGround.name = self._curGround.name
+	    prevGround.treeNode = self._curGround.treeNode
 	end
-	--[[cclog("curGround data:")
-    for i=0,self._curGround.data:LayerCount()-1 do
-    	cclog("..layername:"..self._curGround.data:getLayer(i)._name.."   no:"..i)
-    end]]
+    if self.selectedType >= 2 then
+	    prevLayer.data = self._curLayer.data
+		prevLayer.treeNode = self._curLayer.treeNode
+		prevLayer.ui = self._curLayer.ui 
+    end
 
+	if self._selected == nil then return end
+	local cmdt = 
+	{
+		tips = "选择树:"..self._selected.value,
+		redo = function()
+            local node = nil
+		    if undotype == 1 then
+				node = curTouchNode
+            else
+            	node = self._selected
+		    end
+			self._selectedType = -1
+			
+			while node ~= nil do
+				 if node.P == nil then
+				 	self._curScene.data = SceneManager:findScene(node.value)
+				 	self._curScene.treeNode = node.name
+				 	cclog("curScene:"..node.value)
+				 	
+				 	--self.curTouchNode = nil
+				 end
+				 if self._Grounds[node.name] then
+				 	if self._curGround.ui ~= nil then
+				 		self._curGround.ui:setVisible(false)
+				 	end
+				 	self._curGround.data = self._Grounds[node.name]
+				 	self._curGround.treeNode = node.name
+				 	self._curGround.ui = self._ui[node.value]
+				 	self._curGround.name = node.value
+				 	self._curGround.ui:setVisible(true)
+				 	--self.curTouchNode = nil
+				 	cclog("curGround:"..node.value)
+				 end
+				 node = node.P
+				 self._selectedType = self._selectedType + 1
+				 self.selectedType = self._selectedType
+			end
+            
+            --当点击ground对象时
+            if self._selectedType == 1 then
+                for k,v in pairs(self._layers) do     -- 遍历层对象
+                    if v.ui ~= nil then 
+	                    if string.find(k,self._curGround.name) then
+	                    	v.ui:setOpacity(255)
+	                    	local childs = v.ui:getChildren()
+	                    	for k1,v1 in pairs(childs) do
+                                v1:setTouchEnabled(true)
+	                    	end
+	                    else
+	                        v.ui:setOpacity(60)
+	                        local childs = v.ui:getChildren()
+	                    	for k1,v1 in pairs(childs) do
+                                v1:setTouchEnabled(false)
+	                    	end
+	                    end
+	                end
+                end
+            end
 
-	if self._selectedType == 2 then
-		local prevLayer = self._curLayer
+	        if self._selectedType == 2 then
 
-		local innerNode = self._selected
-		local cmdt = 
-		{
-			tips = "选择层:"..self._selected.value,
-			redo = function()
-				self._curLayer.data = self._curGround.data:getLayer(self._selected.value)
-				cclog("_curLayer.data:  name:"..self._curLayer.data._name)
-				self._curLayer.treeNode = self._selected.name
-				self._curLayer.ui = self._layers[self._curGround.name..self._selected.value]
+                if undotype == 1 then
+                    self._curLayer.data = self._curGround.data:getLayer(curTouchNode.value)
+					cclog("选择层名为:"..self._curLayer.data._name)
+					self._curLayer.treeNode = curTouchNode.name
+					self._curLayer.ui = self._layers[self._curGround.name..curTouchNode.value]
+					self:setupLayerPanel(self._curLayer.data)
+	                cclog("  self._curLayer.treeNode:"..self._curLayer.treeNode)
+
+	                for k,v in pairs(self._layers) do     -- Ñ¡ÖÐ²ã¸ßÁÁÏÔÊ¾
+	                    if k == self._curGround.name..curTouchNode.value then
+	                    	v.ui:setOpacity(255)
+	                    	local childs = v.ui:getChildren()
+	                    	for k1,v1 in pairs(childs) do
+                                v1:setTouchEnabled(true)
+	                    	end
+	                    else
+	                        v.ui:setOpacity(60)
+	                        local childs = v.ui:getChildren()
+	                    	for k1,v1 in pairs(childs) do
+                                v1:setTouchEnabled(false)
+	                    	end
+	                    end 
+	                end                   
+                else
+	                self._curLayer.data = self._curGround.data:getLayer(self._selected.value)
+					cclog("选择层名为:"..self._curLayer.data._name)
+					self._curLayer.treeNode = self._selected.name
+					self._curLayer.ui = self._layers[self._curGround.name..self._selected.value]
+					self:setupLayerPanel(self._curLayer.data)
+	                cclog("  self._curLayer.treeNode:"..self._curLayer.treeNode)
+
+	                for k,v in pairs(self._layers) do     -- 遍历层对象
+	                	cclog("点击层 self._curGround.name..self._selected.value:"..self._curGround.name..self._selected.value)
+	                    if v.ui ~= nil then 
+		                    if k == self._curGround.name..self._selected.value then
+		                    	v.ui:setOpacity(255)
+		                    	--v.ui:setTouchEnabled(true)
+		                    	local childs = v.ui:getChildren()
+		                    	for k1,v1 in pairs(childs) do
+                                    v1:setTouchEnabled(true)
+		                    	end
+		                    else
+		                        v.ui:setOpacity(60)
+		                        --v.ui:setTouchEnabled(false)
+		                        local childs = v.ui:getChildren()
+		                    	for k1,v1 in pairs(childs) do
+                                    v1:setTouchEnabled(false)
+		                    	end
+		                    end
+		                end
+                    end
+                end
+				
+			    --删除对象结构panel
+                self._ObjList:removeAllItems()
+                
+                --重新生成objList
+                for i=0,self._curLayer.data._objectsVector:count()-1 do  --遍历当前层所有对象
+                    local objdata = self._curLayer.data._objectsVector:at(i)
+                    for k,v in pairs(self._objects) do
+                    	--cclog("  k:"..k.." v.data.Filename:"..v.data.Filename)
+                        if v.data == objdata then
+                            self:addObjItem(k,i)
+                        end
+                    end
+                end
+                
+                --默认显示当前层的第一个对象
+                --[[if self._curLayer.data._objectsVector:count() > 0 then
+                    cclog("-----当前层有对象")
+                    local imagedata = self._curLayer.data:getObject(0)
+                    for k,v in pairs(self._objects) do 
+	    				if v.data == imagedata then
+	    					self._object = v
+	    					self._object.data = imagedata
+	            			break
+	    				end
+    			    end
+
+                    --self._object = self._objects[imagedata.name]
+                    --self._object.
+
+    			    if prevObject then
+					    prevObject:getVirtualRenderer():setDrawBound(false)
+					end
+					self._object:getVirtualRenderer():setDrawBound(true)
+					self:setupObjectPanel(self._object.data)
+					self:setupFilter(self._object,self._object.data)
+                end]]
+                
+            end
+
+			if self._selectedType > 2 then
+
+            end
+           --[[ if undotype ~=1 then 
+            self.touchNode = clone(self._selected)
+            curTouchNode = self.touchNode
+            cclog("self.touchNode:"..self.touchNode.name)
+            end]]
+
+            --如果执行了撤销操作，则更换树节点方框标示
+            if undotype == 1 then
+                if prevTouchNode ~= nil then
+                	cclog("重做前节点  prevTouchNode:"..prevTouchNode.name.."  curTouchNode:"..curTouchNode.name)
+                    self._tree:selectNode(prevTouchNode.name,curTouchNode.name)
+                else
+                	self._tree:selectNode(nil,curTouchNode.name)
+                end
+                self._selected = curTouchNode
+            else
+            	 if prevTouchNode ~= nil then
+                	cclog("前节点  prevTouchNode:"..prevTouchNode.name.."  self._selected:"..self._selected.name)
+                    self._tree:selectNode(prevTouchNode.name,self._selected.name)
+                else
+                	self._tree:selectNode(nil,self._selected.name)
+                end
+                curTouchNode = self._selected
+            end
+
+		end,
+	    undo = function()
+            if prevselectType >= 0 then 
+                self._curScene.data = prevScene.data
+				self._curScene.treeNode = prevScene.treeNode
+
+			 	--[[self._curGround.data = nil
+			 	self._curGround.treeNode =  nil
+			 	self._curGround.ui =  nil
+			 	self._curGround.name = nil
+
+                self._curLayer.data = nil
+                self._curLayer.data = nil
+			    self._curLayer.treeNode = nil
+			    self._curLayer.ui = nil ]]
+            end
+            if prevselectType >= 1 then
+
+                    if self._curGround.ui ~= nil then
+				 		--self._curGround.ui:setVisible(false)
+				 	end
+				 	--cclog("prevGround treeNode:"..prevGround.treeNode.." prevGround name:"..prevGround.name)
+				 	self._curGround = prevGround
+				 	prevGround.data = self._Grounds[prevGround.treeNode]
+				 	self._curGround.data = prevGround.data
+				 	self._curGround.treeNode =  prevGround.treeNode
+				 	self._curGround.ui =  prevGround.ui --self._ui[prevTouchNode.value]
+				 	self._curGround.name = prevGround.name
+                    cclog("self._curGround.treeNode:"..self._curGround.treeNode)
+
+                   --[[ self._curLayer.data = nil
+                    self._curLayer.data = nil
+				    self._curLayer.treeNode = nil
+				    self._curLayer.ui = nil ]]
+
+            end
+            if prevselectType >= 2 then
+	            self._curLayer.data = prevLayer.data
+				self._curLayer.treeNode = prevLayer.treeNode
+				self._curLayer.ui = prevLayer.ui
 				self:setupLayerPanel(self._curLayer.data)
-                cclog("--------bbb--------")
-			end,
-			undo = function()
-				self._curlayer = prevLayer
-				self._curGround = prevGround
-				self:setupLayerPanel(self._curLayer.data)
-			end,
-		}
+				if self._curLayer.data ~= nil then
+                   cclog("self._curLayer.data._name:"..self._curLayer.data._name)
+                end
 
-		local cmd = CustomCommand.new(cmdt)
-		Do(cmd)
-		
-	elseif self._selectedType > 2 then
+                for k,v in pairs(self._layers) do     -- 显示该层对象
+                	if k == self._curGround.name..prevTouchNode.value then
+                    	v.ui:setOpacity(255)
+                    	local childs = v.ui:getChildren()
+                    	for k1,v1 in pairs(childs) do
+                            v1:setTouchEnabled(true)
+                    	end
+                    else
+                        v.ui:setOpacity(60)
+                        local childs = v.ui:getChildren()
+                    	for k1,v1 in pairs(childs) do
+                            v1:setTouchEnabled(false)
+                    	end
+                    end
+                end
+                
 
-	end
+                --删除对象结构panel
+                self._ObjList:removeAllItems()
+                
+                --重新生成objList
+                for i=0,self._curLayer.data._objectsVector:count()-1 do  --遍历当前层所有对象
+                    local objdata = self._curLayer.data._objectsVector:at(i)
+                    for k,v in pairs(self._objects) do
+                        if v.data == objdata then
+                            self:addObjItem(k,i)
+                        end
+                    end
+                end
 
-	cclog("selectedType:"..self._selectedType)
+                --默认高亮显示图层中第一个对象
+               --[[ if self._curLayer.data._objectsVector:count() > 0 then
+                    self._object.data = self._curLayer.data:getObject(0)
+                    for k,v in pairs(self._objects) do 
+	    				if v.data == self._object.data then
+	            			self._object = v
+	    				end
+    			    end
+    			    if prevObject then
+					    prevObject:getVirtualRenderer():setDrawBound(false)
+					end
+					self._object:getVirtualRenderer():setDrawBound(true)
+					self:setupObjectPanel(self._object.data)
+					self:setupFilter(self._object,self._object.data)
+                end]]
+            end
+            
+            if prevselectType == -1 then
+                self._curScene.data = nil
+				self._curScene.treeNode = nil
+				self._curScene.ui = 0
+ 
+			 	self._curGround.data = nil
+			 	self._curGround.treeNode =  nil
+			 	self._curGround.ui =  nil
+			 	self._curGround.name = nil
+
+	            self._curLayer.data = nil
+				self._curLayer.treeNode = nil
+				self._curLayer.ui = nil
+
+            end
+            
+		    undotype = 1
+		    if prevTouchNode == nil then
+                self._tree:selectNode(self._selected.name)
+            else
+            	self._tree:selectNode(self._selected.name,prevTouchNode.name)
+		    end
+
+            if prevTouchNode == 1 then
+                for k,v in pairs(self._layers) do     -- 遍历层对象
+                    if v.ui ~= nil then 
+	                    if string.find(k,self._curGround.name) then
+	                    	v.ui:setOpacity(255)
+	                    	local childs = v.ui:getChildren()
+	                    	for k1,v1 in pairs(childs) do
+                                v1:setTouchEnabled(true)
+	                    	end
+	                    else
+	                        v.ui:setOpacity(60)
+	                        local childs = v.ui:getChildren()
+	                    	for k1,v1 in pairs(childs) do
+                                v1:setTouchEnabled(false)
+	                    	end
+	                    end
+	                end
+                end
+
+            end
+
+          --[[  for k,v in pairs(self._layers) do
+            	if prevTouchNode ~= nil then
+                    if k == self._curGround.name..prevTouchNode.value then
+                	    v.ui:setOpacity(255)
+                    else
+                        v.ui:setOpacity(20)
+                    end
+            	end  
+            end ]]
+            self._selected = prevTouchNode
+            --[[if self._curLayer.data._objectsVector:count() > 0 then
+                self._object.data = self._curLayer.data:getObject(0)
+                for k,v in pairs(self._objects) do 
+    				if v == self._object.data then
+            			self._object = k
+            			break
+    				end
+			    end
+			    if prevObject then
+				    prevObject:getVirtualRenderer():setDrawBound(false)
+				end
+				self._object:getVirtualRenderer():setDrawBound(true)
+				self:setupObjectPanel(self._object.data)
+				self:setupFilter(self._object,self._object.data)
+            end]]
+
+		end,
+	}
+
+	local cmd = CustomCommand.new(cmdt)
+	Do(cmd)
+	
 end
 
 -- for preview

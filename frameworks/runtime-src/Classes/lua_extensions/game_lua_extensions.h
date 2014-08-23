@@ -1,0 +1,23 @@
+
+#ifndef __GAME_LUA_EXTRA_H_
+#define __GAME_LUA_EXTRA_H_
+
+#if defined(_USRDLL)
+#define LUA_EXTENSIONS_DLL     __declspec(dllexport)
+#else         /* use a DLL library */
+#define LUA_EXTENSIONS_DLL
+#endif
+
+#if __cplusplus
+extern "C" {
+#endif
+
+#include "lauxlib.h"
+
+	void LUA_EXTENSIONS_DLL game_lua_extensions(lua_State *L);
+	 
+#if __cplusplus
+}
+#endif
+
+#endif /* __LUA_EXTRA_H_ */
