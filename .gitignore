@@ -89,3 +89,4 @@ frameworks/runtime-src/proj.win32/Release.win32/libtiff.lib
 frameworks/runtime-src/proj.win32/Release.win32/libwebp.lib
 frameworks/runtime-src/proj.win32/Release.win32/libzlib.lib
 frameworks/runtime-src/proj.win32/Release.win32/lua51.lib
+Editor.config

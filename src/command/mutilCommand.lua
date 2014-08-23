@@ -2,8 +2,14 @@ mutilCommand = class("mutilCommand", Command)
 mutilCommand.__index = mutilCommand
 
 function mutilCommand:ctor(...)
-	self._tips = "复合动作"
+	self._tips = "复合动作:"
 	self._commands = {...}
+	for k,command in pairs(self._commands) do
+		if k ~= 1 then
+			self._tips = self._tips.."/"
+		end
+		self._tips = self._tips..command._tips
+	end
 end
 
 function mutilCommand:redo()

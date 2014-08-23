@@ -30,7 +30,7 @@ function KeyBoardManager:apply(name)
 end
 
 function KeyBoardManager:PressedKey(keycode,event)
-	--cclog("pressed key:%x",keycode)
+	--cclog("pressed key:%d",keycode)
 	if cc.KeyCode["KEY_ALT"] == keycode then
 		self._type = bor(self._type,alt_type)
 	end
@@ -46,7 +46,7 @@ function KeyBoardManager:PressedKey(keycode,event)
 	--cclog("press a_c_key:"..self._type)
 	if self._using then
 		local shortcut = self._using
-		shortcut:callFunc(self._type,keycode)
+		shortcut:callPFunc(self._type,keycode)
 	end
 end
 
@@ -67,7 +67,7 @@ function KeyBoardManager:ReleasedKey(keycode,event)
 	--cclog("release a_c_key:"..self._type)
 	if self._using then
 		local shortcut = self._using
-		shortcut:callReleaseFunc(self._type,keycode)
+		shortcut:callRFunc(self._type,keycode)
 	end
 end
 

@@ -2,6 +2,9 @@ CommandManager = import(".Manager").new()
 Do = function(...)
 	local args = {...}
 	local command = nil
+	if args[1] == command then
+		return
+	end
 	if #args == 1 then
 	 	command = args[1]
 	else

@@ -61,7 +61,7 @@ function SceneEditorUI:ctor()
 			local idx = listView:getCurSelectedIndex()
 			local item = listView:getItem(idx)
 			local sprite = self._objects[item:getChild("Label"):getString()]
-			self:CMD_SelectSprite(sprite)
+			Do(self:CMD_SelectSprite(sprite))
 			self._prevItem = item
 		end})
 
@@ -110,13 +110,24 @@ function SceneEditorUI:ctor()
 	self.selectedType = -1 --´æ´¢½ÚµãÀàÐÍ
 	self._object = nil
 	self._ObjCount  = 0
+	self._mode = "MOVE"
 
 	-- 设置快捷键
 	local keyshortcut = KeyBoardManager:getShortcuts("SceneEditor")
 	if not keyshortcut then
 		keyshortcut = KeyShortcuts.new("SceneEditor")
-		keyshortcut:add("KEY_Z",handler(self,self.undo),nil,ctrl_type)
-		keyshortcut:add("KEY_Y",handler(self,self.redo),nil,ctrl_type)
+		keyshortcut:add(ctrl_type,"KEY_Z",handler(self,self.undo),nil)
+		keyshortcut:add(ctrl_type,"KEY_Y",handler(self,self.redo),nil)
+		keyshortcut:add(single_type,"KEY_UP_ARROW",handler(self,self.on_upArrow),nil)
+		keyshortcut:add(single_type,"KEY_DOWN_ARROW",handler(self,self.on_downArrow),nil)
+		keyshortcut:add(single_type,"KEY_LEFT_ARROW",handler(self,self.on_leftArrow),nil)
+		keyshortcut:add(single_type,"KEY_RIGHT_ARROW",handler(self,self.on_rightArrow),nil)
+		keyshortcut:add(ctrl_type,"KEY_UP_ARROW",handler(self,self.on_upZOrder),nil)
+		keyshortcut:add(ctrl_type,"KEY_DOWN_ARROW",handler(self,self.on_downZOrder),nil)
+		keyshortcut:add(ctrl_type,"KEY_L",handler(self,self.on_lock),nil)
+		keyshortcut:add(ctrl_type,"KEY_V",handler(self,self.on_visible),nil)
+		keyshortcut:add(ctrl_type,"KEY_N",handler(self,self.addObject),nil)
+		keyshortcut:add(ctrl_type,"KEY_R",handler(self,self.on_Rotate),handler(self,self.un_Rotate))
 		KeyBoardManager:add(keyshortcut)
 	end
 	KeyBoardManager:apply("SceneEditor")
@@ -167,19 +178,20 @@ function SceneEditorUI:CMD_SelectSprite(sprite)
 				CC_SAFE_RELEASE(sprite)
 			end,
 		}
-		local cmd = CustomCommand.new(m)
-		Do(cmd)
+		return CustomCommand.new(m)
 	end
+	return nil
 end
 
 function SceneEditorUI:CMD_MoveObject(object,epos)
+	if not object then return nil end
 	local Pos_x = self._layer:getChild("Pos_x")
 	local Pos_y = self._layer:getChild("Pos_y")
 	local spos = object.data.Pos
 	epos.x = math.floor(epos.x)
 	epos.y = math.floor(epos.y)
 	local delay = cc.pSub(epos,spos)
-	if math.abs(delay.x) > 1 or math.abs(delay.y) > 1 then -- 精度到1像素
+	if math.abs(delay.x) >= 1 or math.abs(delay.y) >= 1 then -- 精度到1像素
 		local cmdtable = 
 		{
 			tips = "移动物件",
@@ -206,15 +218,17 @@ function SceneEditorUI:CMD_MoveObject(object,epos)
 				CC_SAFE_RELEASE(Pos_y)
 			end,
 		}
-		local cmd = CustomCommand.new(cmdtable)
-		Do(cmd)
+		return CustomCommand.new(cmdtable)
 	end
+	return nil
 end
 
 function SceneEditorUI:CMD_ScaleObject(object,scale)
+	if not object then return nil end
+	local oScale = object.data.Scale
+	if oScale.x == scale.x and oScale.y == scale.y then return nil end
 	local Scale_x = self._layer:getChild("Scale_X")
 	local Scale_y = self._layer:getChild("Scale_Y")
-	local oScale = object.data.Scale
 	local cmdtable = 
 	{
 		tips = "缩放物件",
@@ -243,8 +257,212 @@ function SceneEditorUI:CMD_ScaleObject(object,scale)
 			CC_SAFE_RELEASE(Scale_y)
 		end,
 	}
-	local cmd = CustomCommand.new(cmdtable)
-	Do(cmd)
+	return CustomCommand.new(cmdtable)
+end
+
+function SceneEditorUI:CMD_RotateObject(object,rotation)
+	if not object then return nil end
+	local oRotation = object.data.Rotation
+	if oRotation == rotation then return nil end
+	local RotateText = self._layer:getChild("Rotate") 
+	local t = 
+	{
+		tips = "旋转物件",
+		init = function()
+			CC_SAFE_RETAIN(object)
+			CC_SAFE_RETAIN(RotateText)
+		end,
+		redo = function()
+			RotateText:setString(string.format("%d",rotation))
+			object:setRotation(rotation)
+			object.data.Rotation = rotation
+		end,
+		undo = function()
+			RotateText:setString(string.format("%d",oRotation))
+			object:setRotation(oRotation)
+			object.data.Rotation = oRotation
+		end,
+		destory = function()
+			CC_SAFE_RELEASE(object)
+			CC_SAFE_RELEASE(RotateText)
+		end,
+	}
+	return CustomCommand.new(t)
+end
+
+function SceneEditorUI:CMD_FlipObjectX(object,isflip)
+	if not object then return nil end
+	local oFlip = clone(object.data.Flip)
+	if oFlip.x == isflip then return nil end
+	local flip = cc.p(isflip,oFlip.y)
+	local t = 
+	{
+		tips = "水平翻转",
+		init = function()
+			CC_SAFE_RETAIN(object)
+		end,
+		redo = function()
+			object:setFlippedX(flip.x)
+			object.data.Flip = flip
+		end,
+		undo = function()
+			object:setFlippedX(oFlip.x)
+			object.data.Flip = oFlip
+		end,
+		destory = function()
+			CC_SAFE_RELEASE(object)
+		end,
+	}
+	return CustomCommand.new(t)
+end
+
+function SceneEditorUI:CMD_FlipObjectY(object,isflip)
+	if not object then return nil end
+	local oFlip = clone(object.data.Flip)
+	if oFlip.y == isflip then return nil end
+	local flip = cc.p(oFlip.x,isflip)
+	local t = 
+	{
+		tips = "竖直翻转",
+		init = function()
+			CC_SAFE_RETAIN(object)
+		end,
+		redo = function()
+			object:setFlippedY(flip.y)
+			object.data.Flip = flip
+		end,
+		undo = function()
+			object:setFlippedY(oFlip.y)
+			object.data.Flip = oFlip
+		end,
+		destory = function()
+			CC_SAFE_RELEASE(object)
+		end,
+	}
+	return CustomCommand.new(t)
+end
+
+function SceneEditorUI:CMD_OpacityObject(object,opacity)
+	if not object then return nil end
+	local oOpacity = object.data.Opacity
+	if oOpacity == opacity then return nil end
+	local slider = self._layer:getChild("Slider_51")
+	local OpacityLabel = self._layer:getChild("OpacityLabel")
+	local t =
+	{
+		tips = "改变透明度",
+		init = function()
+			CC_SAFE_RETAIN(OpacityLabel)
+			CC_SAFE_RETAIN(slider)
+			CC_SAFE_RETAIN(object)
+		end,
+	 	redo = function()
+	 		OpacityLabel:setString(tostring(opacity))
+	 		slider:setPercent(math.floor(opacity/255*100))
+	 		object:setOpacity(opacity)
+	 		object.data.Opacity = opacity
+	 	end,
+	 	undo = function()
+	 		OpacityLabel:setString(tostring(oOpacity))
+	 		slider:setPercent(math.floor(oOpacity/255*100))
+	 		object:setOpacity(oOpacity)
+	 		object.data.Opacity = oOpacity
+	 	end,
+	 	destory = function()
+	 		CC_SAFE_RELEASE(OpacityLabel)
+	 		CC_SAFE_RELEASE(slider)
+	 		CC_SAFE_RELEASE(object)
+	 	end,
+	}
+	return CustomCommand.new(t)
+end
+
+function SceneEditorUI:CMD_ZOrderObject(object,z)
+	if not object then return nil end
+	local oZ = object.data.zOrder
+	if oZ == z then return nil end
+	local zOrderText = self._layer:getChild("zOrder")
+	local t = 
+	{
+		tips = "设置物件层级",
+		init = function()
+			CC_SAFE_RETAIN(zOrderText)
+			CC_SAFE_RETAIN(object)
+		end,
+		redo = function()
+			zOrderText:setString(string.format("%d",z))
+			object:setLocalZOrder(z)
+			object.data.zOrder = z
+		end,
+		undo = function()
+			zOrderText:setString(string.format("%d",oZ))
+			object:setLocalZOrder(oZ)
+			object.data.zOrder = oZ
+		end,
+		destory = function()
+			CC_SAFE_RELEASE(zOrderText)
+			CC_SAFE_RELEASE(object)
+		end,
+	}
+	return CustomCommand.new(t)
+end
+
+function SceneEditorUI:CMD_LockObject(object,lock)
+	if not object then return nil end
+	local olock = object.data.locked
+	if olock == lock then return nil end
+	local cmdt = 
+	{
+        tips = "锁定/解锁物件",
+        init = function()
+        	CC_SAFE_RETAIN(object)
+        end,
+        undo = function()
+			object.data.locked = olock
+			object:setTouchEnabled(object.data.locked==false)
+	        self:updateObjList(object)	        
+	        self:setupObjectPanel(object.data)
+        end,
+        redo = function()
+        	object.data.locked = lock
+        	object:setTouchEnabled(object.data.locked==false)
+	        self:updateObjList(object)
+	        self:setupObjectPanel(object.data)
+        end,
+        destory = function()
+        	CC_SAFE_RELEASE(object)
+        end,
+    }
+
+   	return CustomCommand.new(cmdt)
+end
+
+function SceneEditorUI:CMD_VisibleObject(object,visible)
+	if not object then return nil end
+	local oVisible = object.data.visible
+	if oVisible == visible then return nil end
+	local cmdt =
+	{
+        tips = "隐藏/显示物件",
+        init = function()
+        	CC_SAFE_RETAIN(object)
+        end,
+        undo = function()
+        	object.data.visible = oVisible
+        	object:setVisible(oVisible)
+	        self:updateObjList(object)
+        end,
+        redo = function()
+            object.data.visible = visible
+            object:setVisible(visible)
+	        self:updateObjList(object)	        
+        end,
+        destory = function()
+        	CC_SAFE_RELEASE(object)
+        end,
+    }
+
+   return CustomCommand.new(cmdt)
 end
 
 --------------------------------------------------------------------------
@@ -398,17 +616,17 @@ function SceneEditorUI:initObjectPanel()
 	end
 	Pos_x:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
-			local pos = self._object.data.Pos
+			local pos = clone(self._object.data.Pos)
 			pos.x = tonumber(widget:getString())
-			self:CMD_MoveObject(self._object,pos)
+			Do(self:CMD_MoveObject(self._object,pos))
 		end})
 
 	local Pos_y = self._layer:getChild("Pos_y")
 	Pos_y:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
-			local pos = self._object.data.Pos
-			pos.y = tonumber(widget:getString()) * self._designFactor
-			self:CMD_MoveObject(self._object,pos)
+			local pos = clone(self._object.data.Pos)
+			pos.y = tonumber(widget:getString())
+			Do(self:CMD_MoveObject(self._object,pos))
 		end})
 
 	local Scale_x = self._layer:getChild("Scale_X")
@@ -417,7 +635,7 @@ function SceneEditorUI:initObjectPanel()
 			local scale = cc.p(0,0)
 			scale.x = tonumber(widget:getString())
 			scale.y = self._object.data.Scale.y
-			self:CMD_ScaleObject(self._object,scale)
+			Do(self:CMD_ScaleObject(self._object,scale))
 		end})
 	
 	local Scale_y = self._layer:getChild("Scale_Y")
@@ -426,54 +644,27 @@ function SceneEditorUI:initObjectPanel()
 			local scale = cc.p(0,0)
 			scale.y = tonumber(widget:getString())
 			scale.x = self._object.data.Scale.x
-			self:CMD_ScaleObject(self._object,scale)
+			Do(self:CMD_ScaleObject(self._object,scale))
 		end})
 
 	local Rotate = self._layer:getChild("Rotate")
 	Rotate:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local rotate = tonumber(widget:getString())
-			cclog("旋转到"..rotate.."度")
-			local cmd1 = cc.RotateCommand.new(self._object,rotate)
-			local cmd2 = command.modifyObject.new(self._object.data,3,rotate)
-			local orotate = self._object:getRotation()
-			local t = 
-			{
-				tips = "设置文本框",
-				init = function()
-					CC_SAFE_RETAIN(widget)
-				end,
-				redo = function()
-					setText(widget,string.format("%d",rotate))
-				end,
-				undo = function()
-					setText(widget,string.format("%d",orotate))
-				end,
-				destory = function()
-					CC_SAFE_RELEASE(widget)
-				end,
-			}
-			local cmd3 = CustomCommand.new(t)
-			Do(cmd1,cmd2,cmd3)
+			Do(self:CMD_RotateObject(self._object,rotate))
 		end})
 	--Rotate:setText("")
 	local H_FlipBtn = self._layer:getChild("H_FlipBtn")
 	H_FlipBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(button)
 			local b = self._object:isFlippedX() == false
-			local flip = cc.p(b,self._object:isFlippedY())
-			local cmd1 = cc.FlipCommand.new(self._object,cc.axis_x)
-			local cmd2 = command.modifyObject.new(self._object.data,5,flip)
-			Do(cmd1,cmd2)
+			Do(self:CMD_FlipObjectX(self._object,b))
 		end})
 	local V_FlipBtn = self._layer:getChild("V_FlipBtn")
 	V_FlipBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(button)
 			local b = self._object:isFlippedY() == false
-			local flip = cc.p(self._object:isFlippedX(),b)
-			local cmd1 = cc.FlipCommand.new(self._object,cc.axis_y)
-			local cmd2 = command.modifyObject.new(self._object.data,5,flip)
-			Do(cmd1,cmd2)
+			Do(self:CMD_FlipObjectY(self._object,b))
 		end})
 	local Slider_51 = self._layer:getChild("Slider_51")
 	local OpacityLabel = self._layer:getChild("OpacityLabel")
@@ -483,130 +674,54 @@ function SceneEditorUI:initObjectPanel()
 			self._object:setOpacity(opacity)
 			OpacityLabel:setString(tostring(opacity))
 		end)
-	local orgOpacity = 255
-	Slider_51:addTouchEvent({[ccui.TouchEventType.began]=
-		function()
-			orgOpacity = self._object:getOpacity()
-		end,
+	Slider_51:addTouchEvent({
 		[ccui.TouchEventType.ended] =
 		function(slider)
 			local percent = slider:getPercent()
 			local opacity = math.floor(255*percent/100)
-			self._object:setOpacity(orgOpacity)
-			local cmd1 = cc.OpacityCommand.new(self._object,opacity)
-			local cmd2 = command.modifyObject.new(self._object.data,4,opacity)
-			local m =
-			{
-				tips = "改变透明度",
-				init = function()
-					CC_SAFE_RETAIN(OpacityLabel)
-					CC_SAFE_RETAIN(slider)
-				end,
-			 	redo = function()
-			 		OpacityLabel:setString(tostring(opacity))
-			 		slider:setPercent(percent)
-			 	end,
-			 	undo = function()
-			 		OpacityLabel:setString(tostring(orgOpacity))
-			 		slider:setPercent(math.floor(orgOpacity/255*100))
-			 	end,
-			 	destory = function()
-			 		CC_SAFE_RELEASE(OpacityLabel)
-			 		CC_SAFE_RELEASE(slider)
-			 	end,
-			}
-			local cmd3 = CustomCommand.new(m)
-			Do(cmd1,cmd2,cmd3)
+			Do(self:CMD_OpacityObject(self._object,opacity))
 		end})
+
 	local zOrder = self._layer:getChild("zOrder")
 	zOrder:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local z = tonumber(widget:getString())
-			local cmd1 = cc.reorderCommand.new(self._object,z)
-			local cmd2 = command.modifyObject.new(self._object.data,6,z)
-			local oz = self._object:getLocalZOrder()
-			local t = 
-			{
-				tips = "设置文本框",
-				init = function()
-					CC_SAFE_RETAIN(widget)
-				end,
-				redo = function()
-					setText(widget,string.format("%d",z))
-				end,
-				undo = function()
-					setText(widget,string.format("%d",oz))
-				end,
-				destory = function()
-					CC_SAFE_RELEASE(widget)
-				end,
-			}
-			local cmd3 = CustomCommand.new(t)
-			Do(cmd1,cmd2,cmd3)
+			Do(self:CMD_ZOrderObject(self._object,z))
 		end})
 
 	local ApplyBtn = self._layer:getChild("ApplyBtn")
 	ApplyBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function()
+			local cmds = {}
 			local pos = cc.p(0,0)
 			pos.x = tonumber(Pos_x:getString())
 			pos.y = tonumber(Pos_y:getString())
-			local cmd1 = cc.MoveCommand.new(self._object,cc.pMul(pos,self._designFactor))
-			local cmd2 = command.modifyObject.new(self._object.data,1,pos)
+			local cmd1 = self:CMD_MoveObject(self._object,pos)
+			if cmd1 then
+				table.insert(cmds,cmd1)
+			end
+			
 			local scale = {x=1,y=1}
 			scale.x = tonumber(Scale_x:getString())
 			scale.y = tonumber(Scale_y:getString())
-			local cmd3 = cc.ScaleCommand.new(self._object,scale.x*self._designFactor,scale.y*self._designFactor)
-			local cmd4 = command.modifyObject.new(self._object.data,2,scale)
-			local rotate = tonumber(Rotate:getString())
-			local cmd5 = cc.RotateCommand.new(self._object,rotate)
-			local cmd6 = command.modifyObject.new(self._object.data,3,rotate)
-			local z = tonumber(zOrder:getString())
-			local cmd7 = cc.reorderCommand.new(self._object,z)
-			local cmd8 = command.modifyObject.new(self._object.data,6,z)
+			local cmd2 = self:CMD_ScaleObject(self._object,scale)
+			if cmd2 then
+				table.insert(cmds,cmd2)
+			end
 
-			local oPos = self._object.data.Pos
-			local oScale = self._object.data.Scale
-			local oRotate= self._object:getRotation()
-			local oZ = self._object:getLocalZOrder()
-			local t = 
-			{
-				tips = "设置文本框",
-				init = function()
-					CC_SAFE_RETAIN(Pos_x)
-					CC_SAFE_RETAIN(Pos_y)
-					CC_SAFE_RETAIN(Rotate)
-					CC_SAFE_RETAIN(Scale_x)
-					CC_SAFE_RETAIN(Scale_y)
-					CC_SAFE_RETAIN(zOrder)
-				end,
-				redo = function()
-					setText(Pos_x,string.format("%d",pos.x))
-					setText(Pos_y,string.format("%d",pos.y))
-					setText(Rotate,string.format("%d",rotate))
-					setText(Scale_x,string.format("%.2f",scale.x))
-					setText(Scale_y,string.format("%.2f",scale.y))
-					setText(zOrder,string.format("%d",z))
-				end,
-				undo = function()
-					setText(Pos_x,string.format("%d",oPos.x))
-					setText(Pos_y,string.format("%d",oPos.y))
-					setText(Rotate,string.format("%d",oRotate))
-					setText(Scale_x,string.format("%.2f",oScale.x))
-					setText(Scale_y,string.format("%.2f",oScale.y))
-					setText(zOrder,string.format("%d",oZ))
-				end,
-				destory = function()
-					CC_SAFE_RELEASE(Pos_x)
-					CC_SAFE_RELEASE(Pos_y)
-					CC_SAFE_RELEASE(Rotate)
-					CC_SAFE_RELEASE(Scale_x)
-					CC_SAFE_RELEASE(Scale_y)
-					CC_SAFE_RELEASE(zOrder)
-				end,
-			}
-			local cmd9 = CustomCommand.new(t)
-			Do(cmd1,cmd2,cmd3,cmd4,cmd5,cmd6,cmd7,cmd8,cmd9)
+			local rotate = tonumber(Rotate:getString())
+			local cmd3 = self:CMD_RotateObject(self._object,rotate)
+			if cmd3 then
+				table.insert(cmds,cmd3)
+			end
+
+			local z = tonumber(zOrder:getString())
+			local cmd4 = self:CMD_ZOrderObject(self._object,z)
+			if cmd4 then
+				table.insert(cmds,cmd4)
+			end
+
+			Do(unpack(cmds))
 		end})
 
 	local function createFilterWindow(filter,object,data)
@@ -775,9 +890,7 @@ function SceneEditorUI:updateObjList(object)
 	for k,v in pairs(items) do
 		v:getChild("Label"):getVirtualRenderer():setDrawBound(false)
 		if object then
-			cclog("24345768975432345679")
 			if v:getChild("Label"):getString() == object.name then
-				cclog("1231231224213")
 				v:getChild("Label"):getVirtualRenderer():setDrawBound(true)
 	            local lockBtn = v:getChild("LockBtn")    -- 锁定按钮
 	            local visibleBtn = v:getChild("VisibleBtn")  -- 隐藏按钮
@@ -798,8 +911,6 @@ function SceneEditorUI:updateObjList(object)
 		end
 	end
 end
-
-
 
 -- SceneOp
 function SceneEditorUI:saveScene()
@@ -876,14 +987,6 @@ function SceneEditorUI:newScene()
 	self._Grounds[self._tree:addItem("前景",parent)] = scene._FrontGround
 	self:addSceneUI(scene._width)
 	self._tree:Layout()
-	--[[
-	local cmd1 = command.NewScene.new("新场景",960*2)
-	local cmd2 = command.addTreeItem.new(self._tree,"新场景")
-	local cmd3 = command.addTreeItem.new(self._tree,"背景","Root1")
-	local cmd4 = command.addTreeItem.new(self._tree,"地板","Root1")
-	local cmd5 = command.addTreeItem.new(self._tree,"前景","Root1")
-	Do(cmd1,cmd2,cmd3,cmd4,cmd5)
-	]]
 end
 
 function SceneEditorUI:delScene()
@@ -1051,83 +1154,14 @@ function SceneEditorUI:addObjItem(name,index)
     if object then
         lockBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(btn)
-			cclog("lock btn handler")
-
-            local cmdt = {
-                tips = "点击锁定按钮",
-                init = function()
-                	-- body
-                
-                end,
-                undo = function()
-                	-- body
-					if object.data.locked then
-                    	object.data.locked = false
-        	        else
-                        object.data.locked = true
-        	        end
-        	        self:updateObjList(object)
-        	        object:setTouchEnabled(object.data.locked==false)
-        	        self:setupObjectPanel(object.data)
-                end,
-                redo = function()
-                	-- body
-                	if object.data.locked then
-
-                    	object.data.locked = false
-        	        else
-                        object.data.locked = true
-        	        end
-        	        self:updateObjList(object)
-        	        object:setTouchEnabled(object.data.locked==false)
-        	        self:setupObjectPanel(object.data)
-                end,
-                destory = function()
-
-                end,
-            }
-
-           local cmd = CustomCommand.new(cmdt)
-           Do(cmd)
+			local b = object.data.locked == false
+			Do(self:CMD_LockObject(object,b))
 		end,})
 
 	    visibleBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(btn)
-
-            local cmdt = {
-                tips = "点击隐藏按钮",
-                init = function()
-                	-- body
-                
-                end,
-                undo = function()
-                	-- body
-					if object.data.visible then
-                    	object.data.visible = false
-        	        else
-                        object.data.visible = true
-        	        end
-        	        self:updateObjList(object)
-        	        object:setVisible(object.data.visible)
-                end,
-                redo = function()
-                	-- body
-                	if object.data.visible then
-                    	object.data.visible = false
-
-        	        else
-                        object.data.visible = true
-        	        end
-        	        self:updateObjList(object)
-        	        object:setVisible(object.data.visible)
-                end,
-                destory = function()
-
-                end,
-            }
-
-           local cmd = CustomCommand.new(cmdt)
-           Do(cmd)
+			local b = object.data.visible == false
+			Do(self:CMD_VisibleObject(object,b))
 		end})
     end
 end
@@ -1242,7 +1276,7 @@ function SceneEditorUI:addImage(filename,layername)
 end
 
 function SceneEditorUI:touchSprite(image)
-	self:CMD_SelectSprite(image)
+	Do(self:CMD_SelectSprite(image))
 	self._spos = image:getTouchBeganPosition()
 	if self._object then
 		self._object.spos = self._object:pos()
@@ -1263,25 +1297,38 @@ end
 
 function SceneEditorUI:moveSprite(image)
 	local mpos =image:getTouchMovePosition()
-	local offset = cc.pSub(mpos,self._spos)
-	local pos = cc.pAdd(self._object.spos,offset)
-	pos.x = math.floor(pos.x)
-	pos.y = math.floor(pos.y)
-	self._object:pos(pos)
-	local Pos_x = self._layer:getChild("Pos_x")
-	Pos_x:setText(string.format("%d",math.floor(pos.x/self._designFactor)))
-	local Pos_y = self._layer:getChild("Pos_y")
-	Pos_y:setText(string.format("%d",math.floor(pos.y/self._designFactor)))
+	if self._mode == "MOVE" then
+		local pos = cc.pAdd(mpos,self._object.offset)
+		pos.x = math.floor(pos.x)
+		pos.y = math.floor(pos.y)
+		self._object:pos(pos)
+		local Pos_x = self._layer:getChild("Pos_x")
+		Pos_x:setText(string.format("%d",math.floor(pos.x/self._designFactor)))
+		local Pos_y = self._layer:getChild("Pos_y")
+		Pos_y:setText(string.format("%d",math.floor(pos.y/self._designFactor)))
+	elseif self._mode == "ROTATE" then
+		local pos = cc.pSub(mpos,self._spos)
+		local r = math.floor(pos.x/3)
+		self._object:setRotation(r+self._object.data.Rotation)
+		local RotateText = self._layer:getChild("Rotate")
+		RotateText:setText(string.format("%d",r+self._object.data.Rotation))
+	end
 	self._layer:getChild("preview_Scroll"):jumpToPercentHorizontal(self._offset.x)
 end
 
 function SceneEditorUI:stopSprite(image)
 	local epos = image:getTouchEndPosition()
 	if self._object then
-		self._object:pos(self._object.spos)
-		epos = cc.pAdd(epos,self._object.offset)
-		epos = cc.p(epos.x/self._designFactor,epos.y/self._designFactor)
-		self:CMD_MoveObject(self._object,epos)
+		if self._mode == "MOVE" then			
+			self._object:pos(self._object.spos)
+			epos = cc.pAdd(epos,self._object.offset)
+			epos = cc.p(epos.x/self._designFactor,epos.y/self._designFactor)
+			Do(self:CMD_MoveObject(self._object,epos))
+		elseif self._mode == "ROTATE" then
+			local pos = cc.pSub(epos,self._spos)
+			local r = math.floor(pos.x/3)
+			Do(self:CMD_RotateObject(self._object,r+self._object.data.Rotation))
+		end
 	end
 	self._layer:getChild("preview_Scroll"):scrollToPercentHorizontal(self._offset.x,0.01,false)
 end
@@ -1511,30 +1558,6 @@ function SceneEditorUI:touchTree(tree_name)
                         end
                     end
                 end
-                
-                --默认显示当前层的第一个对象
-                --[[if self._curLayer.data._objectsVector:count() > 0 then
-                    cclog("-----当前层有对象")
-                    local imagedata = self._curLayer.data:getObject(0)
-                    for k,v in pairs(self._objects) do 
-	    				if v.data == imagedata then
-	    					self._object = v
-	    					self._object.data = imagedata
-	            			break
-	    				end
-    			    end
-
-                    --self._object = self._objects[imagedata.name]
-                    --self._object.
-
-    			    if prevObject then
-					    prevObject:getVirtualRenderer():setDrawBound(false)
-					end
-					self._object:getVirtualRenderer():setDrawBound(true)
-					self:setupObjectPanel(self._object.data)
-					self:setupFilter(self._object,self._object.data)
-                end]]
-                
             end
 
 			if self._selectedType > 2 then
@@ -1733,6 +1756,81 @@ function SceneEditorUI:touchTree(tree_name)
 	local cmd = CustomCommand.new(cmdt)
 	Do(cmd)
 	
+end
+
+function SceneEditorUI:on_upArrow()
+	if self._object then
+		--cclog("on_upArrow")
+		local pos = clone(self._object.data.Pos)
+		pos.y = pos.y+1
+		Do(self:CMD_MoveObject(self._object,pos))
+	end
+end
+
+function SceneEditorUI:on_downArrow()
+	if self._object then
+		--cclog("on_downArrow")
+		local pos = clone(self._object.data.Pos)
+		pos.y = pos.y-1
+		Do(self:CMD_MoveObject(self._object,pos))
+	end
+end
+
+function SceneEditorUI:on_leftArrow()
+	if self._object then
+		--cclog("on_leftArrow")
+		local pos = clone(self._object.data.Pos)
+		pos.x = pos.x-1
+		Do(self:CMD_MoveObject(self._object,pos))
+	end
+end
+
+function SceneEditorUI:on_rightArrow()
+	if self._object then
+		--cclog("on_rightArrow")
+		local pos = clone(self._object.data.Pos)
+		pos.x = pos.x+1
+		Do(self:CMD_MoveObject(self._object,pos))
+	end
+end
+
+function SceneEditorUI:on_Rotate()
+	if self._object then
+		self._mode = "ROTATE"
+	end
+end
+
+function SceneEditorUI:un_Rotate()
+	if self._object then
+		self._mode = "MOVE"
+	end
+end
+
+function SceneEditorUI:on_upZOrder()
+	if self._object then
+		local z = self._object.data.zOrder+1
+		Do(self:CMD_ZOrderObject(self._object,z))
+	end
+end
+
+function SceneEditorUI:on_downZOrder()
+	if self._object then
+		local z = self._object.data.zOrder-1
+		Do(self:CMD_ZOrderObject(self._object,z))
+	end
+end
+
+function SceneEditorUI:on_lock()
+	if self._object then
+		Do(self:CMD_LockObject(self._object,true))
+	end
+end
+
+function SceneEditorUI:on_visible()
+	if self._object then
+		local b = self._object.data.visible == false
+		Do(self:CMD_VisibleObject(self._object,b))
+	end
 end
 
 -- for preview
