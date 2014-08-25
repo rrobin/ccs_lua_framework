@@ -394,7 +394,7 @@ int LuaStack::executeFunction(int numArgs)
     int functionIndex = -(numArgs + 1);
     if (!lua_isfunction(_state, functionIndex))
     {
-        CCLOG("value at stack [%d] is not function", functionIndex);
+        CCLog("value at stack [%d] is not function", functionIndex);
         lua_pop(_state, numArgs + 1); // remove function and arguments
         return 0;
     }
@@ -419,7 +419,7 @@ int LuaStack::executeFunction(int numArgs)
     {
         if (traceback == 0)
         {
-            CCLOG("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
+            CCLog("[LUA ERROR] %s", lua_tostring(_state, - 1));        /* L: ... error */
             lua_pop(_state, 1); // remove error message from stack
         }
         else                                                            /* L: ... G error */
@@ -817,7 +817,7 @@ int LuaStack::lua_loadChunksFromZIP(lua_State *L)
 
 		if (zip)
 		{
-			CCLOG("lua_loadChunksFromZIP() - load zip file: %s%s", zipFilePath.c_str(), isXXTEA ? "*" : "");
+			CCLog("lua_loadChunksFromZIP() - load zip file: %s%s", zipFilePath.c_str(), isXXTEA ? "*" : "");
 			lua_getglobal(L, "package");
 			lua_getfield(L, -1, "preload");
 

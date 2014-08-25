@@ -87,10 +87,12 @@ bool AppDelegate::applicationDidFinishLaunching()
 	game_lua_extensions(L);
 
 #ifdef LOAD_PRECOMPILE
+#ifndef COCOS2D_DEBUG
+	pStack->loadChunksFromZIP("game.bat");
+#endif
 	pStack->loadChunksFromZIP("framework_precompiled.zip");
 #endif
-	CCLog("load main.lua");
-	if(engine->executeScriptFile("main.lua") != 0)
+	if(engine->executeScriptFile("main") != 0)
 		return false;
 
 	EventListenerKeyboard *listener = EventListenerKeyboard::create(); 

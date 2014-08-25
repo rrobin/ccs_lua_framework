@@ -260,11 +260,15 @@ end
 
 
 function TreeControl:selectNode(prevnodename,curnodename)
-	if prevnodename then		
-        self._nodes[prevnodename].W:getChild("Label"):getVirtualRenderer():setDrawBound(false)
+	if prevnodename then
+	    if self._nodes[prevnodename] then	
+        	self._nodes[prevnodename].W:getChild("Label"):getVirtualRenderer():setDrawBound(false)
+	    end
 	end
 	if curnodename then
-		self._nodes[curnodename].W:getChild("Label"):getVirtualRenderer():setDrawBound(true)
+		if self._nodes[curnodename] then
+			self._nodes[curnodename].W:getChild("Label"):getVirtualRenderer():setDrawBound(true)
+        end
 	end
 
 end

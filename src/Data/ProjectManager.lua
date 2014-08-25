@@ -11,7 +11,7 @@ scene =
 
 project= 
 {
-	workpath = f:getWritablePath(),
+	workpath = lfs.currentdir(),
 	name = "NewProject",
 	ext = ".proj",
 	Scenes = {},
@@ -36,8 +36,10 @@ function ProjectManager:save()
 	local ss = self._project.Scenes
 
 	jsonData["Scenes"] = ss
-	for _,v in pairs(ss) do
-		SceneManager:Save(p,v.name,v.ext)
+	if ss then 
+		for _,v in pairs(ss) do
+			SceneManager:Save(p,v.name,v.ext)
+		end
 	end
 
 	local json_str = json.encode(jsonData)

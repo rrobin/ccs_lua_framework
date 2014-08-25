@@ -10,6 +10,7 @@ require("SceneEditor.command.RenameScene")
 require("SceneEditor.command.modifyObject")
 local BrtFilterUI = import(".BrtFilterUI")
 local HueFilterUI = import(".HueFilterUI")
+local PreviewScene = import('.PreviewScene')
 
 function SceneEditorUI:ctor()
 	local layer = ccui.loadLayer("SceneEditor.ExportJson")
@@ -48,6 +49,9 @@ function SceneEditorUI:ctor()
 	local delObjBtn = layer:getChild("DelObjBtn")
 	delObjBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.removeObject)})
 
+	local previewBtn = layer:getChild("PreviewBtn")
+	previewBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.previewScene)})
+
 	local ObjList = layer:getChild("ListView_Obj")
 	ObjList:setTouchEnabled(false)
 	local ObjItem = ccui.loadWidget("ObjItem.ExportJson")
@@ -59,6 +63,7 @@ function SceneEditorUI:ctor()
 	self._prevItem = nil
 	ObjList:addListVeiwEvent({[ccui.ListViewEventType.onSelectedItem_end] = function(listView)
 			local idx = listView:getCurSelectedIndex()
+			cclog("最新idx："..idx)
 			local item = listView:getItem(idx)
 			local sprite = self._objects[item:getChild("Label"):getString()]
 			Do(self:CMD_SelectSprite(sprite))
@@ -107,7 +112,7 @@ function SceneEditorUI:ctor()
 	self._layers = {}
 	self._objects = {}   -- 用来存储object对象列表
 	self._ui = {}
-	self.selectedType = -1 --´æ´¢½ÚµãÀàÐÍ
+	self.selectedType = -1 --用来存储选择的树节点类型
 	self._object = nil
 	self._ObjCount  = 0
 	self._mode = "MOVE"
@@ -128,6 +133,7 @@ function SceneEditorUI:ctor()
 		keyshortcut:add(ctrl_type,"KEY_V",handler(self,self.on_visible),nil)
 		keyshortcut:add(ctrl_type,"KEY_N",handler(self,self.addObject),nil)
 		keyshortcut:add(ctrl_type,"KEY_R",handler(self,self.on_Rotate),handler(self,self.un_Rotate))
+
 		KeyBoardManager:add(keyshortcut)
 	end
 	KeyBoardManager:apply("SceneEditor")
@@ -847,7 +853,10 @@ function SceneEditorUI:setupObjectPanel(SceneObject)
 	local Scale_y = self._layer:getChild("Scale_Y")
 	Scale_y:setText(SceneObject.Scale.y)
 	local Rotate = self._layer:getChild("Rotate")
-	Rotate:setText(SceneObject.Rotation)
+	if SceneObject.Rotation then
+	    cclog("SceneObject.Rotate:"..SceneObject.Rotation)
+	    Rotate:setText(SceneObject.Rotation)
+	end
 	--[[
 	local H_FlipBtn = self._layer:getChild("H_FlipBtn")
 	H_FlipBtn:setBright(SceneObject.FlipX==false)
@@ -971,8 +980,8 @@ function SceneEditorUI:loadScene()
 	end
 	self:addSceneUI(scene._width)	
 	createGround(self._tree:addItem("背景",parent),scene._BackGround,"背景")
-	--createGround(self._tree:addItem("地板",parent),scene._Floor,"地板")
-	self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
+	createGround(self._tree:addItem("地板",parent),scene._Floor,"地板")
+	--self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
 	createGround(self._tree:addItem("前景",parent),scene._FrontGround,"前景")
 	self._tree:Layout()
 end
@@ -987,6 +996,7 @@ function SceneEditorUI:newScene()
 	self._Grounds[self._tree:addItem("前景",parent)] = scene._FrontGround
 	self:addSceneUI(scene._width)
 	self._tree:Layout()
+	self._curScene.data = scene
 end
 
 function SceneEditorUI:delScene()
@@ -1006,7 +1016,7 @@ end
 
 -- GroundLayerOp
 function SceneEditorUI:addLayer()
-	if self._curGround.name == "背景" then
+	--if self._curGround.name == "背景" then
 		local name = "层"..self._curGround.data.layerNo+1
         
 		local node = nil    -- 为数节点内部名称：如child1
@@ -1063,7 +1073,7 @@ function SceneEditorUI:addLayer()
 		}
 		local cmd = CustomCommand.new(cmdt)
 		Do(cmd)
-	end
+	--end
 	self._tree:print()
 end
 
@@ -1071,7 +1081,7 @@ function SceneEditorUI:removeLayer()
 --	cclog("-----删除层前----")
 --	self._tree:print()
     --local indexL = self._curLayer.ui.idx
-    if self._curlayer.ui == 0 then return end
+    if self._curLayer.ui == 0 then return end
     local lName = self._curLayer.ui.lname
     --local layerN = self._curLayer.data._name
     local panelL = self._curLayer.ui.ui
@@ -1328,6 +1338,8 @@ function SceneEditorUI:stopSprite(image)
 			local pos = cc.pSub(epos,self._spos)
 			local r = math.floor(pos.x/3)
 			Do(self:CMD_RotateObject(self._object,r+self._object.data.Rotation))
+		elseif self._mode == "NONE" then
+			self._mode = "MOVE"
 		end
 	end
 	self._layer:getChild("preview_Scroll"):scrollToPercentHorizontal(self._offset.x,0.01,false)
@@ -1477,7 +1489,7 @@ function SceneEditorUI:touchTree(tree_name)
 	                    	v.ui:setOpacity(255)
 	                    	local childs = v.ui:getChildren()
 	                    	for k1,v1 in pairs(childs) do
-                                v1:setTouchEnabled(true)
+                                v1:setTouchEnabled(false)
 	                    	end
 	                    else
 	                        v.ui:setOpacity(60)
@@ -1703,14 +1715,14 @@ function SceneEditorUI:touchTree(tree_name)
             	self._tree:selectNode(self._selected.name,prevTouchNode.name)
 		    end
 
-            if prevTouchNode == 1 then
+            if prevselectType == 1 then  -- 表示上一次点击的是ground
                 for k,v in pairs(self._layers) do     -- 遍历层对象
                     if v.ui ~= nil then 
 	                    if string.find(k,self._curGround.name) then
 	                    	v.ui:setOpacity(255)
 	                    	local childs = v.ui:getChildren()
 	                    	for k1,v1 in pairs(childs) do
-                                v1:setTouchEnabled(true)
+                                v1:setTouchEnabled(false)
 	                    	end
 	                    else
 	                        v.ui:setOpacity(60)
@@ -1802,7 +1814,7 @@ end
 
 function SceneEditorUI:un_Rotate()
 	if self._object then
-		self._mode = "MOVE"
+		self._mode = "NONE"
 	end
 end
 
@@ -1859,5 +1871,11 @@ end
 
 function SceneEditorUI:addLayerUI()
 end
+
+function SceneEditorUI:previewScene()
+	local scene = PreviewScene.new()
+	cc.pushScene(scene)
+end
+
 
 return SceneEditorUI

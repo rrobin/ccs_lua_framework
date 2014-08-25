@@ -55,6 +55,21 @@ function cc.runScene(scene)
     return scene
 end
 
+function cc.pushScene(scene)
+    if sharedDirector:getRunningScene() then
+        sharedDirector:pushScene(scene)
+    else
+        sharedDirector:runWithScene(scene)
+    end
+    return scene
+end
+
+function cc.popScene()
+    if sharedDirector:getRunningScene() then
+        sharedDirector:popScene()
+    end
+end
+
 function cc.getFileData(filename)
     local fileIO = FileIO:create()
     return fileIO:getFileData(filename)

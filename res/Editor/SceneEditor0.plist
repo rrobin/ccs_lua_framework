@@ -4,12 +4,12 @@
 	<dict>
 		<key>frames</key>
 		<dict>
-			<key>OleObjectctInsert.png</key>
+			<key>iconza_32x32_404040/workflow_32x32.png</key>
 			<dict>
 				<key>width</key>
-				<integer>30</integer>
-				<key>height</key>
 				<integer>31</integer>
+				<key>height</key>
+				<integer>26</integer>
 				<key>originalWidth</key>
 				<integer>32</integer>
 				<key>originalHeight</key>
@@ -19,16 +19,16 @@
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
-				<real>-1</real>
-				<key>offsetY</key>
 				<real>-0.5</real>
+				<key>offsetY</key>
+				<real>1</real>
 			</dict>
-			<key>BlogOpenExisting.png</key>
+			<key>iconza_32x32_404040/folder_32x32.png</key>
 			<dict>
 				<key>width</key>
-				<integer>31</integer>
+				<integer>32</integer>
 				<key>height</key>
-				<integer>25</integer>
+				<integer>27</integer>
 				<key>originalWidth</key>
 				<integer>32</integer>
 				<key>originalHeight</key>
@@ -36,87 +36,68 @@
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
-				<integer>33</integer>
+				<integer>28</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>-0.5</real>
+			</dict>
+			<key>iconza_32x32_404040/save_32x32.png</key>
+			<dict>
+				<key>width</key>
+				<integer>32</integer>
+				<key>height</key>
+				<integer>29</integer>
+				<key>originalWidth</key>
+				<integer>32</integer>
+				<key>originalHeight</key>
+				<integer>32</integer>
+				<key>x</key>
+				<integer>34</integer>
+				<key>y</key>
+				<integer>0</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
+				<real>-0.5</real>
+			</dict>
+			<key>iconza_32x32_404040/delete_32x32.png</key>
+			<dict>
+				<key>width</key>
+				<integer>31</integer>
+				<key>height</key>
+				<integer>30</integer>
+				<key>originalWidth</key>
+				<integer>32</integer>
+				<key>originalHeight</key>
+				<integer>32</integer>
+				<key>x</key>
+				<integer>34</integer>
+				<key>y</key>
+				<integer>31</integer>
 				<key>offsetX</key>
 				<real>0.5</real>
 				<key>offsetY</key>
-				<real>-0.5</real>
-			</dict>
-			<key>FormRegionSave.png</key>
-			<dict>
-				<key>width</key>
-				<integer>29</integer>
-				<key>height</key>
-				<integer>29</integer>
-				<key>originalWidth</key>
-				<integer>32</integer>
-				<key>originalHeight</key>
-				<integer>32</integer>
-				<key>x</key>
-				<integer>32</integer>
-				<key>y</key>
-				<integer>0</integer>
-				<key>offsetX</key>
-				<real>-0.5</real>
-				<key>offsetY</key>
-				<real>-1.5</real>
-			</dict>
-			<key>FilePermission.png</key>
-			<dict>
-				<key>width</key>
-				<integer>30</integer>
-				<key>height</key>
-				<integer>32</integer>
-				<key>originalWidth</key>
-				<integer>32</integer>
-				<key>originalHeight</key>
-				<integer>32</integer>
-				<key>x</key>
-				<integer>63</integer>
-				<key>y</key>
-				<integer>0</integer>
-				<key>offsetX</key>
-				<real>-1</real>
-				<key>offsetY</key>
 				<real>0</real>
 			</dict>
-			<key>GroupSmartArtQuickStyles.png</key>
+			<key>iconza_32x32_404040/file_32x32.png</key>
 			<dict>
 				<key>width</key>
-				<integer>28</integer>
+				<integer>32</integer>
 				<key>height</key>
-				<integer>29</integer>
+				<integer>32</integer>
 				<key>originalWidth</key>
 				<integer>32</integer>
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>33</integer>
-				<key>y</key>
-				<integer>31</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>-0.5</real>
-			</dict>
-			<key>HeaderFooterClose.png</key>
-			<dict>
-				<key>width</key>
-				<integer>24</integer>
-				<key>height</key>
-				<integer>24</integer>
-				<key>originalWidth</key>
-				<integer>32</integer>
-				<key>originalHeight</key>
-				<integer>32</integer>
-				<key>x</key>
-				<integer>95</integer>
+				<integer>68</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
-				<real>-1</real>
+				<real>0</real>
 			</dict>
 			<key>CategorizeMenu.png</key>
 			<dict>
@@ -129,39 +110,20 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>95</integer>
+				<integer>0</integer>
 				<key>y</key>
-				<integer>26</integer>
+				<integer>57</integer>
 				<key>offsetX</key>
 				<real>0.5</real>
 				<key>offsetY</key>
 				<real>-0.5</real>
 			</dict>
-			<key>Undo.png</key>
+			<key>iconza_32x32_404040/undo_32x32.png</key>
 			<dict>
 				<key>width</key>
-				<integer>26</integer>
+				<integer>31</integer>
 				<key>height</key>
-				<integer>27</integer>
-				<key>originalWidth</key>
-				<integer>32</integer>
-				<key>originalHeight</key>
-				<integer>32</integer>
-				<key>x</key>
-				<integer>63</integer>
-				<key>y</key>
-				<integer>34</integer>
-				<key>offsetX</key>
-				<real>-1</real>
-				<key>offsetY</key>
-				<real>-0.5</real>
-			</dict>
-			<key>Redo.png</key>
-			<dict>
-				<key>width</key>
-				<integer>27</integer>
-				<key>height</key>
-				<integer>27</integer>
+				<integer>21</integer>
 				<key>originalWidth</key>
 				<integer>32</integer>
 				<key>originalHeight</key>
@@ -169,49 +131,68 @@
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
-				<integer>60</integer>
+				<integer>90</integer>
 				<key>offsetX</key>
 				<real>0.5</real>
 				<key>offsetY</key>
 				<real>-0.5</real>
 			</dict>
-			<key>PasteAsPictureMenu.png</key>
+			<key>iconza_32x32_404040/redo_32x32.png</key>
 			<dict>
 				<key>width</key>
-				<integer>32</integer>
+				<integer>31</integer>
 				<key>height</key>
-				<integer>32</integer>
+				<integer>21</integer>
 				<key>originalWidth</key>
 				<integer>32</integer>
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>0</integer>
-				<key>y</key>
-				<integer>89</integer>
-				<key>offsetX</key>
-				<real>0</real>
-				<key>offsetY</key>
-				<real>0</real>
-			</dict>
-			<key>SharingRequestDeny.png</key>
-			<dict>
-				<key>width</key>
-				<integer>29</integer>
-				<key>height</key>
-				<integer>29</integer>
-				<key>originalWidth</key>
-				<integer>32</integer>
-				<key>originalHeight</key>
-				<integer>32</integer>
-				<key>x</key>
-				<integer>34</integer>
+				<integer>33</integer>
 				<key>y</key>
 				<integer>63</integer>
 				<key>offsetX</key>
 				<real>-0.5</real>
 				<key>offsetY</key>
+				<real>0.5</real>
+			</dict>
+			<key>iconza_32x32_404040/browser_window_32x32.png</key>
+			<dict>
+				<key>width</key>
+				<integer>28</integer>
+				<key>height</key>
+				<integer>23</integer>
+				<key>originalWidth</key>
+				<integer>32</integer>
+				<key>originalHeight</key>
+				<integer>32</integer>
+				<key>x</key>
+				<integer>67</integer>
+				<key>y</key>
+				<integer>34</integer>
+				<key>offsetX</key>
+				<real>0</real>
+				<key>offsetY</key>
 				<real>-0.5</real>
+			</dict>
+			<key>iconza_32x32_404040/puzzle_32x32.png</key>
+			<dict>
+				<key>width</key>
+				<integer>31</integer>
+				<key>height</key>
+				<integer>30</integer>
+				<key>originalWidth</key>
+				<integer>32</integer>
+				<key>originalHeight</key>
+				<integer>32</integer>
+				<key>x</key>
+				<integer>33</integer>
+				<key>y</key>
+				<integer>86</integer>
+				<key>offsetX</key>
+				<real>-0.5</real>
+				<key>offsetY</key>
+				<real>1</real>
 			</dict>
 			<key>fanzhuan.png</key>
 			<dict>
@@ -224,9 +205,9 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>34</integer>
+				<integer>67</integer>
 				<key>y</key>
-				<integer>94</integer>
+				<integer>59</integer>
 				<key>offsetX</key>
 				<real>0.5</real>
 				<key>offsetY</key>
@@ -243,9 +224,9 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>67</integer>
+				<integer>66</integer>
 				<key>y</key>
-				<integer>63</integer>
+				<integer>93</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -262,7 +243,7 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>128</integer>
+				<integer>102</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -281,7 +262,7 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>128</integer>
+				<integer>102</integer>
 				<key>y</key>
 				<integer>33</integer>
 				<key>offsetX</key>
@@ -300,7 +281,7 @@
 				<key>originalHeight</key>
 				<integer>6</integer>
 				<key>x</key>
-				<integer>162</integer>
+				<integer>136</integer>
 				<key>y</key>
 				<integer>0</integer>
 				<key>offsetX</key>
@@ -321,7 +302,7 @@
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
-				<integer>123</integer>
+				<integer>113</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -340,7 +321,7 @@
 				<key>x</key>
 				<integer>0</integer>
 				<key>y</key>
-				<integer>141</integer>
+				<integer>131</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -357,9 +338,9 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>0</integer>
+				<integer>136</integer>
 				<key>y</key>
-				<integer>159</integer>
+				<integer>6</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -376,9 +357,9 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>67</integer>
+				<integer>0</integer>
 				<key>y</key>
-				<integer>97</integer>
+				<integer>149</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -395,9 +376,9 @@
 				<key>originalHeight</key>
 				<integer>32</integer>
 				<key>x</key>
-				<integer>162</integer>
+				<integer>100</integer>
 				<key>y</key>
-				<integer>6</integer>
+				<integer>67</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -416,7 +397,7 @@
 				<key>x</key>
 				<integer>18</integer>
 				<key>y</key>
-				<integer>128</integer>
+				<integer>118</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -435,7 +416,7 @@
 				<key>x</key>
 				<integer>36</integer>
 				<key>y</key>
-				<integer>128</integer>
+				<integer>118</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -452,9 +433,9 @@
 				<key>originalHeight</key>
 				<integer>16</integer>
 				<key>x</key>
-				<integer>101</integer>
+				<integer>136</integer>
 				<key>y</key>
-				<integer>59</integer>
+				<integer>40</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
@@ -471,9 +452,9 @@
 				<key>originalHeight</key>
 				<integer>16</integer>
 				<key>x</key>
-				<integer>101</integer>
+				<integer>0</integer>
 				<key>y</key>
-				<integer>77</integer>
+				<integer>183</integer>
 				<key>offsetX</key>
 				<real>0</real>
 				<key>offsetY</key>
