@@ -11,6 +11,7 @@ function GameScene:ctor(name,width)
 end
 
 function GameScene:getJsonData()
+	cclog("  GameScene:getJsonData()")
 	local data = {}
 	data["name"] = self._name
 	data["width"] = self._width
@@ -24,6 +25,7 @@ end
 function GameScene:serialize(jsonValue)
 	self._width = jsonValue["width"]
 	self._name = jsonValue["name"]
+	cclog(" self._BackGround地址:"..tostring(self._BackGround))
 	self._BackGround:serialize(jsonValue["BackGround"])
 	self._Floor:serialize(jsonValue["Floor"])
 	self._FrontGround:serialize(jsonValue["FrontGround"])

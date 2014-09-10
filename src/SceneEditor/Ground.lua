@@ -100,6 +100,7 @@ end
 
 function Ground:serialize(jsonValue)
 	local layers = jsonValue["layers"]
+
 	for i=1,#layers do
 		self:addLayer()
 		local l = self:getLayer(i-1)

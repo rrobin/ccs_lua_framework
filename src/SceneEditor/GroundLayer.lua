@@ -57,6 +57,17 @@ function GroundLayer:getObjectCount()
 	return self._objectsVector:count()
 end
 
+function GroundLayer:getObjectIndex(obj)
+    local count = self._objectsVector:count()-1
+    for i=0,count do
+    		local objtemp = self._objectsVector:at(i)
+    		if obj == objtemp then
+    			cclog("get object pos:"..i)
+    			return i
+    		end
+    end
+end
+
 function GroundLayer:getGround()
 	return self._ownerGround
 end
@@ -72,6 +83,8 @@ function GroundLayer:getJsonData()
 	data["z"] = self._zOrder
 	local childs = {}
 	data["childs"] = childs
+	cclog("  groundlayer self:"..tostring(self))
+	cclog(" self._objectsVector:count():"..self._objectsVector:count())
 	for i=1,self._objectsVector:count() do
 		childs[i] = self:getObject(i-1):getJsonData()
 	end

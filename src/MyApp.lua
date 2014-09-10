@@ -3,18 +3,25 @@ MyApp.__index = MyApp
 
 local SceneEditor = require("SceneEditor.ui.SceneEditorUI")
 local testScene = require("testScene")
+local previewScene = require("SceneEditor.ui.previewScene")
 
 function MyApp:ctor()
 	MyApp.super.ctor(self)
-	local scene = SceneEditor.new()
-
-	local lastProj = EditorConfig:getLastProj()
+	--[[ 
+	local scene = previewScene.new()
+	local filename = "E:/Tools/3.xEditor/newScene.sce"
+	scene:loadSce(filename)
+ 
+    -- ]] local scene = SceneEditor.new()
+	--[[local lastProj = EditorConfig:getLastProj()
 	if lastProj then
 		ProjectManager:load(lastProj.workpath)
 	else
 		ProjectManager:newProject()
 		EditorConfig:openProj(ProjectManager._project)
-	end
+	end]]
+	ProjectManager:newProject()
+	EditorConfig:openProj(ProjectManager._project)
     cc.runScene(scene)
 end
 

@@ -13,11 +13,18 @@ local HueFilterUI = import(".HueFilterUI")
 local PreviewScene = import('.PreviewScene')
 
 function SceneEditorUI:ctor()
+	local htfv = 0
+	local wtfv = 0
+	self.ssize = {width=0,height=0}
+	self.phsize = {width=0,height=0}   -- 预览窗口大小
 	local layer = ccui.loadLayer("SceneEditor.ExportJson")
 	self:addChild(layer)
 	self._layer = layer
+
+    self._previewWindow = layer:getChild("preview_Win")
+
 	local newSceneBtn = layer:getChild("NewSceneBtn")
-	newSceneBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.newScene)})
+	newSceneBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.popupWindow)})
 
 	local openSceneBtn = layer:getChild("OpenSceneBtn")
 	openSceneBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.loadScene)})
@@ -52,6 +59,28 @@ function SceneEditorUI:ctor()
 	local previewBtn = layer:getChild("PreviewBtn")
 	previewBtn:addTouchEvent({[ccui.TouchEventType.ended] = handler(self,self.previewScene)})
 
+   --[[ local phtypeBtn = layer:getChild("phtypeBtn")
+    phtypeBtn:addTouchEvent({[ccui.TouchEventType.ended] = function()
+        if  then 
+
+        elseif  then
+
+        else
+
+        end
+            cclog("-----phtypeBtn-----")
+	        self.phsize = {width=1136,height=640}
+	        local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
+	        self._previewWindow:setSize(ss)
+			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+	    end}) 
+]]
+
+    self.phsize = {width=960,height=640}
+    local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
+    self._previewWindow:setSize(ss)
+	self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+
 	local ObjList = layer:getChild("ListView_Obj")
 	ObjList:setTouchEnabled(false)
 	local ObjItem = ccui.loadWidget("ObjItem.ExportJson")
@@ -74,13 +103,45 @@ function SceneEditorUI:ctor()
 	flierProPanel:setTouchEnabled(false)
 	flierProPanel:setVisible(false)
 
-	self._previewWindow = layer:getChild("preview_Win")
-	self._designFactor = self._previewWindow:getSize().width/960
+    
+--	cclog("self._previewWindow:getSize().width:"..self._previewWindow:getSize().width)
+--	cclog("self._previewWindow:getSize().height:"..self._previewWindow:getSize().height)
 	self._center = cc.s2p(self._previewWindow:getSize())
 	self._center.x = self._center.x/2
 	self._center.y = self._center.y/2
 	self:initObjectPanel()
     self:initLayerPanel()
+
+    local mgsboxpanel = layer:getChild("mgsbox")
+    --mgsboxpanel:setVisible(true)
+
+    local mgsboxok = layer:getChild("mgsbox_ok")
+    local ptBtn = layer:getChild("ptBtn")
+    mgsboxok:addTouchEvent({[ccui.TouchEventType.ended] = function()
+
+		--local mgsbox_htf = layer:getChild("mgsbox_htf")
+		--htfv = mgsbox_htf:getStringValue()
+		local mgsbox_wtf = layer:getChild("mgsbox_wtf")
+		wtfv = mgsbox_wtf:getStringValue()
+        
+		self.ssize = {width=wtfv,height=self.phsize.height}
+		if tonumber(wtfv) <= 0 then return end
+	    mgsboxpanel:setVisible(false)
+		self:newScene()
+        ptBtn:setVisible(false)
+
+		end})
+
+    local mgsboxcancel = layer:getChild("mgsbox_cancel")
+    mgsboxcancel:addTouchEvent({[ccui.TouchEventType.ended] = function()
+			cclog("zhi xing msgbox_cancel")
+			mgsboxpanel:setVisible(false)
+			self.ssize.width = 480
+            self:newScene()
+            ptBtn:setVisible(false)
+		end})
+
+
 	local treePanel = layer:getChild("TreePanel")
 	self._tree = require("ui.TreeControl").new(treePanel:getSize(),"MainTree",handler(self,self.touchTree))
 	local Layout = treePanel:getLayoutParameter()
@@ -103,7 +164,6 @@ function SceneEditorUI:ctor()
 			self._ObjList:setTouchEnabled(true)
 			self._ObjList:setVisible(true)
 		end})
-	
 
 	self._curScene = {data=0,ui=0,treeNode = 0}
 	self._curGround = {data=0,ui=nil,treeNode = 0,name=""}
@@ -133,10 +193,89 @@ function SceneEditorUI:ctor()
 		keyshortcut:add(ctrl_type,"KEY_V",handler(self,self.on_visible),nil)
 		keyshortcut:add(ctrl_type,"KEY_N",handler(self,self.addObject),nil)
 		keyshortcut:add(ctrl_type,"KEY_R",handler(self,self.on_Rotate),handler(self,self.un_Rotate))
+		keyshortcut:add(ctrl_type,"KEY_S",handler(self,self.on_Save),nil) --增加保存快捷键
 
 		KeyBoardManager:add(keyshortcut)
 	end
 	KeyBoardManager:apply("SceneEditor")
+
+	--初始化机型
+	self:initPT()
+end
+
+
+
+function SceneEditorUI:initPT()
+    cclog(" init phone type panel ")
+    self._PTTable = 
+	{
+	    ["iphone5"] = { text = "iphone5", func = function()
+	        cclog("--iphone5--")
+            self.phsize = {width=1136,height=640}
+	        local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
+	        self._previewWindow:setSize(ss)
+			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+	    end},
+		["iphone4"] = { text = "iphone4", func = function()
+            cclog("--iphone4--")
+            self.phsize = {width=960,height=640}
+	        local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
+	        self._previewWindow:setSize(ss)
+			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+		end},
+		
+	}
+	local ptListView = self._layer:getChild("PTListView")
+	local ptBtn = self._layer:getChild("ptBtn")
+	ptListView:setItemModel(ptBtn)
+	local i = 1
+	for k,v in pairs(self._PTTable) do
+		ptListView:pushBackDefaultItem()
+		local item = ptListView:getItem(i-1)
+		item:setTag(i)
+		item:addTouchEvent({[ccui.TouchEventType.ended] = function(button)
+			ptBtn:setTouchEnabled(true)
+			ptBtn:setVisible(true)
+			ptListView:setTouchEnabled(false)
+			ptListView:setVisible(false)
+			local text = ptBtn:getTitleText()
+            ptBtn:setTitleText(v.text)
+            v.func()
+		end})
+		item:setTitleText(v.text)
+		i = i+1
+	end
+	ptBtn:addTouchEvent({[ccui.TouchEventType.ended] =
+		function(button)
+			button:setTouchEnabled(false)
+			button:setVisible(false)
+			ptListView:setTouchEnabled(true)
+			ptListView:setVisible(true)
+		end
+		})
+end
+
+function SceneEditorUI:setupPT(object,data)
+	local flierProPanel = self._layer:getChild("FlierProPanel")
+	flierProPanel:setTouchEnabled(false)
+	flierProPanel:setVisible(false)
+
+	if object == nil then 	
+		return 
+	end
+
+	local name = "Null"
+	if data and data.Filter then
+		name =  data.Filter.name
+	end
+	if data then
+		cclog(data.Filename.." set filter : "..name)
+	end
+	local v = self._FilterTable[name]
+	local FilterBtn = self._layer:getChild("FilterButton")
+	cclog("text : "..v.text)
+	FilterBtn:setTitleText(v.text)
+	v.func(v,object,data)
 end
 
 ---------------------------------------------------------
@@ -144,6 +283,10 @@ end
 --- 			SceneEditor's command 				  ---
 
 ---------------------------------------------------------
+
+function SceneEditorUI:on_Save()
+    self:saveScene()
+end
 
 function SceneEditorUI:CMD_SelectSprite(sprite)
 	local prevObject = self._object
@@ -386,6 +529,7 @@ end
 function SceneEditorUI:CMD_ZOrderObject(object,z)
 	if not object then return nil end
 	local oZ = object.data.zOrder
+	cclog(" oz:"..oZ)
 	if oZ == z then return nil end
 	local zOrderText = self._layer:getChild("zOrder")
 	local t = 
@@ -613,21 +757,113 @@ function SceneEditorUI:setupLayerPanel(groundLayer)
 
 end
 
+function SceneEditorUI:objectPanelShow(nstr)
+	local Pos_mg = self._layer:getChild("Posx_mg")
+	local Posy_mg = self._layer:getChild("Posy_mg")
+    local Scalex_mg = self._layer:getChild("Scalex_mg")
+    local Scaley_mg = self._layer:getChild("Scaley_mg")
+    local Rotate_mg = self._layer:getChild("Rotate_mg")
+    local zOrder_mg = self._layer:getChild("zOrder_mg")
+    
+    Pos_mg:setVisible(false)
+	Posy_mg:setVisible(false)
+    Scalex_mg:setVisible(false)
+    Scaley_mg:setVisible(false)
+    Rotate_mg:setVisible(false)
+    zOrder_mg:setVisible(false)
+
+    local tnode = self._layer:getChild(nstr)
+    tnode:setVisible(true)
+    
+end
+
 
 function SceneEditorUI:initObjectPanel()
 	--local filename = layer:getChild("ObjFile_Label")
+	local tvalue = nil
+	local inputnum = 0 
+	local prevWidget = nil
+    local Posx_unsmg = self._layer:getChild("Posx_unsmg")
+	local Posy_unsmg = self._layer:getChild("Posy_unsmg")
+    local Scalex_unsmg = self._layer:getChild("Scalex_unsmg")
+    local Scaley_unsmg = self._layer:getChild("Scaley_unsmg")
+    local Rotate_unsmg = self._layer:getChild("Rotate_unsmg")
+    local zOrder_unsmg = self._layer:getChild("zOrder_unsmg")
+
+    Posx_unsmg:setVisible(true)
+    Posy_unsmg:setVisible(true)
+    Scalex_unsmg:setVisible(true)
+    Scaley_unsmg:setVisible(true)
+    Rotate_unsmg:setVisible(true)
+    zOrder_unsmg:setVisible(true)
+
 	local Pos_x = self._layer:getChild("Pos_x")
 	local function setText(widget,string)
 		widget:setString(string)
 	end
+
+	Pos_x:addTouchEvent({[ccui.TouchEventType.began] = 
+		function(widget)
+			self:objectPanelShow("Posx_mg")
+			if prevWidget == widget then
+				if inputnum == 0 then
+					cclog("2")
+					widget:setString("")
+					return
+				end
+				inputnum = inputnum+1
+				cclog("1")
+				return
+			end
+			cclog("touchBegan")
+			tvalue = widget:getString()
+			inputnum = 0
+			widget:setString("")
+			prevWidget = widget
+		end})
+
 	Pos_x:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
+			--[[if inputnum == 0 then
+				widget:setText(tvalue) 
+			end]]
+            cclog("detach_with_ime  widget value :"..widget:getString())
+            if inputnum == 0 then
+            	widget:setString(tvalue)
+            	return
+            end
 			local pos = clone(self._object.data.Pos)
 			pos.x = tonumber(widget:getString())
 			Do(self:CMD_MoveObject(self._object,pos))
+			if prevWidget == widget then
+				inputnum = 0
+				tvalue = widget:getString()
+				widget:setString("")
+				cclog("3")
+			end
+		end,
+		[ccui.TextFiledEventType.insert_text] = 
+		function(widget)
+			cclog("ccui.TextFiledEventType.insert_text")
+			inputnum = inputnum + 1
 		end})
 
+    --[[Pos_x:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
+		function(widget)
+			cclog("ccui.TextFiledEventType.insert_text")
+			inputnum = inputnum + 1
+		end})
+    ]]
+
 	local Pos_y = self._layer:getChild("Pos_y")
+
+	Pos_y:addTouchEvent({[ccui.TouchEventType.ended] = 
+		function(widget)
+            self:objectPanelShow("Posy_mg")
+			tvalue = widget:getString()
+			inputnum = 0
+
+		end})
 	Pos_y:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local pos = clone(self._object.data.Pos)
@@ -636,6 +872,14 @@ function SceneEditorUI:initObjectPanel()
 		end})
 
 	local Scale_x = self._layer:getChild("Scale_X")
+
+	Scale_x:addTouchEvent({[ccui.TouchEventType.ended] = 
+		function(widget)
+            self:objectPanelShow("Scalex_mg")
+			tvalue = widget:getString()
+			inputnum = 0
+
+		end})
 	Scale_x:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local scale = cc.p(0,0)
@@ -645,6 +889,14 @@ function SceneEditorUI:initObjectPanel()
 		end})
 	
 	local Scale_y = self._layer:getChild("Scale_Y")
+
+	Scale_y:addTouchEvent({[ccui.TouchEventType.ended] = 
+	function(widget)
+        self:objectPanelShow("Scaley_mg")
+		tvalue = widget:getString()
+		inputnum = 0
+
+	end})
 	Scale_y:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local scale = cc.p(0,0)
@@ -654,6 +906,14 @@ function SceneEditorUI:initObjectPanel()
 		end})
 
 	local Rotate = self._layer:getChild("Rotate")
+
+	Rotate:addTouchEvent({[ccui.TouchEventType.ended] = 
+	function(widget)
+	    self:objectPanelShow("Rotate_mg")
+		tvalue = widget:getString()
+		inputnum = 0
+
+	end})
 	Rotate:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local rotate = tonumber(widget:getString())
@@ -689,6 +949,14 @@ function SceneEditorUI:initObjectPanel()
 		end})
 
 	local zOrder = self._layer:getChild("zOrder")
+
+	zOrder:addTouchEvent({[ccui.TouchEventType.ended] = 
+	function(widget)
+	    self:objectPanelShow("zOrder_mg")
+		tvalue = widget:getString()
+		inputnum = 0
+
+	end})
 	zOrder:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
 			local z = tonumber(widget:getString())
@@ -924,15 +1192,19 @@ end
 -- SceneOp
 function SceneEditorUI:saveScene()
 	-- body
+	cclog("点击了保存按钮，执行保存场景操作")
 	self._curScene.data._objCount = self._ObjCount 
 	ProjectManager:save()
 	EditorConfig:Save()
 end
 
 function SceneEditorUI:loadScene()
+	cclog("点击了打开文件按钮")
 	local scene = SceneManager:findScene("newScene")
-	if not scene then 
-		ProjectManager:load(lfs.currentdir())
+	if scene then return end
+	local project = nil
+	if not scene then
+		project = ProjectManager:load(lfs.currentdir())
 		scene = SceneManager:findScene("newScene")
 	end 
 	if not scene then
@@ -940,12 +1212,35 @@ function SceneEditorUI:loadScene()
 	end
 	self._ObjCount = scene._objCount
 	local parent = self._tree:addItem("newScene")
-	
+	local prevsize = {width=0,height=0}
+    
+    for k,v in pairs(project.Scenes) do
+	    prevsize.width = v.width
+		prevsize.height = v.height 
+    end
+	cclog(" prevsize x:"..prevsize.width.."  y:"..prevsize.height)
+	self._previewWindow:setSize(prevsize)
+	self.phsize.width = prevsize.width * 2
+	self.phsize.height = prevsize.height * 2
+    local ptBtn = self._layer:getChild("ptBtn")
+
+    cclog("self.phsize.width:"..self.phsize.width)
+	if self.phsize.width == 1136 then
+		cclog(" ptBtn text:"..ptBtn:getTitleText())
+        ptBtn:setTitleText("iphone5")
+	elseif self.phsize.width == 960 then 
+        ptBtn:setTitleText("iphone4")
+	else
+
+	end
+
+	self._designFactor = 0.5 --self._previewWindow:getSize().width/tonumber(scene._width)
 	local function createGround(treeNode,ground,gname)
+		cclog("执行createGround方法")
 		for i=1,ground:LayerCount() do
 			local l = ground:getLayer(i-1)
 			local s = self._previewWindow:getSize()
-			s.width = s.width*self._designFactor
+			s.width = s.width --*self._designFactor
 			local panel = ccui.panel({size = s})
 			local name = l._name
 			self._layers[gname..name] = { ui = panel,lname = name} -- ui = panelL, lname = lName 
@@ -953,7 +1248,19 @@ function SceneEditorUI:loadScene()
 			node = self._tree:addItem(name,treeNode)
 			for j=1,l:getObjectCount() do
 				local obj = l:getObject(j-1)
-				local sprite = ccui.image({image=obj.Filename,z=obj.zOrder})
+				local sprite = nil
+				local objtype = -1
+				cclog("obj.Filename:"..obj.Filename)
+			    if string.find(obj.Filename,"%.plist") then 
+			        sprite = ccui.particle(obj.Filename)
+			        objtype = 2
+			    elseif string.find(obj.Filename,"%.ExportJson") then
+			    	sprite = ccui.animationNode(obj.Filename)
+			    	objtype = 3
+			    else
+					sprite = ccui.image({image=obj.Filename,z=obj.zOrder})
+					objtype = 0
+				end
 				sprite:setScaleX(self._designFactor*obj.Scale.x)
 				sprite:setScaleY(self._designFactor*obj.Scale.y)
 				sprite:pos(cc.pMul(obj.Pos,self._designFactor))
@@ -970,6 +1277,7 @@ function SceneEditorUI:loadScene()
 					obj.Filter:ApplyTo(sprite)
 				end
 				panel:addChild(sprite)
+				--sprite:setTouchEnabled(false)
 				sprite.data = obj
 				sprite.name = obj.name
 				self._objects[sprite.name] = sprite
@@ -978,7 +1286,7 @@ function SceneEditorUI:loadScene()
 
 		self._Grounds[treeNode] = ground
 	end
-	self:addSceneUI(scene._width)	
+	self:addSceneUI(scene._width)
 	createGround(self._tree:addItem("背景",parent),scene._BackGround,"背景")
 	createGround(self._tree:addItem("地板",parent),scene._Floor,"地板")
 	--self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
@@ -986,10 +1294,28 @@ function SceneEditorUI:loadScene()
 	self._tree:Layout()
 end
 
-function SceneEditorUI:newScene()
+function SceneEditorUI:popupWindow()
 	local scene = SceneManager:findScene("newScene")
-	if scene then return end 
-	scene = ProjectManager:newScene("newScene")
+	if scene then return end
+	if self.phsize.width == 0 then return end
+	local mbp = self._layer:getChild("mgsbox")
+    mbp:setVisible(true)
+
+    local mgsbox_wtf = self._layer:getChild("mgsbox_wtf")
+	if self.phsize.width == 1136 then 
+        mgsbox_wtf:setText("1136")
+	elseif self.phsize.width == 960 then
+        mgsbox_wtf:setText("960")
+	else
+
+	end
+end
+
+function SceneEditorUI:newScene()
+
+	local widthtemp = self.ssize.width
+	local sizetemp = self._previewWindow:getSize()
+	scene = ProjectManager:newScene("newScene",widthtemp,sizetemp)
 	local parent = self._tree:addItem("newScene")
 	self._Grounds[self._tree:addItem("背景",parent)] = scene._BackGround
 	self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
@@ -1021,7 +1347,7 @@ function SceneEditorUI:addLayer()
         
 		local node = nil    -- 为数节点内部名称：如child1
 		local s = self._previewWindow:getSize()
-		s.width = s.width*self._designFactor
+		s.width = self.ssize.width*self._designFactor
 		local panel = ccui.panel({size = s,touch = false})
 		local layerData = nil
 		local index = 0
@@ -1109,7 +1435,15 @@ function SceneEditorUI:removeLayer()
         end,
         redo = function()
             self._curGround.data:removeLayer(indexL)
+
+           --[[ local childs = self._layers[self._curGround.name..lName].ui:getChildren()
+        	for k1,v1 in pairs(childs) do
+                self._objects[v1.name] = nil
+        	end
+           ]]
+       
             self._layers[self._curGround.name..lName] = nil
+            --self._objects[]
             self._curGround.ui:removeChild(panelL)
             nodeNo = self._tree:getNodePos(treeN)
             cclog("删除层：nodePos:"..nodeNo.."  treeNode:"..treeN.."  index:"..indexL)
@@ -1162,6 +1496,22 @@ function SceneEditorUI:addObjItem(name,index)
         end
     end
     if object then
+        if object.data.locked then
+        -- 更新按钮对象list锁定状态
+            lockBtn:loadTextureNormal("lock_16x16.png",ccui.TextureResType.plistType)		    
+		else
+        	lockBtn:loadTextureNormal("unlock_16x16.png",ccui.TextureResType.plistType)
+		end
+        object:setTouchEnabled(object.data.locked==false)
+
+		if object.data.visible then
+            -- 更新对象list隐藏状态
+            visibleBtn:loadTextureNormal("cd_16x16.png",ccui.TextureResType.plistType)
+		else
+            visibleBtn:loadTextureNormal("cancel_16x16.png",ccui.TextureResType.plistType)
+		end
+        object:setVisible(object.data.visible)
+
         lockBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(btn)
 			local b = object.data.locked == false
@@ -1268,6 +1618,8 @@ function SceneEditorUI:addImage(filename,layername)
             cclog("self._curGround.name..layername:"..self._curGround.name..layername)
 			self._layers[self._curGround.name..layername].ui:addChild(sprite)
 			pos = self._curLayer.data:addObject(self._object.data)
+			cclog("self._curLayer.data:"..tostring(self._curLayer.data))
+			cclog("self._curLayer.data._objectsVector:count()"..self._curLayer.data._objectsVector:count())
 			self._object.index = pos
 			self._objects[self._object.name] = sprite
 			self:setupObjectPanel(self._object.data)
@@ -1421,16 +1773,15 @@ function SceneEditorUI:touchTree(tree_name)
 	--local prevObject = self._object   -- 将当前对象赋值给前面对象
 
     local prevselectType = self.selectedType
-	local prevScene = {} 
-	local prevGround = {}
+	local prevScene = {data=0,ui=0,treeNode=0} 
+	local prevGround = {data=0,ui=nil,treeNode = 0,name=""}
 	local prevLayer = {}
     if self.selectedType >= 0 then
-	    prevScene = self._curScene
 	    prevScene.data = self._curScene.data
 	    prevScene.treeNode = self._curScene.treeNode
     end 
     if self.selectedType >= 1 then
-	    prevGround = self._curGround
+	    --prevGround = self._curGround
 	    prevGround.data = self._curGround.data
 	    prevGround.treeNode = self._curGround.treeNode
 	    prevGround.ui = self._curGround.ui
@@ -1466,13 +1817,15 @@ function SceneEditorUI:touchTree(tree_name)
 				 end
 				 if self._Grounds[node.name] then
 				 	if self._curGround.ui ~= nil then
-				 		self._curGround.ui:setVisible(false)
+				 		self._curGround.ui:setVisible(true)
+				 		self._curGround.ui:setTouchEnabled(false)
 				 	end
 				 	self._curGround.data = self._Grounds[node.name]
 				 	self._curGround.treeNode = node.name
 				 	self._curGround.ui = self._ui[node.value]
 				 	self._curGround.name = node.value
 				 	self._curGround.ui:setVisible(true)
+				 	self._curGround.ui:setTouchEnabled(true)
 				 	--self.curTouchNode = nil
 				 	cclog("curGround:"..node.value)
 				 end
@@ -1481,6 +1834,18 @@ function SceneEditorUI:touchTree(tree_name)
 				 self.selectedType = self._selectedType
 			end
             
+            --当点击scene对象时
+            if self._selectedType == 0 then
+                for k,v in pairs(self._layers) do     -- 遍历层对象
+                    if v.ui ~= nil then 
+                    	v.ui:setOpacity(255)
+                    	local childs = v.ui:getChildren()
+                    	for k1,v1 in pairs(childs) do
+                            v1:setTouchEnabled(false)
+                    	end
+	                end
+                end
+            end
             --当点击ground对象时
             if self._selectedType == 1 then
                 for k,v in pairs(self._layers) do     -- 遍历层对象
@@ -1512,7 +1877,8 @@ function SceneEditorUI:touchTree(tree_name)
 					self:setupLayerPanel(self._curLayer.data)
 	                cclog("  self._curLayer.treeNode:"..self._curLayer.treeNode)
 
-	                for k,v in pairs(self._layers) do     -- Ñ¡ÖÐ²ã¸ßÁÁÏÔÊ¾
+	                for k,v in pairs(self._layers) do     -- 遍历层
+
 	                    if k == self._curGround.name..curTouchNode.value then
 	                    	v.ui:setOpacity(255)
 	                    	local childs = v.ui:getChildren()
@@ -1536,18 +1902,20 @@ function SceneEditorUI:touchTree(tree_name)
 	                cclog("  self._curLayer.treeNode:"..self._curLayer.treeNode)
 
 	                for k,v in pairs(self._layers) do     -- 遍历层对象
-	                	cclog("点击层 self._curGround.name..self._selected.value:"..self._curGround.name..self._selected.value)
+	                	--cclog("点击层 self._curGround.name..self._selected.value:"..self._curGround.name..self._selected.value)
+	                    
 	                    if v.ui ~= nil then 
 		                    if k == self._curGround.name..self._selected.value then
 		                    	v.ui:setOpacity(255)
-		                    	--v.ui:setTouchEnabled(true)
+		                    	v.ui:setTouchEnabled(true)
 		                    	local childs = v.ui:getChildren()
 		                    	for k1,v1 in pairs(childs) do
+		                    		cclog("childs name:"..v1.name)
                                     v1:setTouchEnabled(true)
 		                    	end
 		                    else
 		                        v.ui:setOpacity(60)
-		                        --v.ui:setTouchEnabled(false)
+		                        v.ui:setTouchEnabled(false)
 		                        local childs = v.ui:getChildren()
 		                    	for k1,v1 in pairs(childs) do
                                     v1:setTouchEnabled(false)
@@ -1584,7 +1952,7 @@ function SceneEditorUI:touchTree(tree_name)
             --如果执行了撤销操作，则更换树节点方框标示
             if undotype == 1 then
                 if prevTouchNode ~= nil then
-                	cclog("重做前节点  prevTouchNode:"..prevTouchNode.name.."  curTouchNode:"..curTouchNode.name)
+                	--cclog("重做前节点  prevTouchNode:"..prevTouchNode.name.."  curTouchNode:"..curTouchNode.name)
                     self._tree:selectNode(prevTouchNode.name,curTouchNode.name)
                 else
                 	self._tree:selectNode(nil,curTouchNode.name)
@@ -1592,7 +1960,7 @@ function SceneEditorUI:touchTree(tree_name)
                 self._selected = curTouchNode
             else
             	 if prevTouchNode ~= nil then
-                	cclog("前节点  prevTouchNode:"..prevTouchNode.name.."  self._selected:"..self._selected.name)
+                	--cclog("前节点  prevTouchNode:"..prevTouchNode.name.."  self._selected:"..self._selected.name)
                     self._tree:selectNode(prevTouchNode.name,self._selected.name)
                 else
                 	self._tree:selectNode(nil,self._selected.name)
@@ -1602,6 +1970,7 @@ function SceneEditorUI:touchTree(tree_name)
 
 		end,
 	    undo = function()
+	        --cclog("curground:"..self._curGround.name.." prevGround:"..prevGround.name)
             if prevselectType >= 0 then 
                 self._curScene.data = prevScene.data
 				self._curScene.treeNode = prevScene.treeNode
@@ -1647,7 +2016,7 @@ function SceneEditorUI:touchTree(tree_name)
 
                 for k,v in pairs(self._layers) do     -- 显示该层对象
                 	if k == self._curGround.name..prevTouchNode.value then
-                    	v.ui:setOpacity(255)
+                		v.ui:setOpacity(255)
                     	local childs = v.ui:getChildren()
                     	for k1,v1 in pairs(childs) do
                             v1:setTouchEnabled(true)
@@ -1828,6 +2197,7 @@ end
 function SceneEditorUI:on_downZOrder()
 	if self._object then
 		local z = self._object.data.zOrder-1
+		if z < 0 then z = 0 end
 		Do(self:CMD_ZOrderObject(self._object,z))
 	end
 end
@@ -1849,8 +2219,10 @@ end
 function SceneEditorUI:addSceneUI(width)
 	self._previewWindow:removeAllChildren()
 	local winSize = self._previewWindow:getSize()
-	local inner = self._previewWindow:getSize()
-	inner.width = width * self._designFactor
+	--local inner = self._previewWindow:getSize()
+	local inner = self.ssize
+	inner.width = width*self._designFactor
+	inner.height = self.ssize.height*self._designFactor
 	local scrollview = ccui.scrollView({size = winSize,innerSize = inner,
 										direction = ccui.ScrollViewDir.horizontal,name = "preview_Scroll",})
 	--image:pos(cc.s2p(image:getSize()))
@@ -1874,6 +2246,10 @@ end
 
 function SceneEditorUI:previewScene()
 	local scene = PreviewScene.new()
+	--cclog(" PreviewScene.new:"..tostring(scene))
+	local filename = "E:/Tools/3.xEditor/newScene.sce"
+	local sizet = self.phsize
+	scene:loadSce(filename,sizet)
 	cc.pushScene(scene)
 end
 

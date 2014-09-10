@@ -81,12 +81,15 @@ end
 
 function SceneManager:addScene(name,width)
 	if name and width then
-		assert(self._Scenes[name] == nil)
+		--assert(self._Scenes[name] == nil)
+		for k,v in pairs(self._Scenes) do 
+            cclog(" scene name k:"..k)
+		end
 		self._Scenes[name] = GameScene.new(name,width)
 		return self._Scenes[name]
 	elseif type(name) == "table" then
 		local scene = name
-		self._Scanes[scene._name] = scene
+		self._Scenes[scene._name] = scene
 		return scene
 	end
 	return nil
@@ -98,11 +101,14 @@ function SceneManager:removeScene(param)
 			self._Scenes[param] = nil
 		end
 	elseif type(param) == "table" then
-		self._Scanes[param._name] = nil
+		self._Scenes[param._name] = nil
 	end
 end
 
 function SceneManager:findScene(name)
+	for k,v in pairs(self._Scenes) do
+         cclog(" self._Scenes k:"..k)
+	end
 	return self._Scenes[name]
 end
 
@@ -116,6 +122,7 @@ function SceneManager:renameScene(old_name,new_name)
 end
 
 function SceneManager:Save(path,name,ext)
+	--cclog("----SceneManager:Save  self:findScene(name):"..self:findScene(name)._name)
 	local scenedata = self:findScene(name):getJsonData()
 	local json_str = json.encode(scenedata)
 	local filePath = path.."/"..name..ext
@@ -131,7 +138,22 @@ function SceneManager:Load(filePath)
 	if file then
 		local json_str = file:read("*a")
 		local parseTable = json.decode(json_str,1)
-		local scene = self:addScene("newScene",960*2)
+		local widthtemp = parseTable["width"]
+		local scene = self:addScene("newScene",widthtemp)
+		scene:serialize(parseTable)
+		file:close()
+		return scene
+	end
+	return nil
+end
+
+function SceneManager:prevLoad(filePath)
+	local file = io.open(filePath)
+	if file then
+		local json_str = file:read("*a")
+		local parseTable = json.decode(json_str,1)
+		local widthtemp = parseTable["width"]
+		local scene = self:addScene("newScene_preview",widthtemp)
 		scene:serialize(parseTable)
 		file:close()
 		return scene
