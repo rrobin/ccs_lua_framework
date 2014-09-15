@@ -1,6 +1,6 @@
 /*
 ** Lua binding: game
-** Generated automatically by tolua++-1.0.92 on 07/25/14 10:54:25.
+** Generated automatically by tolua++-1.0.92 on 09/15/14 14:47:46.
 */
 
 /****************************************************************************
@@ -5233,6 +5233,35 @@ static int tolua_game_PlatformUtility_OpenFile00(lua_State* tolua_S)
 }
 #endif //#ifndef TOLUA_DISABLE
 
+/* method: setWindowTitle of class  PlatformUtility */
+#ifndef TOLUA_DISABLE_tolua_game_PlatformUtility_setWindowTitle00
+static int tolua_game_PlatformUtility_setWindowTitle00(lua_State* tolua_S)
+{
+#ifndef TOLUA_RELEASE
+ tolua_Error tolua_err;
+ if (
+     !tolua_isusertable(tolua_S,1,"PlatformUtility",0,&tolua_err) ||
+     !tolua_isstring(tolua_S,2,0,&tolua_err) ||
+     !tolua_isnoobj(tolua_S,3,&tolua_err)
+ )
+  goto tolua_lerror;
+ else
+#endif
+ {
+  const char* title = ((const char*)  tolua_tostring(tolua_S,2,0));
+  {
+   PlatformUtility::setWindowTitle(title);
+  }
+ }
+ return 0;
+#ifndef TOLUA_RELEASE
+ tolua_lerror:
+ tolua_error(tolua_S,"#ferror in function 'setWindowTitle'.",&tolua_err);
+ return 0;
+#endif
+}
+#endif //#ifndef TOLUA_DISABLE
+
 /* method: create of class  FileIO */
 #ifndef TOLUA_DISABLE_tolua_game_FileIO_create00
 static int tolua_game_FileIO_create00(lua_State* tolua_S)
@@ -5663,6 +5692,7 @@ TOLUA_API int tolua_game_open (lua_State* tolua_S)
    tolua_function(tolua_S,"DirectoryExists",tolua_game_PlatformUtility_DirectoryExists00);
    tolua_function(tolua_S,"OpenFolder",tolua_game_PlatformUtility_OpenFolder00);
    tolua_function(tolua_S,"OpenFile",tolua_game_PlatformUtility_OpenFile00);
+   tolua_function(tolua_S,"setWindowTitle",tolua_game_PlatformUtility_setWindowTitle00);
   tolua_endmodule(tolua_S);
   tolua_cclass(tolua_S,"FileIO","FileIO","CCObject",NULL);
   tolua_beginmodule(tolua_S,"FileIO");

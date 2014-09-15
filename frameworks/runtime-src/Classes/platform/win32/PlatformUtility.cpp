@@ -215,3 +215,11 @@ const std::string PlatformUtility::OpenFile(std::string dir, const char* filer)
 	else
 		return std::string("");
 }
+
+void PlatformUtility::setWindowTitle(const char* title)
+{
+	auto director = CCDirector::getInstance();
+	auto glView = director->getOpenGLView();
+	if(title != nullptr)
+		glfwSetWindowTitle(glView->getWindow(),title);
+}

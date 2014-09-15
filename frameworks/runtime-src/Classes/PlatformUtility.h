@@ -35,6 +35,8 @@ public:
 	static int CALLBACK BrowseFolderCallback(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);
 
 	static const std::string OpenFile(std::string dir,const char* filer);
+
+	static void setWindowTitle(const char* title);
 protected:
 private:
 };
