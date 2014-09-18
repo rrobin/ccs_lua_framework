@@ -24,7 +24,7 @@ function Browse(dir,filter,deep)
 	local b = deep
 	if b == nil then b = -1 end
 	local curDeep = -1
-	return _Browse(dir,filter,deep,curDeep)
+	return _Browse(dir,filter,b,curDeep)
 end
 
 --- 创建文件夹
@@ -58,6 +58,19 @@ function rmdir(dir)
 		return _rmdir(dir)
 	end
 	return nil,"not exist directory:"..dir
+end
+
+function copy(src_dir,dst_dir)
+	local sourcefile = io.open(src_dir,"rb")
+	local destinationfile = io.open(dst_dir,"wb")
+	if not sourcefile or not destinationfile then
+		return false
+	end
+	destinationfile:write(sourcefile:read("*a"))
+	cclog("copy "..src_dir.." to "..dst_dir)
+	sourcefile:close()
+	destinationfile:close()
+	return true
 end
 
 -- Prviate Functions

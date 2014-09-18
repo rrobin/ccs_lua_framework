@@ -2,16 +2,16 @@ local EditorConfig = class("EditorConfig")
 EditorConfig.__index = EditorConfig
 
 function EditorConfig:ctor()
+	self._filepath = lfs.currentdir()
 	local t = fs.Browse(lfs.currentdir(),"Editor.config",1)
 	if not t then
-		--assert(false,"没有找到编辑器配置文件!")
+		cclog("没有找到编辑器配置文件!")
 		self:mkConfig()
 		return
 	end
 	if #t > 1 then
 		assert(false,"不可能发生!")
 	end
-
 	self:Load(lfs.currentdir().."/Editor.config")
 end
 
@@ -28,7 +28,7 @@ function EditorConfig:Save()
 	config["Recently"] = self._config["Recently"]._values
 	config["last"] = self._config["last"]
 	local json_str = json.encode(config)
-	local f = io.open(lfs.currentdir().."/Editor.config","w+")
+	local f = io.open(self._filepath.."/Editor.config","w+")
 	if f then
 		f:write(json_str)
 		f:close()

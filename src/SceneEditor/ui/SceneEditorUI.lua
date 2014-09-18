@@ -12,15 +12,18 @@ local BrtFilterUI = import(".BrtFilterUI")
 local HueFilterUI = import(".HueFilterUI")
 local PreviewScene = import('.PreviewScene')
 
-function SceneEditorUI:ctor()
+function SceneEditorUI:ctor(name)
 	local htfv = 0
-	local wtfv = 0
-	self.ssize = {width=0,height=0}
-	self.phsize = {width=0,height=0}   -- 预览窗口大小
+	local wtfv = 0  --场景宽度
+	self.ssize = {width=0,height=0}    -- 场景宽高
+	self.phsize = {width=0,height=0}   -- iphone型号手机屏幕大小
 	local layer = ccui.loadLayer("SceneEditor.ExportJson")
 	self:addChild(layer)
 	self._layer = layer
-
+    
+    if name ~= nil then
+    	PlatformUtility:setWindowTitle(name)
+    end
     self._previewWindow = layer:getChild("preview_Win")
 
 	local newSceneBtn = layer:getChild("NewSceneBtn")
@@ -75,11 +78,19 @@ function SceneEditorUI:ctor()
 			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
 	    end}) 
 ]]
+	self.phsize = SimulatorSize[ProjectManager._project.ptype]
+	self._designFactor = SimulatorDesignFactor[ProjectManager._project.ptype]
+	local ss = {width=self.phsize.width*self._designFactor,height=self.phsize.height*self._designFactor}
+	self._previewWindow:setSize(ss)
 
-    self.phsize = {width=960,height=640}
-    local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
-    self._previewWindow:setSize(ss)
-	self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+
+	--[[  self.phsize = {width=960,height=640}
+	    local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
+	    self._previewWindow:setSize(ss)
+		ProjectManager._project.width = self._previewWindow:getSize().width
+	    ProjectManager._project.height = self._previewWindow:getSize().height
+		self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+    ]]
 
 	local ObjList = layer:getChild("ListView_Obj")
 	ObjList:setTouchEnabled(false)
@@ -122,7 +133,7 @@ function SceneEditorUI:ctor()
 		--local mgsbox_htf = layer:getChild("mgsbox_htf")
 		--htfv = mgsbox_htf:getStringValue()
 		local mgsbox_wtf = layer:getChild("mgsbox_wtf")
-		wtfv = mgsbox_wtf:getStringValue()
+		wtfv = mgsbox_wtf:getStringValue()  --得到输入的场景宽度
         
 		self.ssize = {width=wtfv,height=self.phsize.height}
 		if tonumber(wtfv) <= 0 then return end
@@ -136,7 +147,7 @@ function SceneEditorUI:ctor()
     mgsboxcancel:addTouchEvent({[ccui.TouchEventType.ended] = function()
 			cclog("zhi xing msgbox_cancel")
 			mgsboxpanel:setVisible(false)
-			self.ssize.width = 480
+			self.ssize.width = 960
             self:newScene()
             ptBtn:setVisible(false)
 		end})
@@ -211,17 +222,36 @@ function SceneEditorUI:initPT()
 	{
 	    ["iphone5"] = { text = "iphone5", func = function()
 	        cclog("--iphone5--")
-            self.phsize = {width=1136,height=640}
+
+			self.phsize = SimulatorSize[SimulatorType.IPhone5]
+			self._designFactor = SimulatorDesignFactor[SimulatorType.IPhone5]
+			local ss = {width=self.phsize.width*self._designFactor,height=self.phsize.height*self._designFactor}
+			self._previewWindow:setSize(ss)
+            ProjectManager._project.ptype = SimulatorType.IPhone5
+
+           --[[ self.phsize = {width=1136,height=640}
 	        local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
 	        self._previewWindow:setSize(ss)
-			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+	        ProjectManager._project.width = self._previewWindow:getSize().width
+	        ProjectManager._project.height = self._previewWindow:getSize().height
+			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)]]
 	    end},
 		["iphone4"] = { text = "iphone4", func = function()
             cclog("--iphone4--")
-            self.phsize = {width=960,height=640}
+
+			self.phsize = SimulatorSize[SimulatorType.IPhone4HD]
+			self._designFactor = SimulatorDesignFactor[SimulatorType.IPhone4HD]
+			local ss = {width=self.phsize.width*self._designFactor,height=self.phsize.height*self._designFactor}
+			self._previewWindow:setSize(ss)
+            ProjectManager._project.ptype = SimulatorType.IPhone4HD
+
+
+            --[[self.phsize = {width=960,height=640}
 	        local ss = {width=self.phsize.width/2,height=self.phsize.height/2}
 	        self._previewWindow:setSize(ss)
-			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)
+	        ProjectManager._project.width = self._previewWindow:getSize().width
+	        ProjectManager._project.height = self._previewWindow:getSize().height
+			self._designFactor = self._previewWindow:getSize().width/tonumber(self.phsize.width)]]
 		end},
 		
 	}
@@ -758,7 +788,7 @@ function SceneEditorUI:setupLayerPanel(groundLayer)
 end
 
 function SceneEditorUI:objectPanelShow(nstr)
-	local Pos_mg = self._layer:getChild("Posx_mg")
+	local Pos_mg = self._layer:getChild("Posx_mg")  -- 点击输入框显示的外框
 	local Posy_mg = self._layer:getChild("Posy_mg")
     local Scalex_mg = self._layer:getChild("Scalex_mg")
     local Scaley_mg = self._layer:getChild("Scaley_mg")
@@ -780,10 +810,12 @@ end
 
 function SceneEditorUI:initObjectPanel()
 	--local filename = layer:getChild("ObjFile_Label")
-	local tvalue = nil
-	local inputnum = 0 
-	local prevWidget = nil
-    local Posx_unsmg = self._layer:getChild("Posx_unsmg")
+	local tvalue = nil  --存放旧值
+	local keyTouched = 0 --是否按了键盘
+	local mouseType = 0 --鼠标状态
+	local widgetobj = nil --存储先前对象
+	local inputnum = 0
+    local Posx_unsmg = self._layer:getChild("Posx_unsmg")   --输入框默认外框
 	local Posy_unsmg = self._layer:getChild("Posy_unsmg")
     local Scalex_unsmg = self._layer:getChild("Scalex_unsmg")
     local Scaley_unsmg = self._layer:getChild("Scaley_unsmg")
@@ -801,68 +833,82 @@ function SceneEditorUI:initObjectPanel()
 	local function setText(widget,string)
 		widget:setString(string)
 	end
-
-	Pos_x:addTouchEvent({[ccui.TouchEventType.began] = 
+	
+	Pos_x:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(widget)
-			self:objectPanelShow("Posx_mg")
-			if prevWidget == widget then
-				if inputnum == 0 then
-					cclog("2")
-					widget:setString("")
-					return
+            self:objectPanelShow("Posx_mg")
+            if widget ~= widgetobj then
+			    if widgetobj ~= nil then
+            		widgetobj:setString(tvalue)
+            	end
+			    mouseType = 0
+			    keyTouched = 0
+            end
+            widgetobj = widget
+
+			if mouseType == 0 then
+				tvalue = widget:getString()
+				widget:setString("")
+				mouseType = mouseType + 1
+			else
+				if keyTouched == 0 then
+				    widget:setString(tvalue)
+				    mouseType = 0
+				else
+        			local pos = clone(self._object.data.Pos)
+					pos.x = tonumber(widget:getString())
+					Do(self:CMD_MoveObject(self._object,pos))
+				    mouseType = 0
+				    keyTouched = 0
 				end
-				inputnum = inputnum+1
-				cclog("1")
-				return
+				tvalue = widget:getString()
 			end
-			cclog("touchBegan")
-			tvalue = widget:getString()
-			inputnum = 0
-			widget:setString("")
-			prevWidget = widget
 		end})
 
 	Pos_x:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
-			--[[if inputnum == 0 then
-				widget:setText(tvalue) 
-			end]]
-            cclog("detach_with_ime  widget value :"..widget:getString())
-            if inputnum == 0 then
-            	widget:setString(tvalue)
-            	return
-            end
 			local pos = clone(self._object.data.Pos)
 			pos.x = tonumber(widget:getString())
 			Do(self:CMD_MoveObject(self._object,pos))
-			if prevWidget == widget then
-				inputnum = 0
-				tvalue = widget:getString()
-				widget:setString("")
-				cclog("3")
-			end
-		end,
-		[ccui.TextFiledEventType.insert_text] = 
-		function(widget)
-			cclog("ccui.TextFiledEventType.insert_text")
-			inputnum = inputnum + 1
 		end})
 
-    --[[Pos_x:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
+    Pos_x:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
 		function(widget)
-			cclog("ccui.TextFiledEventType.insert_text")
-			inputnum = inputnum + 1
+			keyTouched = keyTouched + 1
 		end})
-    ]]
+    
 
 	local Pos_y = self._layer:getChild("Pos_y")
 
 	Pos_y:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(widget)
             self:objectPanelShow("Posy_mg")
-			tvalue = widget:getString()
-			inputnum = 0
+            if widget ~= widgetobj then
+            	if widgetobj ~= nil then
+            		widgetobj:setString(tvalue)
+            	end
+			    mouseType = 0
+			    keyTouched = 0
+            end
+            widgetobj = widget
 
+            if mouseType == 0 then
+				tvalue = widget:getString()
+				widget:setString("")
+				mouseType = mouseType + 1
+			else
+				if keyTouched == 0 then
+				    widget:setString(tvalue)
+				    mouseType = 0
+				else
+        			local pos = clone(self._object.data.Pos)
+					pos.y = tonumber(widget:getString())
+					Do(self:CMD_MoveObject(self._object,pos))
+				    mouseType = 0
+				    keyTouched = 0
+				end
+				tvalue = widget:getString()
+			end
 		end})
 	Pos_y:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
 		function(widget)
@@ -871,13 +917,43 @@ function SceneEditorUI:initObjectPanel()
 			Do(self:CMD_MoveObject(self._object,pos))
 		end})
 
+    Pos_y:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
+		function(widget)
+			keyTouched = keyTouched + 1
+		end})
+
 	local Scale_x = self._layer:getChild("Scale_X")
 
 	Scale_x:addTouchEvent({[ccui.TouchEventType.ended] = 
 		function(widget)
             self:objectPanelShow("Scalex_mg")
-			tvalue = widget:getString()
-			inputnum = 0
+			if widget ~= widgetobj then
+            	if widgetobj ~= nil then
+            		widgetobj:setString(tvalue)
+            	end
+			    mouseType = 0
+			    keyTouched = 0
+            end
+            widgetobj = widget
+
+            if mouseType == 0 then
+				tvalue = widget:getString()
+				widget:setString("")
+				mouseType = mouseType + 1
+			else
+				if keyTouched == 0 then
+				    widget:setString(tvalue)
+				    mouseType = 0
+				else
+        			local scale = cc.p(0,0)
+					scale.x = tonumber(widget:getString())
+					scale.y = self._object.data.Scale.y
+					Do(self:CMD_ScaleObject(self._object,scale))
+				    mouseType = 0
+				    keyTouched = 0
+				end
+				tvalue = widget:getString()
+			end
 
 		end})
 	Scale_x:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
@@ -887,14 +963,43 @@ function SceneEditorUI:initObjectPanel()
 			scale.y = self._object.data.Scale.y
 			Do(self:CMD_ScaleObject(self._object,scale))
 		end})
-	
+    Scale_x:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
+		function(widget)
+			keyTouched = keyTouched + 1
+		end})	
+
 	local Scale_y = self._layer:getChild("Scale_Y")
 
 	Scale_y:addTouchEvent({[ccui.TouchEventType.ended] = 
 	function(widget)
         self:objectPanelShow("Scaley_mg")
-		tvalue = widget:getString()
-		inputnum = 0
+	    if widget ~= widgetobj then
+        	if widgetobj ~= nil then
+        		widgetobj:setString(tvalue)
+        	end
+		    mouseType = 0
+		    keyTouched = 0
+        end
+        widgetobj = widget
+
+        if mouseType == 0 then
+			tvalue = widget:getString()
+			widget:setString("")
+			mouseType = mouseType + 1
+		else
+			if keyTouched == 0 then
+			    widget:setString(tvalue)
+			    mouseType = 0
+			else
+    			local scale = cc.p(0,0)
+				scale.y = tonumber(widget:getString())
+				scale.x = self._object.data.Scale.x
+				Do(self:CMD_ScaleObject(self._object,scale))
+			    mouseType = 0
+			    keyTouched = 0
+			end
+			tvalue = widget:getString()
+		end
 
 	end})
 	Scale_y:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
@@ -904,14 +1009,41 @@ function SceneEditorUI:initObjectPanel()
 			scale.x = self._object.data.Scale.x
 			Do(self:CMD_ScaleObject(self._object,scale))
 		end})
+    Scale_y:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
+		function(widget)
+			keyTouched = keyTouched + 1
+		end})	
 
 	local Rotate = self._layer:getChild("Rotate")
 
 	Rotate:addTouchEvent({[ccui.TouchEventType.ended] = 
 	function(widget)
 	    self:objectPanelShow("Rotate_mg")
-		tvalue = widget:getString()
-		inputnum = 0
+        if widget ~= widgetobj then
+        	if widgetobj ~= nil then
+        		widgetobj:setString(tvalue)
+        	end
+		    mouseType = 0
+		    keyTouched = 0
+        end
+        widgetobj = widget
+
+        if mouseType == 0 then
+			tvalue = widget:getString()
+			widget:setString("")
+			mouseType = mouseType + 1
+		else
+			if keyTouched == 0 then
+			    widget:setString(tvalue)
+			    mouseType = 0
+			else
+    			local rotate = tonumber(widget:getString())
+			    Do(self:CMD_RotateObject(self._object,rotate))
+			    mouseType = 0
+			    keyTouched = 0
+			end
+			tvalue = widget:getString()
+		end
 
 	end})
 	Rotate:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
@@ -919,6 +1051,11 @@ function SceneEditorUI:initObjectPanel()
 			local rotate = tonumber(widget:getString())
 			Do(self:CMD_RotateObject(self._object,rotate))
 		end})
+
+    Rotate:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
+		function(widget)
+			keyTouched = keyTouched + 1
+		end})	
 	--Rotate:setText("")
 	local H_FlipBtn = self._layer:getChild("H_FlipBtn")
 	H_FlipBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
@@ -953,8 +1090,31 @@ function SceneEditorUI:initObjectPanel()
 	zOrder:addTouchEvent({[ccui.TouchEventType.ended] = 
 	function(widget)
 	    self:objectPanelShow("zOrder_mg")
-		tvalue = widget:getString()
-		inputnum = 0
+        if widget ~= widgetobj then
+        	if widgetobj ~= nil then
+        		widgetobj:setString(tvalue)
+        	end
+		    mouseType = 0
+		    keyTouched = 0
+        end
+        widgetobj = widget
+
+        if mouseType == 0 then
+			tvalue = widget:getString()
+			widget:setString("")
+			mouseType = mouseType + 1
+		else
+			if keyTouched == 0 then
+			    widget:setString(tvalue)
+			    mouseType = 0
+			else
+    			local z = tonumber(widget:getString())
+				Do(self:CMD_ZOrderObject(self._object,z))
+			    mouseType = 0
+			    keyTouched = 0
+			end
+			tvalue = widget:getString()
+		end
 
 	end})
 	zOrder:addTextFieldEvent({[ccui.TextFiledEventType.detach_with_ime] = 
@@ -962,6 +1122,11 @@ function SceneEditorUI:initObjectPanel()
 			local z = tonumber(widget:getString())
 			Do(self:CMD_ZOrderObject(self._object,z))
 		end})
+
+    zOrder:addTextFieldEvent({[ccui.TextFiledEventType.insert_text] = 
+		function(widget)
+			keyTouched = keyTouched + 1
+		end})	
 
 	local ApplyBtn = self._layer:getChild("ApplyBtn")
 	ApplyBtn:addTouchEvent({[ccui.TouchEventType.ended] = 
@@ -1198,32 +1363,32 @@ function SceneEditorUI:saveScene()
 	EditorConfig:Save()
 end
 
-function SceneEditorUI:loadScene()
+function SceneEditorUI:loadScene(filename)
 	cclog("点击了打开文件按钮")
 	local scene = SceneManager:findScene("newScene")
-	if scene then return end
+	--[[if scene then return end
 	local project = nil
 	if not scene then
-		project = ProjectManager:load(lfs.currentdir())
+		project = ProjectManager:load(filename)
 		scene = SceneManager:findScene("newScene")
-	end 
+	end]]
 	if not scene then
 		return
 	end
+	local project = ProjectManager._project
+	local projectPath = project.workpath.."\\Res"
+	cclog("projectPath:"..projectPath)
 	self._ObjCount = scene._objCount
 	local parent = self._tree:addItem("newScene")
 	local prevsize = {width=0,height=0}
     
-    for k,v in pairs(project.Scenes) do
-	    prevsize.width = v.width
-		prevsize.height = v.height 
-    end
+	self.phsize = SimulatorSize[project.ptype]
+	self._designFactor = SimulatorDesignFactor[project.ptype]
+	prevsize = {width=self.phsize.width*self._designFactor,height=self.phsize.height*self._designFactor}
 	cclog(" prevsize x:"..prevsize.width.."  y:"..prevsize.height)
 	self._previewWindow:setSize(prevsize)
-	self.phsize.width = prevsize.width * 2
-	self.phsize.height = prevsize.height * 2
-    local ptBtn = self._layer:getChild("ptBtn")
 
+    local ptBtn = self._layer:getChild("ptBtn")
     cclog("self.phsize.width:"..self.phsize.width)
 	if self.phsize.width == 1136 then
 		cclog(" ptBtn text:"..ptBtn:getTitleText())
@@ -1234,7 +1399,7 @@ function SceneEditorUI:loadScene()
 
 	end
 
-	self._designFactor = 0.5 --self._previewWindow:getSize().width/tonumber(scene._width)
+	--self._designFactor = 0.5 --self._previewWindow:getSize().width/tonumber(scene._width)
 	local function createGround(treeNode,ground,gname)
 		cclog("执行createGround方法")
 		for i=1,ground:LayerCount() do
@@ -1250,17 +1415,19 @@ function SceneEditorUI:loadScene()
 				local obj = l:getObject(j-1)
 				local sprite = nil
 				local objtype = -1
-				cclog("obj.Filename:"..obj.Filename)
+				local objfilename = projectPath.."\\"..obj.Filename
+				cclog("objfilename:"..objfilename)
 			    if string.find(obj.Filename,"%.plist") then 
-			        sprite = ccui.particle(obj.Filename)
+			        sprite = ccui.particle(objfilename)
 			        objtype = 2
 			    elseif string.find(obj.Filename,"%.ExportJson") then
-			    	sprite = ccui.animationNode(obj.Filename)
+			    	sprite = ccui.animationNode(objfilename)
 			    	objtype = 3
 			    else
-					sprite = ccui.image({image=obj.Filename,z=obj.zOrder})
+					sprite = ccui.image({image=objfilename,z=obj.zOrder})
 					objtype = 0
 				end
+				cclog("after create sprite")
 				sprite:setScaleX(self._designFactor*obj.Scale.x)
 				sprite:setScaleY(self._designFactor*obj.Scale.y)
 				sprite:pos(cc.pMul(obj.Pos,self._designFactor))
@@ -1314,8 +1481,8 @@ end
 function SceneEditorUI:newScene()
 
 	local widthtemp = self.ssize.width
-	local sizetemp = self._previewWindow:getSize()
-	scene = ProjectManager:newScene("newScene",widthtemp,sizetemp)
+	--local sizetemp = self._previewWindow:getSize()
+	scene = ProjectManager:newScene("newScene",widthtemp)
 	local parent = self._tree:addItem("newScene")
 	self._Grounds[self._tree:addItem("背景",parent)] = scene._BackGround
 	self._Grounds[self._tree:addItem("地板",parent)] = scene._Floor
@@ -2248,7 +2415,7 @@ function SceneEditorUI:previewScene()
 	local scene = PreviewScene.new()
 	--cclog(" PreviewScene.new:"..tostring(scene))
 	local filename = "E:/Tools/3.xEditor/newScene.sce"
-	local sizet = self.phsize
+	local sizet = self.phsize*self._designFactor
 	scene:loadSce(filename,sizet)
 	cc.pushScene(scene)
 end

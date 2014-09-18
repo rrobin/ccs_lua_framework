@@ -181,7 +181,7 @@ function Widget:onPressStateChangedToDisabled(uiwidget)
 end
 
 function Widget:getWidgetParent()
-    return tolua.cast(self:getParent(),UI_WIDGET)
+    return self:getParent()
 end
 
 function Widget:setTouchEnable(enable,child)

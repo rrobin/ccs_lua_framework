@@ -30,8 +30,20 @@ SceneObject =
 }
 
 function SceneObject:getJsonData()
+	cclog("Manager SceneObject getJsonData")
 	local data = {}
-	data["FileName"] = self.Filename
+	local fn = self.Filename
+	if string.find(self.Filename,"\\") then
+        cclog("路径中包含斜杠")
+    	fn = string.ippath(self.Filename)
+        cclog("copy "..self.Filename.." "..ProjectManager._project.workpath.."\\Res\\"..fn)
+    	fs.copy(self.Filename,ProjectManager._project.workpath.."\\Res\\"..fn)
+    	--os.execute("copy "..self.Filename.." "..ProjectManager._project.workpath.."\\Res\\"..fn)
+    	cclog("after os execute")
+	end
+	
+	data["FileName"] = fn
+	
 	data["Pos"] = pArray(self.Pos)
 	data["Flip"] = pArray(self.Flip)
 	data["zOrder"] = self.zOrder
@@ -85,6 +97,7 @@ function SceneManager:addScene(name,width)
 		for k,v in pairs(self._Scenes) do 
             cclog(" scene name k:"..k)
 		end
+		cclog("------------创建scene")
 		self._Scenes[name] = GameScene.new(name,width)
 		return self._Scenes[name]
 	elseif type(name) == "table" then
@@ -123,10 +136,12 @@ end
 
 function SceneManager:Save(path,name,ext)
 	--cclog("----SceneManager:Save  self:findScene(name):"..self:findScene(name)._name)
+	cclog("--------- save scene ---------")
 	local scenedata = self:findScene(name):getJsonData()
 	local json_str = json.encode(scenedata)
-	local filePath = path.."/"..name..ext
-	local file = io.open(filePath,"w+")
+
+	local fileName = path.."/Scenes/"..name..ext
+	local file = io.open(fileName,"w+")
 	if file then
 		file:write(json_str) 
 		file:close()

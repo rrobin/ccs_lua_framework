@@ -2,7 +2,6 @@ display = display or {}
 cclog("required display module")
 display.GameCache = import(".GameCache")
 import(".NodeEx")
---cclog("shader extend will coming soon..")
 import(".SpriteEx")
 --[[
     display保存一份所有shaders的表

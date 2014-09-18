@@ -1,3 +1,33 @@
+SimulatorType = 
+{
+   IPhone4 = 1,		-- 480x320
+   IPhone4HD = 2, 	-- 960x640
+   IPhone5 = 3,		-- 1136x640
+   IPhone6 = 4,		--
+   IPad	   = 5,		-- 1024x768
+   IPadHD  = 6,		-- 2048x1536
+}
+
+SimulatorSize =
+{
+ 	{width = 480,height = 320},		-- ip4
+ 	{width = 960,height = 640},		-- ip4HD
+ 	{width = 1136,height = 640},	-- ip5
+ 	{width = 480,height = 320},		-- ip6
+ 	{width = 1024,height = 768},	-- ipad
+ 	{width = 2048,height = 1536},	-- ipadHD
+}
+
+SimulatorDesignFactor = 
+{
+	1,			-- ip4
+	0.5,		-- ip4HD
+	0.5,		-- ip5
+	0.5,		-- ip6
+	0.5,		-- ipad
+	0.5, 		-- ipadHD
+}
+
 local ProjectManager = class("ProjectManager")
 ProjectManager.__index = ProjectManager
 
@@ -7,8 +37,6 @@ scene =
 {
 	name = "newScene",
 	ext = ".sce",
-	width=0,
-	height=0
 }
 
 project= 
@@ -17,6 +45,7 @@ project=
 	name = "NewProject",
 	ext = ".proj",
 	Scenes = {},
+	ptype = SimulatorType.IPhone4HD,       --iphone 机型
 }
 
 function ProjectManager:ctor()
@@ -39,15 +68,20 @@ function ProjectManager:save()
 
     cclog(" p:"..p.." ss:"..#ss)
 	jsonData["Scenes"] = ss
-
+    --jsonData["width"] = self._project.width
+    --jsonData["height"] = self._project.height
+    
+    jsonData["ptype"] = self._project.ptype
+    
 	if ss then 
 		for _,v in pairs(ss) do
 			SceneManager:Save(p,v.name,v.ext)
 		end
 	end
-
+    cclog(" after scenemanager save")
 	local json_str = json.encode(jsonData)
 	local filePath = p.."/"..self._project.name..self._project.ext
+	cclog("ProjectManager save:"..filePath)
 	local file = io.open(filePath,"w+")
 	if file then
 		file:write(json_str) 
@@ -56,8 +90,9 @@ function ProjectManager:save()
 end
 
 function ProjectManager:load(path)
-	cclog(" ProjectManager load ")
+	cclog(" ProjectManager load :"..path)
 	local p = path or self._project.workpath
+
 	local t = fs.Browse(path,"%"..self._project.ext,-1)
 	if not t then
 		assert(false,"在目录"..path.."下没有找到项目文件")
@@ -66,15 +101,25 @@ function ProjectManager:load(path)
 		assert(fasle,"找到多个项目文件")
 	end
 	self._project.workpath = p
+	local fname = string.ipextension(t[1])
+	self._project.name = fname
 	local file = io.open(p.."/"..t[1])
+
 	if file then
 		local json_str = file:read("*a")
 		cclog(" json_str:"..json_str)
 		json_str = json.decode(json_str,1)
 		local ss = json_str["Scenes"]
+
+		--self._project.width = json_str["width"]
+        --self._project.height = json_str["height"]
+
+        self._project.ptype = json_str["ptype"]
+
         self._project.Scenes = ss   -- 加载时重新赋值
 		for k,v in pairs(ss) do
-                SceneManager:Load(p.."/"..v.name..v.ext)
+            --SceneManager:Load(p.."/"..v.name..v.ext)
+            SceneManager:Load(p.."/Scenes/"..v.name..v.ext)
 		end
 		file:close()
 	else
@@ -84,10 +129,8 @@ function ProjectManager:load(path)
 	return self._project
 end
 
-function ProjectManager:newScene(name,width,size)
+function ProjectManager:newScene(name,width)
 	local s = clone(scene)
-	s.width = size.width
-	s.height = size.height
 	s.name = name
 	self._project.Scenes[#self._project.Scenes+1] = s
 	if width then 

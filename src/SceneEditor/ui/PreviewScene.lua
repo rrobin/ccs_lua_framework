@@ -8,31 +8,47 @@ function PreviewScene:ctor()
 	local keyshortcut = KeyBoardManager:getShortcuts("PreviewScene")
 	if not keyshortcut then
 		keyshortcut = KeyShortcuts.new("PreviewScene")
-		keyshortcut:add(single_type,"KEY_LEFT_ARROW",handler(self,self.onLeft),nil)
-		keyshortcut:add(single_type,"KEY_RIGHT_ARROW",handler(self,self.onRight),nil)
-		keyshortcut:add(single_type,"KEY_UP_ARROW",handler(self,self.onUp),nil)
-		keyshortcut:add(single_type,"KEY_DOWN_ARROW",handler(self,self.onDown),nil)
-		keyshortcut:add(single_type,"KEY_ESCAPE",handler(self,self.returnEditor),nil)
 		KeyBoardManager:add(keyshortcut)
 	end
+	keyshortcut:add(single_type,"KEY_LEFT_ARROW",handler(self,self.onPressLeft),handler(self,self.onReleaseLeft))
+	keyshortcut:add(single_type,"KEY_RIGHT_ARROW",handler(self,self.onPressRight),handler(self,self.onReleaseRight))
+	keyshortcut:add(single_type,"KEY_UP_ARROW",handler(self,self.onUp),nil)
+	keyshortcut:add(single_type,"KEY_DOWN_ARROW",handler(self,self.onDown),nil)
+	keyshortcut:add(single_type,"KEY_ESCAPE",handler(self,self.returnEditor),nil)
 	KeyBoardManager:apply("PreviewScene")
-	--scheduleUpdateWithPriorityLua(onLefting,)
 end
 
-function PreviewScene:onLeft()
+
+function PreviewScene:onPressLeft()
+    self:scheduleUpdateWithPriorityLua(handler(self,self.onMoveLeft),1)
+end
+
+function PreviewScene:onReleaseLeft()
+	self:unscheduleUpdate()
+end
+
+function PreviewScene:onPressRight()
+	self:scheduleUpdateWithPriorityLua(handler(self,self.onMoveRight),1)
+end
+
+function PreviewScene:onReleaseRight()
+    self:unscheduleUpdate()
+end
+
+function PreviewScene:onMoveLeft(dt)
 	cclog(" PreviewScene:onLeft:"..tostring(self))
 	local pnode = self:getChildByTag(-555)
-	local posx = pnode:getPositionX() - 1
+	local posx = pnode:getPositionX() - 2000*tonumber(string.format("%.3f",dt))/60
 	cclog("posx:"..posx)
 	cclog("max value:"..-(tonumber(self.psize.width))/2)
 	if posx <= -(tonumber(self.psize.width))/2 then posx = -(tonumber(self.psize.width))/2 end
 	pnode:setPositionX(posx)
 end
 
-function PreviewScene:onRight()
+function PreviewScene:onMoveRight(dt)
 	cclog(" PreviewScene:onRight:"..tostring(self))
 	local pnode = self:getChildByTag(-555)
-	local posx = pnode:getPositionX() + 1
+	local posx = pnode:getPositionX() + 2000*tonumber(string.format("%.3f",dt))/60
 	cclog("posx:"..posx)
 	if posx >=0 then posx = 0 end
 	--if posx 0 then posx 
