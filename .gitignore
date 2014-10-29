@@ -90,3 +90,5 @@ frameworks/runtime-src/proj.win32/Release.win32/libwebp.lib
 frameworks/runtime-src/proj.win32/Release.win32/libzlib.lib
 frameworks/runtime-src/proj.win32/Release.win32/lua51.lib
 Editor.config
+frameworks/runtime-src/proj.lua/ccsforlua.deproj
+frameworks/runtime-src/proj.lua/ccsforlua.deuser

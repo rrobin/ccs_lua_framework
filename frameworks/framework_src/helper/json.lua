@@ -224,7 +224,7 @@ end
 function decode_scanNumber(s,startPos)
   local endPos = startPos+1
   local stringLen = string.len(s)
-  local acceptableChars = "+-0123456789.e"
+  local acceptableChars = "+-0123456789.eE"
   while (string.find(acceptableChars, string.sub(s,endPos,endPos), 1, true)
 	and endPos<=stringLen
 	) do

@@ -6,6 +6,7 @@ require("command.init")
 require("config")
 require("lfs")
 require('Common.fileSystem')
+require('Common.LuaXml')
 
 ccui.particle = function(filename)
 	return require("ui.particle").new(filename)

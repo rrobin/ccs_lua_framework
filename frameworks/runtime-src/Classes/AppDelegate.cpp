@@ -85,7 +85,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 	tolua_game_open(L);
 	register_all_game_manual(L);
 	game_lua_extensions(L);
-
+//#undef COCOS2D_DEBUG
 #ifdef LOAD_PRECOMPILE
 #ifndef COCOS2D_DEBUG
 	pStack->loadChunksFromZIP("game.bat");
@@ -94,7 +94,7 @@ bool AppDelegate::applicationDidFinishLaunching()
 #endif
 	if(engine->executeScriptFile("main") != 0)
 		return false;
-
+//#define COCOS2D_DEBUG
 	EventListenerKeyboard *listener = EventListenerKeyboard::create(); 
 	listener->onKeyReleased = keyEventCallback; 
 	director->getEventDispatcher()->addEventListenerWithFixedPriority(listener, 1); 

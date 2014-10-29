@@ -4,7 +4,7 @@ MyApp.__index = MyApp
 local ProjectCreator = require("ProjectCreator.ProjectCreateUI")
 local SceneEditor = require("SceneEditor.ui.SceneEditorUI")
 local testScene = require("testScene")
-local previewScene = require("SceneEditor.ui.previewScene")
+local previewScene = require("SceneEditor.ui.PreviewScene")
 
 function MyApp:ctor()
 	MyApp.super.ctor(self)
@@ -12,9 +12,9 @@ function MyApp:ctor()
 	local scene = previewScene.new()
 	local filename = "E:/Tools/3.xEditor/newScene.sce"
 	scene:loadSce(filename)
- 
+
     -- ]] 
-    local scene = ProjectCreator.new()
+    local scene = testScene.new()
 	--[[local lastProj = EditorConfig:getLastProj()
 	if lastProj then
 		ProjectManager:load(lastProj.workpath)

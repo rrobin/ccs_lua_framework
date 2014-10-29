@@ -183,6 +183,9 @@ xcopy /Y /Q "$(OutDir)..\..\lib\*.dll" "$(OutDir)..\..\bin"</Command>
     <ClInclude Include="..\Classes\gameEngine.h" />
     <ClInclude Include="..\Classes\luabinding\game_luabinding.h" />
     <ClInclude Include="..\Classes\luabinding\game_manual.h" />
+    <ClInclude Include="..\Classes\lua_extensions\cjson\fpconv.h" />
+    <ClInclude Include="..\Classes\lua_extensions\cjson\lua_cjson.h" />
+    <ClInclude Include="..\Classes\lua_extensions\cjson\strbuf.h" />
     <ClInclude Include="..\Classes\lua_extensions\game_lua_extensions.h" />
     <ClInclude Include="..\Classes\lua_extensions\lfs.h" />
     <ClInclude Include="..\Classes\mersennetwister\MersenneTwister.h" />
@@ -217,6 +220,9 @@ xcopy /Y /Q "$(OutDir)..\..\lib\*.dll" "$(OutDir)..\..\bin"</Command>
     <ClCompile Include="..\Classes\common.cpp" />
     <ClCompile Include="..\Classes\luabinding\game_luabinding.cpp" />
     <ClCompile Include="..\Classes\luabinding\game_manual.cpp" />
+    <ClCompile Include="..\Classes\lua_extensions\cjson\fpconv.c" />
+    <ClCompile Include="..\Classes\lua_extensions\cjson\lua_cjson.c" />
+    <ClCompile Include="..\Classes\lua_extensions\cjson\strbuf.c" />
     <ClCompile Include="..\Classes\lua_extensions\game_lua_extensions.c" />
     <ClCompile Include="..\Classes\lua_extensions\lfs.c" />
     <ClCompile Include="..\Classes\NetConnection.cpp" />

@@ -4,15 +4,21 @@
 extern "C" {
 #endif
 
+	// cjson
+#include "cjson/lua_cjson.h"
+
 #ifndef WP8
 	// filesystem
 #include "lfs.h"
 #endif
+//#include "LuaXML.h"
 
 	static luaL_Reg luax_exts[] = {
+		{"cjson", luaopen_cjson_safe},
 #ifndef WP8
 		{"lfs", luaopen_lfs},
 #endif
+		//{"LuaXML_lib",luaopen_LuaXML_lib},
 		{NULL, NULL}
 	};
 

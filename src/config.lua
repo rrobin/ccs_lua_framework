@@ -1,9 +1,9 @@
 config = 
 {
-	width 	= 1152,
-	height 	= 764,
-	designWidth = 1152,
-	designHeight = 764,
+	width 	= 960,
+	height 	= 640,
+	designWidth = 960,
+	designHeight = 640,
 	policy = cc.ResolutionPolicy.SHOW_ALL,
 	fps = false,
 	interval = 60,
